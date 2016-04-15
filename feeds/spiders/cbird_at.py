@@ -16,7 +16,7 @@ class CbirdAtSpider(scrapy.Spider):
     def parse(self, response):
         yield FeedItem(
             title='Neue cbird Versionen',
-            subtitle='The neuesten Versionen von cbird.',
+            subtitle='Die neuesten Versionen von cbird.',
             link=self.start_urls[0],
             author={'name': self.name})
 

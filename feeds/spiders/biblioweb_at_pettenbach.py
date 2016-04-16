@@ -1,11 +1,9 @@
 #!/usr/bin/python3
 
-import datetime
-
 import scrapy
 
-from feeds.items import FeedItem
-from feeds.items import FeedEntryItem
+from feeds.loaders import FeedEntryItemLoader
+from feeds.loaders import FeedItemLoader
 
 
 # TODO factor name out
@@ -26,11 +24,14 @@ class BibliowebAtPettenbachSpider(scrapy.Spider):
             '?kat=1&content=show_new&seit=60&order_by=Sachtitel',
             callback=self.parse_overview_page)
 
-        yield FeedItem(
-            title=self._library_user,
-            subtitle='Neue Titel in der {}'.format(self._library_user),
-            link='http://www.biblioweb.at/{}/'.format(self._library),
-            author={'name': self._library_user})
+        il = FeedItemLoader()
+        il.add_value('title', self._library_user)
+        il.add_value('subtitle',
+                     'Neue Titel in der {}'.format(self._library_user))
+        il.add_value('link',
+                     'http://www.biblioweb.at/{}/'.format(self._library))
+        il.add_value('author_name', self._library_user)
+        yield il.load_item()
 
     def parse_overview_page(self, response):
         # Find other pages
@@ -46,18 +47,18 @@ class BibliowebAtPettenbachSpider(scrapy.Spider):
 
     def parse_content(self, response):
         parts = self._extract_parts(response)
-        item = FeedEntryItem(author={'name': self._library_user})
-
-        item['title'] = ' - '.join(parts[:self._find_first_meta(parts)])
-        item['link'] = response.url
-        item['updated'] = self._extract_datetime(response, parts)
+        il = FeedEntryItemLoader(response=response)
+        il.add_value('title', ' - '.join(parts[:self._find_first_meta(parts)]))
+        il.add_value('link', response.url)
+        il.add_xpath('updated', '//td/span/text()',
+                     re='In der Bibliothek seit: (.*)')
 
         _content = ['<ul>']
         for part in parts:
             _content.append('<li>{}</li>'.format(part))
         _content.append('</ul>')
-        item['content_html'] = ''.join(_content)
-        yield item
+        il.add_value('content_html', ''.join(_content))
+        yield il.load_item()
 
     def _find_first_meta(self, parts):
         # Find the first entry after author | title | subtitle.
@@ -70,13 +71,5 @@ class BibliowebAtPettenbachSpider(scrapy.Spider):
         parts = [p.strip() for p in
                  response.xpath('//td/span/text()').extract()]
         return [p for p in parts if p not in ('', ', ,')]
-
-    def _extract_datetime(self, response, parts):
-        for part in parts:
-            if part.startswith('In der Bibliothek seit:'):
-                return datetime.datetime.strptime(part[-10:], '%d.%m.%Y')
-
-        self.logger.error('No date found for: {}'.format(response.url))
-        return datetime.datetime.now()
 
 # vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4 smartindent autoindent

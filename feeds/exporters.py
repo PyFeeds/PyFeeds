@@ -49,11 +49,11 @@ class AtomExporter(BaseItemExporter):
     def _convert_feed_item(self, item):
         xml_items = []
 
-        # Convert fields containing dicts.
-        for key in ('author',):
-            if key in item:
-                xml_items.append(self._convert_special_dict(item, key))
-                item.pop(key)
+        # Convert author related fields.
+        author_item = self._convert_special_nested(
+            item, 'author', ('name', 'email'))
+        if author_item is not None:
+            xml_items.append(author_item)
 
         # Convert link
         key = 'link'
@@ -77,12 +77,24 @@ class AtomExporter(BaseItemExporter):
 
         return xml_items
 
-    def _convert_special_dict(self, item, key):
-        xml_item = etree.Element(key)
-        for k, v in item[key].items():
-            child = etree.SubElement(xml_item, k)
-            child.text = v
-        return xml_item
+    def _convert_special_nested(self, item, parent, children, sep='_'):
+        children_items = []
+        for full_key in [sep.join((parent, child)) for child in children]:
+            if full_key in item:
+                children_items.append(
+                    self._convert_special_single_element(item, full_key, sep))
+                item.pop(full_key)
+        if children_items:
+            element = etree.Element(parent)
+            for children_item in children_items:
+                element.append(children_item)
+            return element
+
+    def _convert_special_single_element(self, item, key, sep):
+        _, child_key = key.split(sep)
+        element = etree.Element(child_key)
+        element.text = item[key]
+        return element
 
     def _convert_special_link(self, item, key):
         xml_item = etree.Element(key)

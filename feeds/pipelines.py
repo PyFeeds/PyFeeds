@@ -33,19 +33,6 @@ class AtomCheckRequiredFieldsPipeline(object):
                                format(required, item))
 
 
-class AtomCheckDictFieldsPipeline(object):
-    """Check fields containing dicts have the required keys."""
-    def process_item(self, item, spider):
-        if 'author' in item:
-            if 'name' in item['author']:
-                return item
-            else:
-                raise DropItem('The required key "{}" is missing in: {}.'.
-                               format('author', item))
-
-        return item
-
-
 class AtomExportPipeline(object):
     """Export items as atom feeds."""
     def __init__(self, output_path):

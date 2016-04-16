@@ -19,8 +19,8 @@ class BaseItem(scrapy.Item):
         serializer=lambda x: x.strftime(BaseItem.UPDATED_FMT))
 
     # Recommended
-    # Must be a dict containing at least 'name' and optionally 'email'.
-    author = scrapy.Field()
+    author_name = scrapy.Field()
+    author_email = scrapy.Field()
 
     # A unique link to a feed/item.
     link = scrapy.Field()

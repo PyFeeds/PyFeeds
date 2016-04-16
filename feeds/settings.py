@@ -14,7 +14,6 @@ TELNETCONSOLE_ENABLED = False
 ITEM_PIPELINES = {
     'feeds.pipelines.AtomAutogenerateIdPipeline': 100,
     'feeds.pipelines.AtomCheckRequiredFieldsPipeline': 110,
-    'feeds.pipelines.AtomCheckDictFieldsPipeline': 120,
     'feeds.pipelines.AtomExportPipeline': 400
 }
 

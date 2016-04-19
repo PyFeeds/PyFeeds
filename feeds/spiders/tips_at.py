@@ -29,8 +29,9 @@ class TipsAtSpider(CrawlSpider):
         il.add_value(
             'content_html', 'Region: {}'.format(
                 response.url.split('/')[4].title()))
+        il.add_xpath('content_html', '//div[@class="shortcode-content"]')
         il.add_xpath(
-            'content_html', '//div[@class="shortcode-content"]//text()')
+            'content_html', '//div[@class="main-article-content"]//img')
         il.add_xpath(
             'updated', '//div[@class="calendar-time"]/text()',
             re='läuft bis ([^\s]+)')

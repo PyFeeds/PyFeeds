@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 
 import datetime
+import pytz
 
 from scrapy.loader import ItemLoader
 from scrapy.loader.processors import Join
@@ -14,8 +15,10 @@ from feeds.items import FeedEntryItem
 
 def parse_datetime(text, loader_context):
     datetime_format = loader_context.get('datetime_format', '%d.%m.%Y')
+    timezone = loader_context.get('timezone', pytz.UTC)
     try:
-        return datetime.datetime.strptime(text, datetime_format)
+        return (timezone.localize(datetime.datetime.strptime(text,
+                datetime_format)).astimezone(pytz.UTC))
     except ValueError:
         return None
 

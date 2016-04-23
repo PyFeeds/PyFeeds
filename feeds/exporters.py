@@ -113,6 +113,7 @@ class AtomExporter(BaseItemExporter):
 
     def _convert_special_link(self, item, key):
         xml_item = etree.Element(key)
+        xml_item.set('rel', 'alternate')
         xml_item.set('href', item[key])
         return xml_item
 

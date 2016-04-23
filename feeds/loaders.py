@@ -30,7 +30,7 @@ class BaseItemLoader(ItemLoader):
     # Field specific
     id_in = MapCompose(str.strip)
 
-    title_in = MapCompose(str.strip, str.title)
+    title_in = MapCompose(str.strip)
 
     updated_in = MapCompose(str.strip, parse_datetime)
 
@@ -45,7 +45,7 @@ class FeedItemLoader(BaseItemLoader):
     default_item_class = FeedItem
 
     # Field specific
-    subtitle_in = MapCompose(str.strip, str.title)
+    subtitle_in = MapCompose(str.strip)
 
 
 class FeedEntryItemLoader(BaseItemLoader):

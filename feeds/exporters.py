@@ -17,6 +17,7 @@ class AtomExporter(BaseItemExporter):
         self._pretty_print = kwargs.pop('pretty_print', True)
         self._xml = None
         self._feed_updated = None
+        self._feed_items = []
 
     def start_exporting(self):
         self._xml = etree.Element('feed')
@@ -26,6 +27,10 @@ class AtomExporter(BaseItemExporter):
         child = etree.Element('updated')
         child.text = self._feed_updated
         self._xml.insert(0, child)
+
+        for item in sorted(self._feed_items, reverse=True,
+                           key=lambda k: k.findtext('updated', default=None)):
+            self._xml.append(item)
 
         path = os.path.join(self._output_path, self._name)
         os.makedirs(path, exist_ok=True)
@@ -42,9 +47,10 @@ class AtomExporter(BaseItemExporter):
             for child in self._convert_feed_item(item):
                 self._xml.insert(0, child)
         elif isinstance(item, FeedEntryItem):
-            entry = etree.SubElement(self._xml, 'entry')
+            entry = etree.Element('entry')
             for child in self._convert_feed_item(item):
                 entry.append(child)
+            self._feed_items.append(entry)
 
     def _convert_feed_item(self, item):
         xml_items = []

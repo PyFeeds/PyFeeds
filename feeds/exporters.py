@@ -29,7 +29,7 @@ class AtomExporter(BaseItemExporter):
         self._xml.insert(0, child)
 
         for item in sorted(self._feed_items, reverse=True,
-                           key=lambda k: k.findtext('updated', default=None)):
+                           key=lambda k: k.findtext('updated', default=0)):
             self._xml.append(item)
 
         path = os.path.join(self._output_path, self._name)

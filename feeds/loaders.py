@@ -58,6 +58,10 @@ class FeedEntryItemLoader(BaseItemLoader):
     content_html_in = MapCompose(str.strip)
     content_html_out = Join('<br>')
 
+    enclosure_iri_in = MapCompose(str.strip)
+
+    enclosure_type_in = MapCompose(str.strip)
+
 
 # Site specific loaders
 class CbirdFeedEntryItemLoader(FeedEntryItemLoader):

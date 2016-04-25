@@ -39,7 +39,8 @@ class Oe1OrfAtSpider(Spider):
             il = FeedEntryItemLoader(response=response,
                                      datetime_format=self._datetime_format,
                                      timezone=self._timezone)
-            il.add_value('link', item['url_json'].replace('/konsole', ''))
+            il.add_value('link', 'https://{}{}'.format(
+                self.name, item['url_json'].replace('/konsole', '')))
             il.add_value('title', item['title'])
             il.add_value('content_html', item['info'].replace('\n', '<br>'))
             il.add_value('enclosure_iri', item['url_stream'])

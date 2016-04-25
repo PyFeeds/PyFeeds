@@ -1,14 +1,10 @@
 #!/usr/bin/python3
 
 import json
+
+from scrapy.spiders import Spider
 import pytz
 import scrapy
-
-from datetime import datetime, timedelta
-
-from scrapy.linkextractors import LinkExtractor
-from scrapy.spiders import Spider
-from scrapy.spiders import Rule
 
 from feeds.loaders import FeedEntryItemLoader
 from feeds.loaders import FeedItemLoader

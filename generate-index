@@ -1,0 +1,55 @@
+#!/usr/bin/python3
+# Generate the index.html file for feeds.
+
+import argparse
+import datetime
+import glob
+import os
+
+from jinja2 import Environment
+from jinja2 import FileSystemLoader
+from lxml import etree
+
+
+def fetch_metadata_from_feeds(atom_output_path, feed_name='feed.atom'):
+    ns = {'ns': 'http://www.w3.org/2005/Atom'}
+    metadata = []
+    for fn in glob.glob(
+            '{}/**/{}'.format(atom_output_path, feed_name), recursive=True):
+        tree = etree.parse(fn)
+        metadata.append({
+            'filename': os.path.relpath(fn, atom_output_path),
+            'title': tree.xpath('//ns:feed/ns:title/text()', namespaces=ns)[0]
+        })
+
+    return metadata
+
+
+def generate_index(metadata, index_path, templates_path='./res/templates',
+                   template_name='index.j2'):
+    env = Environment(loader=FileSystemLoader(templates_path))
+    template = env.get_template(template_name)
+    with open(index_path, 'w', encoding='utf-8') as f:
+        context = {
+            'entries': sorted(metadata, key=lambda x: x['title']),
+            'last_update': datetime.datetime.now().replace(microsecond=0)}
+        f.write(template.render(context))
+
+
+def parse_args():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('atom_output_path')
+    return parser.parse_args()
+
+
+def main():
+    args = parse_args()
+    index_path = os.path.join(args.atom_output_path, 'index.html')
+    metadata = fetch_metadata_from_feeds(args.atom_output_path)
+    generate_index(metadata, index_path)
+
+
+if __name__ == '__main__':
+    main()
+
+# vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4 smartindent autoindent

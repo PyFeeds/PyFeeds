@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Feeds</title>
+    <meta name="description" content="Offer Atom feeds for websites that don't offer any.">
+    <meta name="author" content="nblock.org">
+    {% for entry in entries -%}
+      <link rel="alternate" type="application/atom+xml" title="{{ entry['title'] }}" href="{{ entry['filename'] }}">
+    {% endfor %}
+  </head>
+
+  <body>
+    <h1>Feeds</h1>
+    This site provides Atom feeds for websites that don't offer any.
+
+    <h2>Available feeds</h2>
+    <ul>
+      {% for entry in entries -%}
+      <li><a href="{{ entry['filename'] }}">{{ entry['title'] }}</a></li>
+      {% endfor %}
+    </ul>
+
+    <h2>Meta</h2>
+    <ul>
+      <li>Source code: <a href="https://github.com/nblock/feeds">GitHub</a></li>
+      <li>License: AGPLv3</li>
+      <li>Last update: {{ last_update }}</li>
+      <li>Contact: Open a <a href="https://github.com/nblock/feeds/issues">GitHub issue</a> or send an send an e-mail to service-feeds [at] nblock.org</li>
+    </ul>
+  </body>
+</html>

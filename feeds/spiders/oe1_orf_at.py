@@ -3,6 +3,7 @@
 import json
 
 from scrapy.spiders import Spider
+import lxml
 import pytz
 import scrapy
 
@@ -39,14 +40,46 @@ class Oe1OrfAtSpider(Spider):
             il = FeedEntryItemLoader(response=response,
                                      datetime_format=self._datetime_format,
                                      timezone=self._timezone)
-            il.add_value('link', 'https://{}{}'.format(
-                self.name, item['url_json'].replace('/konsole', '')))
+
+            link = 'http://{}{}'.format(
+                self.name, item['url_json'].replace('/konsole', ''))
+            il.add_value('link', link)
             il.add_value('title', item['title'])
-            il.add_value('content_html', item['info'].replace('\n', '<br>'))
             il.add_value('enclosure_iri', item['url_stream'])
             il.add_value('enclosure_type', 'audio/mpeg')
             il.add_value('updated', '{} {}'.format(item['day_label'],
                                                    item['time']))
-            yield il.load_item()
+            yield scrapy.Request(link, self.parse_item_text, meta={'item': il})
+
+    def parse_item_text(self, response):
+        il = response.meta['item']
+
+        # Parse article text.
+        text = lxml.html.fragment_fromstring(''.join(response.xpath(
+            '(//div[@class="textbox-wide"])[1]/*[not('
+            'contains(@class,"autor") or '
+            'contains(@class,"outerleft") or '
+            'contains(@class,"socialmediaArtikel") or '
+            'contains(@class,"copyright") or '
+            'contains(@class,"tags") or'
+            'contains(name(),"h1")'
+            ')]').extract()),
+            create_parent='div')
+
+        # Remove some unnecessary tags.
+        for bad in ['copyright', 'overlay-7tage', 'overlay-7tage-hover',
+                    'hover-infobar', 'overlay-download', 'gallerynav',
+                    'audiolink']:
+            for elem in text.xpath('//*[contains(@class,"{}")]'.format(bad)):
+                elem.getparent().remove(elem)
+
+        # Make references in tags like <a> and <img> absolute.
+        text.make_links_absolute('http://{}'.format(self.name,
+                                 resolve_base_href=True))
+
+        il.add_value('content_html',
+                     lxml.html.tostring(text, 'UTF-8').decode('UTF-8'))
+
+        yield il.load_item()
 
 # vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4 smartindent autoindent

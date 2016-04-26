@@ -6,6 +6,7 @@ from scrapy import signals
 from scrapy.exceptions import DropItem
 
 from feeds.exporters import AtomExporter
+from feeds.items import FeedEntryItem
 
 
 class AtomAutogenerateIdPipeline(object):
@@ -25,12 +26,21 @@ class AtomAutogenerateIdPipeline(object):
 class AtomCheckRequiredFieldsPipeline(object):
     """Check presence of required fields."""
     def process_item(self, item, spider):
-        for required in ('id', 'title', 'link'):
-            if required in item:
-                return item
-            else:
+        def raise_if_missing(name, item):
+            if name not in item:
                 raise DropItem('The required field "{}" is missing in: {}.'.
-                               format(required, item))
+                               format(name, item))
+
+        # Required fields for all items
+        for required in ('id', 'title', 'link'):
+            raise_if_missing(required, item)
+
+        # Required fields for FeedEntryItems
+        if isinstance(item, FeedEntryItem):
+            for required in ('updated',):
+                raise_if_missing(required, item)
+
+        return item
 
 
 class AtomExportPipeline(object):

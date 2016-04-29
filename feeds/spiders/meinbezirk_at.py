@@ -28,8 +28,7 @@ class MeinbezirkAtSpider(CrawlSpider):
     def parse_item(self, response):
         # Ignore all articles without lottery or with an expired lottery.
         if not response.xpath(
-                '//div[@id="contentArea"]//h2/text()').re(
-                    'Jetzt mitmachen \(Teilnahmeschluss'):
+                '//div[@id="contentArea"]//text()').re('Jetzt mitmachen'):
             return
 
         # One FeedItem is required.

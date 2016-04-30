@@ -52,25 +52,17 @@ class Oe1OrfAtSpider(Spider):
             yield scrapy.Request(link, self.parse_item_text, meta={'il': il})
 
     def parse_item_text(self, response):
-        css_remove = [
-            'script', 'object', '.copyright', '.overlay-7tage',
-            '.overlay-7tage-hover', '.hover-infobar', '.overlay-download',
-            '.gallerynav', '.audiolink'
+        remove_elems = [
+            'script', 'object', '.copyright', '.copyright-small', '.hidden',
+            '.overlay-7tage', '.overlay-7tage-hover', '.hover-infobar',
+            '.overlay-download', '.gallerynav', '.audiolink', '.autor',
+            '.outerleft', '.socialmediaArtikel', '.copyright', '.tags', 'h1'
         ]
         il = FeedEntryItemLoader(response=response,
                                  parent=response.meta['il'],
                                  remove_elems=remove_elems,
                                  base_url='http://{}'.format(self.name))
-        il.add_xpath('content_html', '''
-            (//div[@class="textbox-wide"])[1]/*[not(
-                contains(@class,"autor") or
-                contains(@class,"outerleft") or
-                contains(@class,"socialmediaArtikel") or
-                contains(@class,"copyright") or
-                contains(@class,"tags") or
-                contains(name(),"h1")
-            )]
-            ''')
+        il.add_xpath('content_html', '(//div[@class="textbox-wide"])[1]')
         yield il.load_item()
 
 # vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4 smartindent autoindent

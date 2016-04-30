@@ -59,7 +59,7 @@ class Oe1OrfAtSpider(Spider):
         ]
         il = FeedEntryItemLoader(response=response,
                                  parent=response.meta['il'],
-                                 css_remove=css_remove,
+                                 remove_elems=remove_elems,
                                  base_url='http://{}'.format(self.name))
         il.add_xpath('content_html', '''
             (//div[@class="textbox-wide"])[1]/*[not(

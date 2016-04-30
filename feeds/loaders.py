@@ -52,8 +52,9 @@ def make_links_absolute(tree):
 
 
 def cleanup_html(tree, loader_context):
-    for css in loader_context.get('css_remove', []):
-        selector = CSSSelector(css)
+    # Remove tags.
+    for elem_sel in loader_context.get('remove_elems', []):
+        selector = CSSSelector(elem_sel)
         for elem in selector(tree):
             elem.getparent().remove(elem)
 

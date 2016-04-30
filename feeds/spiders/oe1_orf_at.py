@@ -53,8 +53,9 @@ class Oe1OrfAtSpider(Spider):
 
     def parse_item_text(self, response):
         css_remove = [
-            '.copyright', '.overlay-7tage', '.overlay-7tage-hover',
-            '.hover-infobar', '.overlay-download', '.gallerynav', '.audiolink'
+            'script', 'object', '.copyright', '.overlay-7tage',
+            '.overlay-7tage-hover', '.hover-infobar', '.overlay-download',
+            '.gallerynav', '.audiolink'
         ]
         il = FeedEntryItemLoader(response=response,
                                  parent=response.meta['il'],

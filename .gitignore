@@ -11,3 +11,6 @@ __pycache__/
 
 # virtualenv
 venv/
+
+# custom config
+feeds.cfg

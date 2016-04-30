@@ -1,11 +1,13 @@
 #!/usr/bin/python3
 
-# Scrapy settings for feeds project
+import logging
+
+# Low level settings intended for scrapy.
+# Please use feeds.cfg to configure feeds.
 
 BOT_NAME = 'feeds'
 SPIDER_MODULES = ['feeds.spiders']
 NEWSPIDER_MODULE = 'feeds.spiders'
-USER_AGENT = 'feeds (+https://feeds.nblock.org)'
 
 # Disable telnet
 TELNETCONSOLE_ENABLED = False
@@ -16,5 +18,11 @@ ITEM_PIPELINES = {
     'feeds.pipelines.AtomCheckRequiredFieldsPipeline': 110,
     'feeds.pipelines.AtomExportPipeline': 400
 }
+
+# Default user agent. Can be overriden in feeds.cfg.
+USER_AGENT = 'feeds (+https://feeds.nblock.org)'
+
+# Set default level to info. Can be overriden with --loglevel parameter.
+LOG_LEVEL = logging.INFO
 
 # vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4 smartindent autoindent

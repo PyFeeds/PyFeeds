@@ -12,7 +12,7 @@ useragent = feeds (+https://feeds.nblock.org)
 ## Target directory where the feeds will be saved.
 # output_path = output
 
-[nzz.at]
+#[nzz.at]
 ## NZZ.at is a paywalled site.
 ## If you want to crawl it, please provide username and password.
 # username =

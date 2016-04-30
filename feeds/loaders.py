@@ -67,6 +67,18 @@ def cleanup_html(tree, loader_context):
     return [tree]
 
 
+def skip_empty_tree(tree):
+    if tree.text:
+        # Has a text.
+        return [tree]
+
+    if len(tree):
+        # Has children.
+        return [tree]
+
+    return None
+
+
 class BaseItemLoader(ItemLoader):
     # Defaults
     default_output_processor = TakeFirst()
@@ -99,7 +111,7 @@ class FeedEntryItemLoader(BaseItemLoader):
     content_text_in = MapCompose(str.strip, remove_tags)
     content_text_out = Join('\n')
 
-    content_html_in = MapCompose(build_tree, cleanup_html,
+    content_html_in = MapCompose(build_tree, cleanup_html, skip_empty_tree,
                                  make_links_absolute, serialize_tree)
     content_html_out = Join()
 

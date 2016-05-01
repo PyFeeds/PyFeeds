@@ -3,7 +3,6 @@
 import json
 
 from scrapy.spiders import Spider
-import lxml
 import pytz
 import scrapy
 
@@ -30,6 +29,7 @@ class Oe1OrfAtSpider(Spider):
         # Only scrape today and the last two days. Exclude the last entry
         # (i.e. today) which is the the current response.
         for day in json.loads(response.body_as_unicode())['nav'][-3:-1]:
+            self.logger.debug('day: {}'.format(day))
             yield scrapy.Request('http://{}{}'.format(self.name, day['url']),
                                  self.parse_item)
 
@@ -39,8 +39,8 @@ class Oe1OrfAtSpider(Spider):
         for item in json.loads(response.body_as_unicode())['list']:
             il = FeedEntryItemLoader(response=response,
                                      datetime_format=self._datetime_format,
-                                     timezone=self._timezone)
-
+                                     timezone=self._timezone,
+                                     base_url='http://{}'.format(self.name))
             link = 'http://{}{}'.format(
                 self.name, item['url_json'].replace('/konsole', ''))
             il.add_value('link', link)
@@ -49,37 +49,20 @@ class Oe1OrfAtSpider(Spider):
             il.add_value('enclosure_type', 'audio/mpeg')
             il.add_value('updated', '{} {}'.format(item['day_label'],
                                                    item['time']))
-            yield scrapy.Request(link, self.parse_item_text, meta={'item': il})
+            yield scrapy.Request(link, self.parse_item_text, meta={'il': il})
 
     def parse_item_text(self, response):
-        il = response.meta['item']
-
-        # Parse article text.
-        text = lxml.html.fragment_fromstring(''.join(response.xpath(
-            '(//div[@class="textbox-wide"])[1]/*[not('
-            'contains(@class,"autor") or '
-            'contains(@class,"outerleft") or '
-            'contains(@class,"socialmediaArtikel") or '
-            'contains(@class,"copyright") or '
-            'contains(@class,"tags") or'
-            'contains(name(),"h1")'
-            ')]').extract()),
-            create_parent='div')
-
-        # Remove some unnecessary tags.
-        for bad in ['copyright', 'overlay-7tage', 'overlay-7tage-hover',
-                    'hover-infobar', 'overlay-download', 'gallerynav',
-                    'audiolink']:
-            for elem in text.xpath('//*[contains(@class,"{}")]'.format(bad)):
-                elem.getparent().remove(elem)
-
-        # Make references in tags like <a> and <img> absolute.
-        text.make_links_absolute('http://{}'.format(self.name,
-                                 resolve_base_href=True))
-
-        il.add_value('content_html',
-                     lxml.html.tostring(text, 'UTF-8').decode('UTF-8'))
-
+        remove_elems = [
+            'script', 'object', '.copyright', '.copyright-small', '.hidden',
+            '.overlay-7tage', '.overlay-7tage-hover', '.hover-infobar',
+            '.overlay-download', '.gallerynav', '.audiolink', '.autor',
+            '.outerleft', '.socialmediaArtikel', '.copyright', '.tags', 'h1'
+        ]
+        il = FeedEntryItemLoader(response=response,
+                                 parent=response.meta['il'],
+                                 remove_elems=remove_elems,
+                                 base_url='http://{}'.format(self.name))
+        il.add_xpath('content_html', '(//div[@class="textbox-wide"])[1]')
         yield il.load_item()
 
 # vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4 smartindent autoindent

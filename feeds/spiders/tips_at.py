@@ -23,7 +23,8 @@ class TipsAtSpider(CrawlSpider):
 
     def parse_item(self, response):
         il = FeedEntryItemLoader(response=response,
-                                 base_url='http://{}'.format(self.name))
+                                 base_url='http://{}'.format(self.name),
+                                 remove_elems=['script'])
         il.add_value('link', response.url)
         il.add_xpath('title', '//h1[@class="article-title"]/text()')
         il.add_xpath('author_name', '//div[@class="calendar-time"]/a/text()')

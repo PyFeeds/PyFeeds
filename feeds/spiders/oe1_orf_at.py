@@ -41,6 +41,8 @@ class Oe1OrfAtSpider(Spider):
                                      datetime_format=self._datetime_format,
                                      timezone=self._timezone,
                                      base_url='http://{}'.format(self.name))
+            if 'url_json' not in item:
+                continue
             link = 'http://{}{}'.format(
                 self.name, item['url_json'].replace('/konsole', ''))
             il.add_value('link', link)

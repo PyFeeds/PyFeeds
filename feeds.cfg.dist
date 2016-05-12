@@ -1,0 +1,19 @@
+# Feeds configuration.
+
+[feeds]
+## Useragent to use for crawling.
+useragent = feeds (+https://feeds.nblock.org)
+
+## List of spiders to run by default, one per line.
+# spiders =
+#     tvthek.orf.at
+#     oe1.orf.at
+
+## Target directory where the feeds will be saved.
+# output_path = output
+
+#[nzz.at]
+## NZZ.at is a paywalled site.
+## If you want to crawl it, please provide username and password.
+# username =
+# password =

@@ -51,9 +51,13 @@ class AtomExportPipeline(object):
 
     @classmethod
     def from_crawler(cls, crawler):
-        pipeline = cls(
-            output_path=crawler.settings.get('ATOM_OUTPUT_PATH', 'output'),
-        )
+        try:
+            output_path = (
+                crawler.settings.get('FEEDS_CONFIG')['feeds']['output_path']
+            )
+        except (KeyError, TypeError):
+            output_path = 'output'
+        pipeline = cls(output_path=output_path)
         crawler.signals.connect(pipeline.spider_opened, signals.spider_opened)
         crawler.signals.connect(pipeline.spider_closed, signals.spider_closed)
         return pipeline

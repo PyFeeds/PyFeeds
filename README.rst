@@ -1,10 +1,8 @@
 Feeds
 =====
 
-An experimental project to create Atom feeds from websites that don't offer
-any.
-
-The Atom feeds are available at `feeds.nblock.org <https://feeds.nblock.org>`_.
+DIY Atom feeds in times of social media and paywalls. Create Atom feeds from
+websites that don't offer any.
 
 Project settings
 ----------------

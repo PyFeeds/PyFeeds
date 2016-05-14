@@ -2,7 +2,7 @@
 
 [feeds]
 ## Useragent to use for crawling.
-useragent = feeds (+https://feeds.nblock.org)
+useragent = feeds (+https://github.com/nblock/feeds)
 
 ## List of spiders to run by default, one per line.
 # spiders =

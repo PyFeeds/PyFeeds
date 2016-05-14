@@ -20,7 +20,7 @@ ITEM_PIPELINES = {
 }
 
 # Default user agent. Can be overriden in feeds.cfg.
-USER_AGENT = 'feeds (+https://feeds.nblock.org)'
+USER_AGENT = 'feeds (+https://github.com/nblock/feeds)'
 
 # Set default level to info. Can be overriden with --loglevel parameter.
 LOG_LEVEL = logging.INFO

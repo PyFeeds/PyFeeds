@@ -5,7 +5,6 @@ import urllib.parse
 import json
 
 from scrapy.spiders import Spider
-import pytz
 import scrapy
 
 from feeds.loaders import FeedEntryItemLoader
@@ -17,8 +16,7 @@ class NzzAtSpider(Spider):
     allowed_domains = ['nzz.at']
     start_urls = ['https://nzz.at/wp/wp-login.php']
 
-    _datetime_format = '%Y-%m-%d %H:%M:%S'
-    _timezone = pytz.timezone('GMT')
+    _timezone = 'GMT'
     _excluded = []
     _max_items = 20
     _num_items = 0
@@ -57,13 +55,11 @@ class NzzAtSpider(Spider):
         yield scrapy.Request(url, callback=self._parse_ajax_url)
 
     def _create_error_item(self, title, body):
-        il = FeedEntryItemLoader(datetime_format=self._datetime_format,
-                                 timezone=self._timezone)
+        il = FeedEntryItemLoader(timezone=self._timezone)
         il.add_value('link', self.start_urls[0])
         il.add_value('title', title)
         il.add_value('content_html', body)
-        il.add_value('updated',
-                     datetime.utcnow().strftime(self._datetime_format))
+        il.add_value('updated', str(datetime.utcnow()))
         return il.load_item()
 
     def _parse_ajax_url(self, response):
@@ -86,7 +82,6 @@ class NzzAtSpider(Spider):
 
     def parse_item(self, response):
         il = FeedEntryItemLoader(response=response,
-                                 datetime_format=self._datetime_format,
                                  timezone=self._timezone,
                                  base_url='http://{}'.format(self.name))
         article = json.loads(response.body_as_unicode())['data']

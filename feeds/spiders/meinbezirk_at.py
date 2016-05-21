@@ -44,7 +44,8 @@ class MeinbezirkAtSpider(CrawlSpider):
 
         # Parse the actual content.
         il = FeedEntryItemLoader(response=response,
-                                 datetime_format='%d.%m.%Y, %H:%M',
+                                 timezone='Europe/Vienna',
+                                 dayfirst=True,
                                  remove_elems=['script', 'iframe'])
         il.add_value('link', response.url)
         il.add_xpath('title', '//div[@id="contentArea"]//h1/text()')

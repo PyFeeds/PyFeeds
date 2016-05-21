@@ -47,7 +47,8 @@ class BibliowebAtPettenbachSpider(scrapy.Spider):
 
     def parse_content(self, response):
         parts = self._extract_parts(response)
-        il = FeedEntryItemLoader(response=response)
+        il = FeedEntryItemLoader(response=response, timezone='Europe/Vienna',
+                                 dayfirst=True)
         il.add_value('title', ' - '.join(parts[:self._find_first_meta(parts)]))
         il.add_value('link', response.url)
         il.add_xpath('updated', '//td/span/text()',

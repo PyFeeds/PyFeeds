@@ -1,9 +1,10 @@
 #!/usr/bin/python3
 
-import datetime
+from datetime import datetime
+from datetime import timedelta
 
 from scrapy.spiders import Spider
-import pytz
+import delorean
 import scrapy
 
 from feeds.loaders import FeedEntryItemLoader
@@ -15,18 +16,18 @@ class ProfilAtSpider(Spider):
     allowed_domains = ['profil.at']
 
     _emitted_feed_item = False
-    _datetime_format = '%Y-%m-%dT%H:%M:%S'
-    _timezone = pytz.timezone('Europe/Vienna')
+    _timezone = 'Europe/Vienna'
     _max_days = 3
 
     def start_requests(self):
-        now = datetime.datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(
-            self._timezone)
-        for day in range(self._max_days):
+        start = datetime.utcnow() - timedelta(days=self._max_days)
+        for day in delorean.range_daily(start=start, count=self._max_days,
+                                        timezone='UTC'):
             yield scrapy.Request(
                 'http://{}/archiv/{}'.format(
-                    self.name, (now - datetime.timedelta(days=day)).strftime(
-                        '%Y/%m/%d')), self.parse_archive_page)
+                    self.name,
+                    day.shift(self._timezone).format_datetime('Y/M/d')),
+                self.parse_archive_page)
 
     def parse_archive_page(self, response):
         if not self._emitted_feed_item:
@@ -49,7 +50,6 @@ class ProfilAtSpider(Spider):
             '.ressortTitleMobile', '.article-number', '.artikel-kommentarlink'
         ]
         il = FeedEntryItemLoader(response=response,
-                                 datetime_format=self._datetime_format,
                                  timezone=self._timezone,
                                  base_url='http://{}'.format(self.name),
                                  remove_elems=remove_elems)

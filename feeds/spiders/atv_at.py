@@ -4,7 +4,7 @@ import datetime
 import json
 
 from scrapy.spiders import Spider
-import pytz
+import delorean
 import scrapy
 
 from feeds.loaders import FeedEntryItemLoader
@@ -16,8 +16,7 @@ class AtvAtSpider(Spider):
     allowed_domains = ['atv.at']
     start_urls = ['http://atv.at/mediathek/neue-folgen/']
 
-    _datetime_format = '%d.%m.%Y %H:%M'
-    _timezone = pytz.timezone('Europe/Vienna')
+    _timezone = 'Europe/Vienna'
     _timerange = datetime.timedelta(days=7)
 
     def parse(self, response):
@@ -60,8 +59,8 @@ class AtvAtSpider(Spider):
         )
         il = FeedEntryItemLoader(response=response,
                                  base_url='http://{}'.format(self.name),
-                                 datetime_format=self._datetime_format,
-                                 timezone=self._timezone)
+                                 timezone=self._timezone,
+                                 dayfirst=True)
         il.add_value('link', data['clipurl'])
         il.add_value('title', data['programname'])
         il.add_value('updated', data['airdate'])
@@ -69,7 +68,7 @@ class AtvAtSpider(Spider):
         item = il.load_item()
         # Only include videos posted in the last 7 days.
         if (item['updated'] + self._timerange >
-                datetime.datetime.now(self._timezone)):
+                delorean.utcnow().shift(self._timezone)):
             yield item
 
 # vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4 smartindent autoindent

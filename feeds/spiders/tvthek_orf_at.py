@@ -1,12 +1,10 @@
 #!/usr/bin/python3
 
 import json
-import pytz
-
-from datetime import datetime
 
 from scrapy.spiders import Spider
 from scrapy import Request
+import delorean
 
 from feeds.loaders import FeedEntryItemLoader
 from feeds.loaders import FeedItemLoader
@@ -16,16 +14,15 @@ class TvthekOrfAtSpider(Spider):
     name = 'tvthek.orf.at'
     allowed_domains = ['tvthek.orf.at']
 
-    _datetime_format = '%Y-%m-%d %H:%M:%S'
-    _timezone = pytz.timezone('Europe/Vienna')
+    _timezone = 'Europe/Vienna'
     _token = '027f84a09ec56b'
 
     def start_requests(self):
         # We only parse the current day because at the end of the day this
         # already produces a lot of requests and feed readers cache previous
         # days (i.e. old contents of our feed) anyways.
-        today = datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(
-            self._timezone).strftime('%Y%m%d')
+        today = delorean.utcnow().shift(self._timezone).format_datetime(
+            'YMMdd')
         yield Request('http://{}/service_api/token/{}/episodes/by_date/{}'.
                       format(self.name, self._token, today))
 
@@ -51,7 +48,6 @@ class TvthekOrfAtSpider(Spider):
     def parse_item_details(self, response):
         item = json.loads(response.body_as_unicode())['episodeDetail']
         il = FeedEntryItemLoader(response=response,
-                                 datetime_format=self._datetime_format,
                                  timezone=self._timezone)
         self.logger.info('Episode name: {}, program name: {}'.format(
             item['title'], item['program']['name']))

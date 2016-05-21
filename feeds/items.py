@@ -4,8 +4,8 @@ import scrapy
 
 
 class BaseItem(scrapy.Item):
-    # Required date format: RFC 3339
-    UPDATED_FMT = '%Y-%m-%dT%H:%M:%SZ'
+    # Required date format: RFC 3339 (ISO 8601 extended format)
+    UPDATED_FMT = 'Y-MM-ddTHH:mm:ssZZZZZ'
 
     # Required
     # The feed/entry id. It may be auto generated in case a link is present.
@@ -14,9 +14,9 @@ class BaseItem(scrapy.Item):
     # The feed/entry title.
     title = scrapy.Field()
 
-    # The last updated date of the feed as datetime object.
+    # The last updated date of the feed as Delorean object.
     updated = scrapy.Field(
-        serializer=lambda x: x.strftime(BaseItem.UPDATED_FMT))
+        serializer=lambda x: x.format_datetime(BaseItem.UPDATED_FMT))
 
     # Recommended
     author_name = scrapy.Field()

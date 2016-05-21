@@ -1,10 +1,8 @@
 #!/usr/bin/python3
 
-import datetime
-
+import delorean
 import lxml
 from lxml.cssselect import CSSSelector
-import pytz
 from scrapy.loader import ItemLoader
 from scrapy.loader.processors import Join
 from scrapy.loader.processors import MapCompose
@@ -16,13 +14,11 @@ from feeds.items import FeedEntryItem
 
 
 def parse_datetime(text, loader_context):
-    datetime_format = loader_context.get('datetime_format', '%d.%m.%Y')
-    timezone = loader_context.get('timezone', pytz.UTC)
-    try:
-        return (timezone.localize(datetime.datetime.strptime(text,
-                datetime_format)).astimezone(pytz.UTC))
-    except ValueError:
-        return None
+    return delorean.parse(
+        text,
+        timezone=loader_context.get('timezone', 'UTC'),
+        dayfirst=loader_context.get('dayfirst', False),
+        yearfirst=loader_context.get('yearfirst', True)).shift('UTC')
 
 
 def build_tree(text, loader_context):

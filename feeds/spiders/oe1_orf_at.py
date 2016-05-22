@@ -3,7 +3,6 @@
 import json
 
 from scrapy.spiders import Spider
-import pytz
 import scrapy
 
 from feeds.loaders import FeedEntryItemLoader
@@ -15,8 +14,7 @@ class Oe1OrfAtSpider(Spider):
     allowed_domains = ['oe1.orf.at']
     start_urls = ['http://oe1.orf.at/programm/konsole/heute']
 
-    _datetime_format = '%d.%m.%Y %H:%M'
-    _timezone = pytz.timezone('Europe/Vienna')
+    _timezone = 'Europe/Vienna'
 
     def parse(self, response):
         il = FeedItemLoader()
@@ -38,7 +36,6 @@ class Oe1OrfAtSpider(Spider):
     def parse_item(self, response):
         for item in json.loads(response.body_as_unicode())['list']:
             il = FeedEntryItemLoader(response=response,
-                                     datetime_format=self._datetime_format,
                                      timezone=self._timezone,
                                      base_url='http://{}'.format(self.name))
             if 'url_json' not in item:

@@ -7,9 +7,9 @@ setup(
     include_package_data=True,
     install_requires=[
         'Click>=6.6',
+        'Delorean>=0.6.0',
         'Jinja2>=2.8',
         'Scrapy>=1.1.0rc3',
-        'pytz>=2016.4',
         'lxml>=3.5.0',
     ],
     entry_points='''

@@ -20,7 +20,7 @@ class CbirdAtSpider(CrawlSpider):
     def parse_item(self, response):
         il = CbirdFeedEntryItemLoader(
             selector=response.xpath('//div[@class="main"]'),
-            datetime_format='%Y%m%d')
+            timezone='Europe/Vienna')
         il.add_xpath('title', 'h1/text()')
         il.add_value('link', response.url)
         il.add_xpath('content_html', 'h1/following-sibling::*')

@@ -54,6 +54,12 @@ def cleanup_html(tree, loader_context):
         for elem in selector(tree):
             elem.getparent().remove(elem)
 
+    # Change tag names.
+    for elem_sel, elem_tag in loader_context.get('change_tags', {}).items():
+        selector = CSSSelector(elem_sel)
+        for elem in selector(tree):
+            elem.tag = elem_tag
+
     # tree.iter() iterates over the tree including the root node.
     for elem in tree.iter():
         # Remove class and id attribute from all elements which not needed in

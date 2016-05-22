@@ -102,5 +102,15 @@ def crawl(ctx, spiders, stats):
     process.start()
 
 
+@cli.command()
+def list():
+    """List all available spiders."""
+    settings = get_project_settings()
+    settings['LOG_ENABLED'] = False
+    process = CrawlerProcess(settings)
+    for s in sorted(process.spider_loader.list()):
+        print(s)
+
+
 def main():
     cli(obj={})

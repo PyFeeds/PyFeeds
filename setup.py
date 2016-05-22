@@ -8,8 +8,7 @@ setup(
     install_requires=[
         'Click>=6.6',
         'Delorean>=0.6.0',
-        'Jinja2>=2.8',
-        'Scrapy>=1.1.0rc3',
+        'Scrapy>=1.1',
         'lxml>=3.5.0',
     ],
     entry_points='''

@@ -6,25 +6,37 @@ from feeds.loaders import FeedEntryItemLoader
 from feeds.loaders import FeedItemLoader
 
 
-# TODO factor name out
-class BibliowebAtPettenbachSpider(scrapy.Spider):
-    _library = 'pettenbach'
-    _library_user = 'Bibliothek {}'.format(_library.title())
-
-    name = 'biblioweb.at/{}'.format(_library)
+class BibliowebAtSpider(scrapy.Spider):
+    name = 'biblioweb.at'
     allowed_domains = ['biblioweb.at']
-    start_urls = ['http://www.biblioweb.at/{}/start.asp'.format(_library)]
+    _days = 60
+
+    def start_requests(self):
+        try:
+            config = self.settings.get('FEEDS_CONFIG')[self.name]
+            self._library = config['location'].lower()
+            self._library_user = 'Bibliothek {}'.format(self._library.title())
+            yield scrapy.Request(
+                'http://www.biblioweb.at/{}/start.asp'.format(self._library),
+                callback=self.parse)
+        except KeyError:
+            # Key location or section biblioweb.at not found in feeds.cfg.
+            self.logger.error(
+                "A location is required for spider '{name}'. Please add a "
+                "configuration block for '{name}' with the 'location' you "
+                "want to scrape.".format(name=self.name))
 
     def parse(self, response):
         # Ignore the initial response to start.asp as it is required to get the
-        # ASP cookie. Without this cookie the request to webopac123 (!) are
+        # ASP cookie. Without this cookie the requests to webopac123 (!) are
         # ignored and will be redirected to the "login" page.
         yield scrapy.Request(
             'http://www.biblioweb.at/webopac123/webopac.asp'
-            '?kat=1&content=show_new&seit=60&order_by=Sachtitel',
-            callback=self.parse_overview_page)
+            '?kat=1&content=show_new&seit={}&order_by=Sachtitel'.format(
+                self._days), callback=self.parse_overview_page)
 
         il = FeedItemLoader()
+        il.add_value('path', self._path())
         il.add_value('title', self._library_user)
         il.add_value('subtitle',
                      'Neue Titel in der {}'.format(self._library_user))
@@ -49,6 +61,7 @@ class BibliowebAtPettenbachSpider(scrapy.Spider):
         parts = self._extract_parts(response)
         il = FeedEntryItemLoader(response=response, timezone='Europe/Vienna',
                                  dayfirst=True)
+        il.add_value('path', self._path())
         il.add_value('title', ' - '.join(parts[:self._find_first_meta(parts)]))
         il.add_value('link', response.url)
         il.add_xpath('updated', '//td/span/text()',
@@ -72,5 +85,8 @@ class BibliowebAtPettenbachSpider(scrapy.Spider):
         parts = [p.strip() for p in
                  response.xpath('//td/span/text()').extract()]
         return [p for p in parts if p not in ('', ', ,')]
+
+    def _path(self):
+        return self._library
 
 # vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4 smartindent autoindent

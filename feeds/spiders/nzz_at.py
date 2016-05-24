@@ -30,7 +30,7 @@ class NzzAtSpider(Spider):
         yield il.load_item()
 
         try:
-            config = self.settings.get('FEEDS_CONFIG')['nzz.at']
+            config = self.settings.get('FEEDS_CONFIG')[self.name]
             yield scrapy.FormRequest.from_response(
                 response,
                 formname='loginform',

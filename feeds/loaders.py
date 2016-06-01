@@ -2,6 +2,7 @@
 
 import delorean
 import lxml
+from lxml import etree
 from lxml.cssselect import CSSSelector
 from scrapy.loader import ItemLoader
 from scrapy.loader.processors import Join
@@ -70,6 +71,31 @@ def cleanup_html(tree, loader_context):
     return [tree]
 
 
+def convert_footnotes(tree, loader_context):
+    footnotes = []
+
+    # Convert footnotes.
+    for elem_sel in loader_context.get('convert_footnotes', []):
+        selector = CSSSelector(elem_sel)
+        for elem in selector(tree):
+            footnotes.append(elem.text_content())
+            ref = etree.Element('span')
+            ref.text = ' [{}]'.format(len(footnotes))
+            elem.getparent().replace(elem, ref)
+
+    # Add new <div> with all the footnotes, one per <p>
+    if footnotes:
+        footnotes_elem = etree.Element('div')
+        tree.append(footnotes_elem)
+
+    for i, footnote in enumerate(footnotes):
+        footnote_elem = etree.Element('p')
+        footnote_elem.text = '[{}] {}'.format(i + 1, footnote)
+        footnotes_elem.append(footnote_elem)
+
+    return [tree]
+
+
 def skip_empty_tree(tree):
     if tree.text:
         # Has a text.
@@ -114,8 +140,9 @@ class FeedEntryItemLoader(BaseItemLoader):
     content_text_in = MapCompose(str.strip, remove_tags)
     content_text_out = Join('\n')
 
-    content_html_in = MapCompose(build_tree, cleanup_html, skip_empty_tree,
-                                 make_links_absolute, serialize_tree)
+    content_html_in = MapCompose(build_tree, convert_footnotes, cleanup_html,
+                                 skip_empty_tree, make_links_absolute,
+                                 serialize_tree)
     content_html_out = Join()
 
     enclosure_iri_in = MapCompose(str.strip)

@@ -56,6 +56,8 @@ class TvthekOrfAtSpider(Spider):
         if text:
             il.add_value('content_html', text.replace('\r\n', '<br>'))
         il.add_value('updated', item['releaseDateOnPlatform'])
+        il.add_value('category', self._categories_from_oewa_base_path(
+                     item['oewaBasePath']))
         # The "id"s are bogus values because we don't know the actual values
         # for the URL. We make another request to see where we get redirected.
         yield Request('http://{}/program/id/{}/id/{}'.format(
@@ -67,5 +69,26 @@ class TvthekOrfAtSpider(Spider):
         il = response.meta['item']
         il.add_value('link', response.headers['Location'].decode('ascii'))
         yield il.load_item()
+
+    def _categories_from_oewa_base_path(self, oewa_base_path):
+        """Parse ÖWA Base Path into a list of categories.
+
+         Base paths look like this:
+
+           * RedCont/KulturUndFreizeit/FilmUndKino
+           * RedCont/KulturUndFreizeit/Sonstiges
+           * RedCont/Lifestyle/EssenUndTrinken
+           * RedCont/Nachrichten/Nachrichtenueberblick
+           * RedCont/Sport/Sonstiges
+        """
+        old_new = {
+            'RedCont': '', 'Sonstiges': '', 'Und': ' und ',
+            'ue': 'ü', 'ae': 'ä', 'oe': 'ö',
+            'Ue': 'Ü', 'Ae': 'Ä', 'Oe': 'Ö'
+        }
+        for old, new in old_new.items():
+            oewa_base_path = oewa_base_path.replace(old, new)
+        return filter(lambda x: x != '', oewa_base_path.split('/'))
+
 
 # vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4 smartindent autoindent

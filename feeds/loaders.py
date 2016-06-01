@@ -5,6 +5,7 @@ import lxml
 from lxml import etree
 from lxml.cssselect import CSSSelector
 from scrapy.loader import ItemLoader
+from scrapy.loader.processors import Identity
 from scrapy.loader.processors import Join
 from scrapy.loader.processors import MapCompose
 from scrapy.loader.processors import TakeFirst
@@ -148,6 +149,9 @@ class FeedEntryItemLoader(BaseItemLoader):
     enclosure_iri_in = MapCompose(str.strip)
 
     enclosure_type_in = MapCompose(str.strip)
+
+    category_in = MapCompose(str.strip)
+    category_out = Identity()
 
 
 # Site specific loaders

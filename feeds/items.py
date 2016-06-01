@@ -25,6 +25,9 @@ class BaseItem(scrapy.Item):
     # A unique link to a feed/item.
     link = scrapy.Field()
 
+    # Optional
+    category = scrapy.Field()
+
 
 class FeedItem(BaseItem):
     # Optional

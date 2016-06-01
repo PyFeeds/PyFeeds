@@ -83,7 +83,8 @@ class NzzAtSpider(Spider):
     def parse_item(self, response):
         il = FeedEntryItemLoader(response=response,
                                  timezone=self._timezone,
-                                 base_url='http://{}'.format(self.name))
+                                 base_url='http://{}'.format(self.name),
+                                 convert_footnotes=['.c-footnote__content'])
         article = json.loads(response.body_as_unicode())['data']
         il.add_value('link', article['shorturl'])
         if article['overline']:

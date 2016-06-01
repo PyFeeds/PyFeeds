@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 
+from datetime import timedelta
 import json
 
 from scrapy.spiders import Spider
@@ -18,13 +19,17 @@ class TvthekOrfAtSpider(Spider):
     _token = '027f84a09ec56b'
 
     def start_requests(self):
-        # We only parse the current day because at the end of the day this
+        # We only parse today and yesterday because at the end of the day this
         # already produces a lot of requests and feed readers cache previous
         # days (i.e. old contents of our feed) anyways.
-        today = delorean.utcnow().shift(self._timezone).format_datetime(
-            'YMMdd')
-        yield Request('http://{}/service_api/token/{}/episodes/by_date/{}'.
-                      format(self.name, self._token, today))
+        # It's not enough to parse only today because we might miss shows that
+        # aired just before midnight but were streamed after midnight
+        # (see also https://github.com/nblock/feeds/issues/27)
+        today = delorean.utcnow().shift(self._timezone)
+        for day in [today, today - timedelta(days=1)]:
+            yield Request('http://{}/service_api/token/{}/episodes/by_date/{}'.
+                          format(self.name, self._token,
+                                 day.format_datetime('YMMdd')))
 
     def parse(self, response):
         il = FeedItemLoader()

@@ -82,6 +82,12 @@ class AtomExporter(BaseItemExporter):
                 xml_items.append(self._convert_special_content(item, key))
                 item.pop(key)
 
+        key = 'category'
+        if key in item:
+            for category in self._convert_special_category(item, key):
+                xml_items.append(category)
+            item.pop(key)
+
         # Convert remaining fields.
         for name, value in self._get_serialized_fields(item, default_value=''):
             element = etree.Element(name)
@@ -130,6 +136,12 @@ class AtomExporter(BaseItemExporter):
         xml_item.set('href', item[key_iri])
         xml_item.set('type', item[key_type])
         return xml_item
+
+    def _convert_special_category(self, item, key):
+        for category in item[key]:
+            xml_item = etree.Element('category')
+            xml_item.set('term', category)
+            yield xml_item
 
     def _update_updated(self, raw_updated):
         if raw_updated is None:

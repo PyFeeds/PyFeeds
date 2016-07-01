@@ -20,7 +20,7 @@ class ProfilAtSpider(Spider):
     _max_days = 3
 
     def start_requests(self):
-        start = datetime.utcnow() - timedelta(days=self._max_days)
+        start = datetime.utcnow() - timedelta(days=self._max_days - 1)
         for day in delorean.range_daily(start=start, count=self._max_days,
                                         timezone='UTC'):
             yield scrapy.Request(

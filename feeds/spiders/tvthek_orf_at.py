@@ -63,7 +63,7 @@ class TvthekOrfAtSpider(Spider):
             il.add_value('content_html', text.replace('\r\n', '<br>'))
         # WARNING: The API uses multiple datetime formats, depending on the
         # field. You might need to adjust dayfirst if you change the field.
-        il.add_value('updated', item['livedate'])
+        il.add_value('updated', item['date'])
         il.add_value('category', self._categories_from_oewa_base_path(
                      item['oewaBasePath']))
         # The "id"s are bogus values because we don't know the actual values

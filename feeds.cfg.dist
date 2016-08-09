@@ -1,7 +1,7 @@
 # Feeds configuration.
 
 [feeds]
-## Useragent to use for crawling.
+# Useragent to use for crawling.
 useragent = feeds (+https://github.com/nblock/feeds)
 
 ## List of spiders to run by default, one per line.
@@ -30,3 +30,7 @@ useragent = feeds (+https://github.com/nblock/feeds)
 ## If you want to crawl paid articles, please provide username and password.
 # username =
 # password =
+
+#[biblioweb.at]
+## Location of your library that uses biblioweb.at.
+#location =

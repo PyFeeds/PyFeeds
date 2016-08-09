@@ -28,6 +28,9 @@ class BaseItem(scrapy.Item):
     # Optional
     category = scrapy.Field()
 
+    # Optional
+    path = scrapy.Field()
+
 
 class FeedItem(BaseItem):
     # Optional

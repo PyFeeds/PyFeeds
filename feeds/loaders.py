@@ -4,6 +4,7 @@ import delorean
 import lxml
 from lxml import etree
 from lxml.cssselect import CSSSelector
+import os
 from scrapy.loader import ItemLoader
 from scrapy.loader.processors import Identity
 from scrapy.loader.processors import Join
@@ -125,6 +126,9 @@ class BaseItemLoader(ItemLoader):
     author_email_in = MapCompose(str.strip)
 
     link_in = MapCompose(str.strip)
+
+    # Optional
+    path_out = Join(os.sep)
 
 
 class FeedItemLoader(BaseItemLoader):

@@ -97,6 +97,8 @@ class NzzAtSpider(Spider):
         il.add_value('content_html', article['post']['post_content'])
         il.add_value('author_name', article['author']['name'])
         il.add_value('updated', article['post']['post_modified_gmt'])
+        if article['channel']:
+            il.add_value('category', article['channel'])
         self._excluded.append(article['post']['ID'])
         self._num_items += 1
         yield il.load_item()

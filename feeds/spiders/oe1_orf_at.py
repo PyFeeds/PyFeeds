@@ -62,6 +62,17 @@ class Oe1OrfAtSpider(Spider):
                                  remove_elems=remove_elems,
                                  base_url='http://{}'.format(self.name))
         il.add_xpath('content_html', '(//div[@class="textbox-wide"])[1]')
+        il.add_css('category', '.tags a::text')
+        link = response.xpath(
+                '//p[@class="autor"]/a[contains(., "Sendereihe")]/@href'
+            ).extract_first()
+        yield scrapy.Request(link, self.parse_item_category, meta={'il': il})
+
+    def parse_item_category(self, response):
+        il = FeedEntryItemLoader(response=response,
+                                 parent=response.meta['il'],
+                                 base_url='http://{}'.format(self.name))
+        il.add_xpath('category', '//meta[@name="title"]/@content')
         yield il.load_item()
 
 # vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4 smartindent autoindent

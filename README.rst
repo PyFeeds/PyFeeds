@@ -81,7 +81,7 @@ Quickstart
 
 * Point your feed reader to the generated Atom feeds and start reading. Feeds
   works best when run periodically in a cron job.
-* Run ``feeds --help`` or ``feeds <subcommand> --help`` to help and usage
+* Run ``feeds --help`` or ``feeds <subcommand> --help`` for help and usage
   details.
 
 How to contribute

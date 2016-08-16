@@ -51,6 +51,11 @@ class KonsumentAtSpider(Spider):
                                  callback=self._parse_article_url)
 
     def _parse_article_url(self, response):
+        if 'Fehler' in response.css('h2 ::text').extract_first():
+            self.logger.info('Skipping {} as it returned an error'.format(
+                             response.url))
+            return
+
         remove_elems = ['div[style="padding-top:10px;"]']
         il = FeedEntryItemLoader(response=response,
                                  timezone=self._timezone,

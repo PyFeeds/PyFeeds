@@ -64,14 +64,13 @@ class KonsumentAtSpider(Spider):
         il.add_value('updated', date)
         url = (response.xpath('//a[text()="Druckversion"]/@onclick').
                re_first(r"window\.open\('(.*)'\);"))
-        title = response.css('h1::text').extract_first()
+        il.add_css('title', 'h1::text')
         if url:
-            il.add_value('title', title)
             yield scrapy.Request(response.urljoin(url),
                                  callback=self._parse_article,
                                  meta={'il': il})
         else:
-            il.add_value('title', '[€] ' + title)
+            il.add_value('category', 'paywalled')
             il.add_css('content_html', '.primary')
             il.add_css('content_html', 'div[style="padding-top:10px;"] > h3')
             yield il.load_item()

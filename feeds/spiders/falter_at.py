@@ -73,7 +73,7 @@ class FalterAtSpider(Spider):
                 title = item['title']
             il.add_value('title', title)
             # All articles have the same date.
-            # We add an offset they are sorted in the right order.
+            # We add an offset so they are sorted in the right order.
             date = (delorean.parse(item['date'], dayfirst=False,
                                    timezone=self._timezone) +
                     timedelta(hours=17, seconds=i)).format_datetime(
@@ -89,7 +89,10 @@ class FalterAtSpider(Spider):
                                  parent=response.meta['il'],
                                  remove_elems=remove_elems,
                                  base_url='http://{}'.format(self.name))
-        il.add_xpath('content_html', '//article')
+        content = response.xpath('//article').extract_first()
+        if 'Lesen Sie diesen Artikel in voller Länge' in content:
+            il.add_value('category', 'paywalled')
+        il.add_value('content_html', content)
         yield il.load_item()
 
 # vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4 smartindent autoindent

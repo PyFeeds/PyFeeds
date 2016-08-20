@@ -39,11 +39,11 @@ Feeds is currently able to create Atom feeds for the following sites:
 * `Übermedien <http://www.uebermedien.de>`_: Newest articles
 * `Wiener Linien <http://www.wienerlinien.at>`_: Newest articles
 
-Some sites (falter.at, NZZ.at, ...) offer articles only behind a paywall. If
-you have a paid subscription, you can configure your username and password in
-``feeds.cfg`` and also read paywalled articles from within your feed reader.
-For the less fortunate paywalled articles are tagged ``paywalled`` so they can
-be filtered if desired.
+Some sites (Falter, Konsument, NZZ, Übermedien) offer articles only behind a
+paywall. If you have a paid subscription, you can configure your username and
+password in ``feeds.cfg`` and also read paywalled articles from within your
+feed reader. For the less fortunate who don't have a subscription, paywalled
+articles are tagged with ``paywalled`` so they can be filtered, if desired.
 
 All feeds contain the articles in full text so you never have to leave your
 feed reader while reading.

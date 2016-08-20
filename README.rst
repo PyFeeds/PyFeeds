@@ -36,6 +36,7 @@ Feeds is currently able to create Atom feeds for the following sites:
 * `ORF Ö1 <http://oe1.orf.at>`_: Newest episodes of radio shows
 * `ORF TVthek <http://tvthek.orf.at>`_: Newest episodes of TV shows
 * `profil <http://www.profil.at>`_: Newest articles
+* `Übermedien <http://www.uebermedien.de>`_: Newest articles
 * `Wiener Linien <http://www.wienerlinien.at>`_: Newest articles
 
 Some sites (falter.at, NZZ.at, ...) offer articles only behind a paywall. If
@@ -43,6 +44,9 @@ you have a paid subscription, you can configure your username and password in
 ``feeds.cfg`` and also read paywalled articles from within your feed reader.
 For the less fortunate paywalled articles are tagged ``paywalled`` so they can
 be filtered if desired.
+
+All feeds contain the articles in full text so you never have to leave your
+feed reader while reading.
 
 Installation
 ------------

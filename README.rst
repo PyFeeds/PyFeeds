@@ -27,8 +27,8 @@ Feeds is currently able to create Atom feeds for the following sites:
 * `ATV.at <http://www.atv.at>`_: Newest episodes of TV shows
 * `Bibliothek der Arbeiterkammer <http://ak.ciando.com>`_: Most recently added
   books to the e-library
-* `Libraries based on <http://biblioweb.at>`_: Most recently added media to
-  libraries based on the biblioweb software.
+* `Libraries based on biblioweb <http://biblioweb.at>`_: Most recently added
+  media to libraries based on the biblioweb software.
 * `cbird.at <http://www.cbird.at>`_: Newest releases of the cbird software
 * `falter.at <http://www.falter.at>`_: Newest articles
 * `KONSUMENT.AT <http://www.konsument.at>`_: Newest articles

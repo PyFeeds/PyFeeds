@@ -37,6 +37,8 @@ Feeds is currently able to create Atom feeds for the following sites:
 * `ORF Ö1 <http://oe1.orf.at>`_: Newest episodes of radio shows
 * `ORF TVthek <http://tvthek.orf.at>`_: Newest episodes of TV shows
 * `profil <http://www.profil.at>`_: Newest articles
+* `puls 4 <http://www.puls4.com>`_: Newest episodes of TV shows (not including
+   reairs)
 * `Übermedien <http://www.uebermedien.de>`_: Newest articles
 * `Wiener Linien <http://www.wienerlinien.at>`_: Newest articles
 

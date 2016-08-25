@@ -3,6 +3,7 @@
 import delorean
 import lxml
 from lxml import etree
+from lxml.html import HtmlComment
 from lxml.cssselect import CSSSelector
 import os
 from scrapy.loader import ItemLoader
@@ -65,8 +66,11 @@ def cleanup_html(tree, loader_context):
 
     # tree.iter() iterates over the tree including the root node.
     for elem in tree.iter():
-        # Remove class and id attribute from all elements which not needed in
-        # the feed.
+        # Remove HTML comments.
+        if isinstance(elem, HtmlComment):
+            elem.getparent().remove(elem)
+        # Remove class and id attribute from all elements which are not needed
+        # in the feed.
         elem.attrib.pop('class', None)
         elem.attrib.pop('id', None)
 

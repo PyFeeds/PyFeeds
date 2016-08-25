@@ -90,6 +90,20 @@ Quickstart
 * Run ``feeds --help`` or ``feeds <subcommand> --help`` for help and usage
   details.
 
+Related work
+------------
+
+* `morss <https://github.com/pictuga/morss>`_ creates feeds, similar to Feeds
+  but in "real-time", i.e. on (HTTP) request.
+* `Full-Text RSS <https://bitbucket.org/fivefilters/full-text-rss>`_ converts
+  feeds to contain the full article and not only a teaser based on heuristics
+  and rules. Feeds are converted in "real-time", i.e. on request basis.
+* `f43.me <https://github.com/j0k3r/f43.me>`_ converts feeds to contain the
+  full article and also improves articles by adding links to the comment
+  sections of Hacker News and Reddit. Feeds are converted periodically.
+* `python-ftr <https://github.com/1flow/python-ftr>`_ is a library to extract
+  content from pages. A partial reimplementation of Full-Text RSS.
+
 How to contribute
 -----------------
 

@@ -120,6 +120,13 @@ Pull requests
 * Create a topic branch and make your desired changes.
 * Open a pull request. Make sure the travis checks are passing.
 
+Author
+------
+
+Feeds is written and maintained by `Florian Preinstorfer
+<https://www.nblock.org>`_ (`@nblock <https://twitter.com/krippala>`_) and
+`Lukas Anzinger <https://www.notinventedhere.org>`_.
+
 License
 -------
 

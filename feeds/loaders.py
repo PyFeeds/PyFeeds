@@ -58,6 +58,10 @@ def cleanup_html(tree, loader_context):
         for elem in selector(tree):
             elem.getparent().remove(elem)
 
+    for elem_sel in loader_context.get('remove_elems_xpath', []):
+        for elem in tree.xpath(elem_sel):
+            elem.getparent().remove(elem)
+
     # Change tag names.
     for elem_sel, elem_tag in loader_context.get('change_tags', {}).items():
         selector = CSSSelector(elem_sel)

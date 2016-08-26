@@ -145,6 +145,12 @@ class FeedItemLoader(BaseItemLoader):
     # Field specific
     subtitle_in = MapCompose(str.strip)
 
+    # Optional
+    icon_in = MapCompose(str.strip)
+
+    # Optional
+    logo_in = MapCompose(str.strip)
+
 
 class FeedEntryItemLoader(BaseItemLoader):
     default_item_class = FeedEntryItem

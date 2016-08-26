@@ -31,6 +31,7 @@ Feeds is currently able to create Atom feeds for the following sites:
   media to libraries based on the biblioweb software.
 * `cbird.at <http://www.cbird.at>`_: Newest releases of the cbird software
 * `falter.at <http://www.falter.at>`_: Newest articles
+* `HELP.gv.at <https://help.gv.at>`_: News and changes in Austrian law
 * `KONSUMENT.AT <http://www.konsument.at>`_: Newest articles
 * `NZZ.at <http://www.nzz.at>`_: Newest articles
 * `ORF Ö1 <http://oe1.orf.at>`_: Newest episodes of radio shows

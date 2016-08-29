@@ -36,6 +36,12 @@ class FeedItem(BaseItem):
     # Optional
     subtitle = scrapy.Field()
 
+    # Optional
+    icon = scrapy.Field()
+
+    # Optional
+    logo = scrapy.Field()
+
 
 class FeedEntryItem(BaseItem):
     # Recommended

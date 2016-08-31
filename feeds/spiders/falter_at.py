@@ -5,7 +5,7 @@ from datetime import timedelta
 import json
 import re
 
-from scrapy.spiders import Spider
+from scrapy import Spider
 import delorean
 import scrapy
 
@@ -18,16 +18,17 @@ class FalterAtSpider(Spider):
     _timezone = 'Europe/Vienna'
 
     def start_requests(self):
-        try:
-            config = self.settings.get('FEEDS_CONFIG')[self.name]
+        abonr = self.spider_settings.get('abonr')
+        password = self.spider_settings.get('password')
+        if abonr and password:
             yield scrapy.FormRequest(
                 url='https://www.{}/falter/e-paper/login'.format(self.name),
-                formdata={'login[abonr]': config['abonr'],
-                          'login[password]': config['password'],
+                formdata={'login[abonr]': abonr,
+                          'login[password]': password,
                           'redirect_url': '/archiv/'},
                 callback=self.parse_archive
             )
-        except (KeyError, AttributeError, TypeError):
+        else:
             # Username, password or section falter.at not found in feeds.cfg.
             self.logger.info('Login failed: No username or password given. '
                              'Only free articles are available in full text.')

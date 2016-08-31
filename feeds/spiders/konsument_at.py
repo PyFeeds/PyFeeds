@@ -1,7 +1,6 @@
 #!/usr/bin/python3
 
-
-from scrapy.spiders import Spider
+from scrapy import Spider
 import scrapy
 
 from feeds.loaders import FeedEntryItemLoader
@@ -26,16 +25,17 @@ class KonsumentAtSpider(Spider):
         il.add_value('author_name', self.name)
         yield il.load_item()
 
-        try:
-            config = self.settings.get('FEEDS_CONFIG')[self.name]
+        user = self.spider_settings.get('username')
+        pwd = self.spider_settings.get('password')
+        if user and pwd:
             yield scrapy.FormRequest.from_response(
                 response,
                 formcss='#login form',
-                formdata={'user': config['username'],
-                          'pwd': config['password']},
+                formdata={'user': user,
+                          'pwd': pwd},
                 callback=self._after_login
             )
-        except (KeyError, AttributeError, TypeError):
+        else:
             # Username, password or section not found in feeds.cfg.
             self.logger.info('Login failed: No username or password given')
             # We can still try to scrape the free articles.

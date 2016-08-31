@@ -2,12 +2,12 @@
 
 import html
 
+from scrapy.spiders import XMLFeedSpider
+import scrapy
+
 from feeds.loaders import FeedEntryItemLoader
 from feeds.loaders import FeedItemLoader
-from feeds.spiders.blendle import (
-    BlendleSession, BlendleAuthenticationError)
-import scrapy
-from scrapy.spiders import XMLFeedSpider
+from feeds.spiders.blendle import BlendleSession, BlendleAuthenticationError
 
 
 class UebermedienDeSpider(XMLFeedSpider):

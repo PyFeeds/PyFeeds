@@ -1,25 +1,25 @@
 #!/usr/bin/python3
 
+from scrapy import Spider
 import scrapy
 
 from feeds.loaders import FeedEntryItemLoader
 from feeds.loaders import FeedItemLoader
 
 
-class BibliowebAtSpider(scrapy.Spider):
+class BibliowebAtSpider(Spider):
     name = 'biblioweb.at'
     allowed_domains = ['biblioweb.at']
     _days = 60
 
     def start_requests(self):
-        try:
-            config = self.settings.get('FEEDS_CONFIG')[self.name]
-            self._library = config['location'].lower()
+        self._library = self.spider_settings.get('location', '').lower()
+        if self._library:
             self._library_user = 'Bibliothek {}'.format(self._library.title())
             yield scrapy.Request(
                 'http://www.biblioweb.at/{}/start.asp'.format(self._library),
                 callback=self.parse)
-        except KeyError:
+        else:
             # Key location or section biblioweb.at not found in feeds.cfg.
             self.logger.error(
                 "A location is required for spider '{name}'. Please add a "

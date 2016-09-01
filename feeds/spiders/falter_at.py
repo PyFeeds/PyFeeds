@@ -5,16 +5,18 @@ from datetime import timedelta
 import json
 import re
 
-from scrapy import Spider
 import delorean
 import scrapy
 
 from feeds.loaders import FeedEntryItemLoader
-from feeds.loaders import FeedItemLoader
+from feeds.spiders import FeedsSpider
 
 
-class FalterAtSpider(Spider):
+class FalterAtSpider(FeedsSpider):
     name = 'falter.at'
+
+    _subtitle = 'Wir holen dich da raus.'
+    _link = 'https://www.falter.at'
     _timezone = 'Europe/Vienna'
 
     def start_requests(self):
@@ -36,13 +38,6 @@ class FalterAtSpider(Spider):
                 self.name), self.parse_archive)
 
     def parse_archive(self, response):
-        il = FeedItemLoader()
-        il.add_value('title', 'falter.at')
-        il.add_value('subtitle', 'Wir holen dich da raus.')
-        il.add_value('link', 'https://www.falter.at')
-        il.add_value('author_name', self.name)
-        yield il.load_item()
-
         # The perks of having a JavaScript frontend ...
         revisions = json.loads(response.xpath(
             '//div[@class="content-main"]/script/text()').re(

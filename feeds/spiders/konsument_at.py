@@ -1,30 +1,21 @@
 #!/usr/bin/python3
 
-from scrapy import Spider
 import scrapy
 
 from feeds.loaders import FeedEntryItemLoader
-from feeds.loaders import FeedItemLoader
+from feeds.spiders import FeedsSpider
 
 
-class KonsumentAtSpider(Spider):
+class KonsumentAtSpider(FeedsSpider):
     name = 'konsument.at'
     allowed_domains = ['konsument.at']
     start_urls = ['http://www.konsument.at/page/das-aktuelle-heft']
 
+    _title = 'KONSUMENT.AT'
+    _subtitle = 'Objektiv, unbestechlich, keine Werbung'
     _timezone = 'Europe/Vienna'
-    _excluded = []
-    _max_items = 20
-    _num_items = 0
 
     def parse(self, response):
-        il = FeedItemLoader()
-        il.add_value('title', 'KONSUMENT.AT')
-        il.add_value('subtitle', 'Objektiv, unbestechlich, keine Werbung')
-        il.add_value('link', 'http://www.konsument.at')
-        il.add_value('author_name', self.name)
-        yield il.load_item()
-
         user = self.spider_settings.get('username')
         pwd = self.spider_settings.get('password')
         if user and pwd:

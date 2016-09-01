@@ -3,30 +3,24 @@
 import datetime
 import json
 
-from scrapy.spiders import Spider
 import delorean
 import scrapy
 
 from feeds.loaders import FeedEntryItemLoader
-from feeds.loaders import FeedItemLoader
+from feeds.spiders import FeedsSpider
 
 
-class AtvAtSpider(Spider):
+class AtvAtSpider(FeedsSpider):
     name = 'atv.at'
     allowed_domains = ['atv.at']
     start_urls = ['http://atv.at/mediathek/neue-folgen/']
 
+    _title = 'ATV.at'
+    _subtitle = 'Mediathek'
     _timezone = 'Europe/Vienna'
     _timerange = datetime.timedelta(days=7)
 
     def parse(self, response):
-        il = FeedItemLoader()
-        il.add_value('title', 'ATV.at')
-        il.add_value('subtitle', 'Mediathek')
-        il.add_value('link', 'http://atv.at')
-        il.add_value('author_name', self.name)
-        yield il.load_item()
-
         for link in response.css('.program_link').xpath('@href').extract():
             yield scrapy.Request(link, self.parse_item)
 

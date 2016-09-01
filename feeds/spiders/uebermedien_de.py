@@ -2,28 +2,23 @@
 
 import html
 
-from scrapy.spiders import XMLFeedSpider
 import scrapy
 
 from feeds.loaders import FeedEntryItemLoader
-from feeds.loaders import FeedItemLoader
 from feeds.spiders.blendle import BlendleSession, BlendleAuthenticationError
+from feeds.spiders import FeedsXMLFeedSpider
 
 
-class UebermedienDeSpider(XMLFeedSpider):
+class UebermedienDeSpider(FeedsXMLFeedSpider):
     name = 'uebermedien.de'
     allowed_domains = ['uebermedien.de']
     start_urls = ['http://www.uebermedien.de/feed/']
     namespaces = [('dc', 'http://purl.org/dc/elements/1.1/')]
 
-    def parse(self, response):
-        il = FeedItemLoader()
-        il.add_value('title', 'uebermedien.de')
-        il.add_value('subtitle', 'Medien besser kritisieren.')
-        il.add_value('link', 'http://www.{}'.format(self.name))
-        il.add_value('author_name', self.name)
-        yield il.load_item()
+    _title = 'uebermedien.de'
+    _subtitle = 'Medien besser kritisieren.'
 
+    def parse(self, response):
         # Try to login to Blendle.
         self._blendle_session = BlendleSession(spider=self,
                                                provider='uebermedien')

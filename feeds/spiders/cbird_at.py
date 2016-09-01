@@ -1,14 +1,14 @@
 #!/usr/bin/python3
 
 from scrapy.linkextractors import LinkExtractor
-from scrapy.spiders import CrawlSpider
 from scrapy.spiders import Rule
 
 from feeds.loaders import CbirdFeedEntryItemLoader
-from feeds.loaders import FeedItemLoader
+
+from feeds.spiders import FeedsCrawlSpider
 
 
-class CbirdAtSpider(CrawlSpider):
+class CbirdAtSpider(FeedsCrawlSpider):
     name = 'cbird.at'
     allowed_domains = ['cbird.at']
     start_urls = ['http://cbird.at/hilfe/neu/']
@@ -16,6 +16,10 @@ class CbirdAtSpider(CrawlSpider):
         Rule(LinkExtractor(allow=('hilfe/neu/(\d+)',)), callback='parse_item'),
         Rule(LinkExtractor(allow=('impressum',)), callback='parse_imprint'),
     )
+
+    _title = 'Neue cbird Versionen',
+    _subtitle = 'Die neuesten Versionen von cbird.'
+    _link = start_urls[0]
 
     def parse_item(self, response):
         il = CbirdFeedEntryItemLoader(
@@ -29,13 +33,8 @@ class CbirdAtSpider(CrawlSpider):
         yield il.load_item()
 
     def parse_imprint(self, response):
-        il = FeedItemLoader(response=response)
-        il.add_value('title', 'Neue cbird Versionen')
-        il.add_value('subtitle', 'Die neuesten Versionen von cbird.')
-        il.add_value('link', self.start_urls[0])
-        il.add_xpath('author_name',
-                     '//div[@class="main"]/p/text()', re='Firma (.*)')
-        il.add_value('author_name', self.name)
-        yield il.load_item()
+        self._author_name = (response.xpath(
+            '//div[@class="main"]/p/text()').re_first('Firma (.*)') or
+            self.name)
 
 # vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4 smartindent autoindent

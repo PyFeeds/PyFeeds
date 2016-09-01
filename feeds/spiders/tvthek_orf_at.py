@@ -3,18 +3,20 @@
 from datetime import timedelta
 import json
 
-from scrapy.spiders import Spider
 from scrapy import Request
 import delorean
 
 from feeds.loaders import FeedEntryItemLoader
-from feeds.loaders import FeedItemLoader
+from feeds.spiders import FeedsSpider
 
 
-class TvthekOrfAtSpider(Spider):
+class TvthekOrfAtSpider(FeedsSpider):
     name = 'tvthek.orf.at'
     allowed_domains = ['tvthek.orf.at']
 
+    _title = 'TVthek.ORF.at'
+    _subtitle = 'ORF TVTHEK'
+    _link = 'http://tvthek.orf.at'
     _timezone = 'Europe/Vienna'
     _token = '027f84a09ec56b'
 
@@ -32,20 +34,9 @@ class TvthekOrfAtSpider(Spider):
                                  day.format_datetime('YMMdd')))
 
     def parse(self, response):
-        il = FeedItemLoader()
-        il.add_value('title', 'TVthek.ORF.at')
-        il.add_value('subtitle', 'ORF TVTHEK')
-        il.add_value('link', 'http://tvthek.orf.at')
-        il.add_value('author_name', self.name)
-        yield il.load_item()
-
-        yield from self.parse_item(response)
-
-    def parse_item(self, response):
         json_response = json.loads(response.body_as_unicode())
         if 'nextPage' in json_response['paginationMetaData']:
-            yield Request(json_response['paginationMetaData']['nextPage'],
-                          self.parse_item)
+            yield Request(json_response['paginationMetaData']['nextPage'])
 
         for item in json_response['episodeShorts']:
             yield Request(item['detailApiCall'], self.parse_item_details)

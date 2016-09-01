@@ -4,31 +4,26 @@ from datetime import datetime
 import urllib.parse
 import json
 
-from scrapy import Spider
 import scrapy
 
 from feeds.loaders import FeedEntryItemLoader
-from feeds.loaders import FeedItemLoader
+from feeds.spiders import FeedsSpider
 
 
-class NzzAtSpider(Spider):
+class NzzAtSpider(FeedsSpider):
     name = 'nzz.at'
     allowed_domains = ['nzz.at']
     start_urls = ['https://nzz.at/wp/wp-login.php']
 
+    _title = 'NZZ.at'
+    _subtitle = 'Hintergrund, Analyse, Kommentar'
+    _link = 'https://nzz.at'
     _timezone = 'GMT'
     _excluded = []
     _max_items = 20
     _num_items = 0
 
     def parse(self, response):
-        il = FeedItemLoader()
-        il.add_value('title', 'NZZ.at')
-        il.add_value('subtitle', 'Hintergrund, Analyse, Kommentar')
-        il.add_value('link', 'https://nzz.at')
-        il.add_value('author_name', self.name)
-        yield il.load_item()
-
         username = self.spider_settings.get('username')
         password = self.spider_settings.get('password')
         if username and password:

@@ -2,15 +2,14 @@
 
 import datetime
 
-from scrapy.spiders import Spider
 import scrapy
 import w3lib
 
 from feeds.loaders import FeedEntryItemLoader
-from feeds.loaders import FeedItemLoader
+from feeds.spiders import FeedsSpider
 
 
-class AkCiandoComSpider(Spider):
+class AkCiandoComSpider(FeedsSpider):
     name = 'ak.ciando.com'
     allowed_domains = ['ak.ciando.com']
     start_urls = [
@@ -18,15 +17,9 @@ class AkCiandoComSpider(Spider):
         '&cat_nav=0&more_new=1&rows=100&intStartRow=1']
 
     _title = 'AK Digitale Bibliothek'
+    _subtitle = 'Neue Titel in der digitalen AK Bibliothek'
 
     def parse(self, response):
-        il = FeedItemLoader()
-        il.add_value('title', self._title)
-        il.add_value('subtitle', 'Neue Titel in der digitalen AK Bibliothek')
-        il.add_value('link', 'http://{}'.format(self.name))
-        il.add_value('author_name', self._title)
-        yield il.load_item()
-
         for link in response.xpath(
                 '//p[@class="p_blr_title"]//a/@href').extract():
             yield scrapy.Request(response.urljoin(link), self.parse_item)

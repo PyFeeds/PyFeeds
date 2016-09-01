@@ -12,20 +12,22 @@ from feeds.items import FeedItem
 class AtomExporter(BaseItemExporter):
 
     class AtomFeed(object):
-        def __init__(self, header, exporter):
+        def __init__(self, exporter):
             self._exporter = exporter
             self._feed_updated = None
             self._feed_items = []
             self._xml = etree.Element('feed')
             self._xml.set('xmlns', 'http://www.w3.org/2005/Atom')
-            for child in self._convert_feed_item(header):
-                self._xml.insert(0, child)
 
-        def export_item(self, item):
-            entry = etree.Element('entry')
-            for child in self._convert_feed_item(item):
-                entry.append(child)
-            self._feed_items.append(entry)
+        def add_item(self, item):
+            if isinstance(item, FeedItem):
+                for child in self._convert_feed_item(item):
+                    self._xml.insert(0, child)
+            elif isinstance(item, FeedEntryItem):
+                entry = etree.Element('entry')
+                for child in self._convert_feed_item(item):
+                    entry.append(child)
+                self._feed_items.append(entry)
 
         def insert_updated(self):
             child = etree.Element('updated')
@@ -166,9 +168,8 @@ class AtomExporter(BaseItemExporter):
             path = os.path.join(self._name, item['path'])
         except KeyError:
             path = self._name
-        if isinstance(item, FeedItem):
-            self._feeds[path] = self.AtomFeed(header=item, exporter=self)
-        elif isinstance(item, FeedEntryItem):
-            self._feeds[path].export_item(item)
+        if path not in self._feeds:
+            self._feeds[path] = self.AtomFeed(exporter=self)
+        self._feeds[path].add_item(item)
 
 # vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4 smartindent autoindent

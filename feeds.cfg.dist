@@ -12,6 +12,11 @@ useragent = feeds (+https://github.com/nblock/feeds)
 ## Target directory where the feeds will be saved.
 # output_path = output
 
+## URL of target directory from which the feeds can be accessed.
+## Optional; used to generate atom:link element with rel="self" attribute.
+## See also: https://validator.w3.org/feed/docs/warning/MissingSelf.html
+# output_url = https://example.com/feeds
+
 #[nzz.at]
 ## NZZ.at is a paywalled site.
 ## If you want to crawl it, please provide username and password.

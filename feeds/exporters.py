@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 
+from urllib.parse import urljoin
 import os
 
 from lxml import etree
@@ -12,8 +13,9 @@ from feeds.items import FeedItem
 class AtomExporter(BaseItemExporter):
 
     class AtomFeed(object):
-        def __init__(self, exporter):
+        def __init__(self, exporter, link_self=None):
             self._exporter = exporter
+            self._link_self = link_self
             self._feed_updated = None
             self._feed_items = []
             self._xml = etree.Element('feed')
@@ -21,6 +23,8 @@ class AtomExporter(BaseItemExporter):
 
         def add_item(self, item):
             if isinstance(item, FeedItem):
+                if self._link_self:
+                    item['link_self'] = self._link_self
                 for child in self._convert_feed_item(item):
                     self._xml.insert(0, child)
             elif isinstance(item, FeedEntryItem):
@@ -55,7 +59,15 @@ class AtomExporter(BaseItemExporter):
             # Convert link
             key = 'link'
             if key in item:
-                xml_items.append(self._convert_special_link(item, key))
+                xml_items.append(self._convert_special_link(item, key,
+                                 'alternate'))
+                item.pop(key)
+
+            # Convert link
+            key = 'link_self'
+            if key in item:
+                xml_items.append(self._convert_special_link(item, key,
+                                 'self'))
                 item.pop(key)
 
             # Convert enclosure
@@ -110,9 +122,9 @@ class AtomExporter(BaseItemExporter):
             element.text = item[key]
             return element
 
-        def _convert_special_link(self, item, key):
-            xml_item = etree.Element(key)
-            xml_item.set('rel', 'alternate')
+        def _convert_special_link(self, item, key, rel):
+            xml_item = etree.Element('link')
+            xml_item.set('rel', rel)
             xml_item.set('href', item[key])
             return xml_item
 
@@ -143,9 +155,10 @@ class AtomExporter(BaseItemExporter):
             if self._feed_updated is None or self._feed_updated < raw_updated:
                 self._feed_updated = raw_updated
 
-    def __init__(self, output_path, name, **kwargs):
+    def __init__(self, output_path, output_url, name, **kwargs):
         self._configure(kwargs)
         self._output_path = output_path
+        self._output_url = output_url
         self._name = name
         self._feeds = {}
         self._pretty_print = kwargs.pop('pretty_print', True)
@@ -155,21 +168,22 @@ class AtomExporter(BaseItemExporter):
             feed.insert_updated()
             feed.sort()
             path = os.path.join(self._output_path, path)
-            os.makedirs(path, exist_ok=True)
-            filename = os.path.join(path, 'feed.atom')
-            with open(filename, 'wb') as f:
+            os.makedirs(os.path.dirname(path), exist_ok=True)
+            with open(path, 'wb') as f:
                 f.write(feed.tostring(
                         encoding=self.encoding,
                         pretty_print=self._pretty_print,
                         xml_declaration=True))
 
     def export_item(self, item):
-        try:
-            path = os.path.join(self._name, item['path'])
-        except KeyError:
-            path = self._name
+        path = os.path.join(self._name, item.pop('path', ''), 'feed.atom')
         if path not in self._feeds:
-            self._feeds[path] = self.AtomFeed(exporter=self)
+            if self._output_url:
+                link_self = urljoin(self._output_url, path)
+            else:
+                link_self = None
+            self._feeds[path] = self.AtomFeed(exporter=self,
+                                              link_self=link_self)
         self._feeds[path].add_item(item)
 
 # vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4 smartindent autoindent

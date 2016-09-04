@@ -22,7 +22,7 @@ class BaseItem(scrapy.Item):
     author_name = scrapy.Field()
     author_email = scrapy.Field()
 
-    # A unique link to a feed/item.
+    # A unique link to a site/item.
     link = scrapy.Field()
 
     # Optional
@@ -41,6 +41,9 @@ class FeedItem(BaseItem):
 
     # Optional
     logo = scrapy.Field()
+
+    # Optional
+    link_self = scrapy.Field()
 
 
 class FeedEntryItem(BaseItem):

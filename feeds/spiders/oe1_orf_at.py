@@ -32,7 +32,8 @@ class Oe1OrfAtSpider(FeedsSpider):
         for item in json.loads(response.body_as_unicode())['list']:
             il = FeedEntryItemLoader(response=response,
                                      timezone=self._timezone,
-                                     base_url='http://{}'.format(self.name))
+                                     base_url='http://{}'.format(self.name),
+                                     dayfirst=True)
             if 'url_json' not in item:
                 continue
             link = 'http://{}{}'.format(

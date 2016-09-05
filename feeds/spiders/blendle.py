@@ -70,6 +70,14 @@ class BlendleSession:
         )
 
     def _after_login(self, response):
+        self._subscription = False
+
+        if response.status != 200:
+            self._spider.logger.error(
+                'Login failed: Blendle returned status code {}'.format(
+                    response.status))
+            return response.meta['callback']()
+
         try:
             self._jwt = json.loads(response.body_as_unicode())['jwt']
             # Fix padding by always adding too much of it.
@@ -80,11 +88,12 @@ class BlendleSession:
             self._spider.logger.debug(
                 'Successfully established Blendle session')
             self._subscription = True
+        except json.decoder.JSONDecodeError:
+            self._spider.logger.error(
+                'Login failed: Could not parse response from Blendle')
         except KeyError:
             self._spider.logger.error(
                 'Login failed: Username or password wrong')
-            self._subscription = False
-
         return response.meta['callback']()
 
     def _parse_provider_item(self, response):

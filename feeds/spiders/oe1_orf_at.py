@@ -2,28 +2,23 @@
 
 import json
 
-from scrapy.spiders import Spider
 import scrapy
 
 from feeds.loaders import FeedEntryItemLoader
-from feeds.loaders import FeedItemLoader
+from feeds.spiders import FeedsSpider
 
 
-class Oe1OrfAtSpider(Spider):
+class Oe1OrfAtSpider(FeedsSpider):
     name = 'oe1.orf.at'
     allowed_domains = ['oe1.orf.at']
     start_urls = ['http://oe1.orf.at/programm/konsole/heute']
 
+    _title = 'oe1.ORF.at'
+    _subtitle = 'Ö1 Webradio'
+    _link = 'http://oe1.orf.at'
     _timezone = 'Europe/Vienna'
 
     def parse(self, response):
-        il = FeedItemLoader()
-        il.add_value('title', 'oe1.ORF.at')
-        il.add_value('subtitle', 'Ö1 Webradio')
-        il.add_value('link', 'http://oe1.orf.at')
-        il.add_value('author_name', self.name)
-        yield il.load_item()
-
         # Only scrape today and the last two days. Exclude the last entry
         # (i.e. today) which is the the current response.
         for day in json.loads(response.body_as_unicode())['nav'][-3:-1]:

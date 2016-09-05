@@ -25,31 +25,30 @@ class BlendleSession:
         self._provider = provider
 
     def login(self, callback):
-        try:
-            config = self._spider.settings.get(
-                'FEEDS_CONFIG')[self._spider.name]
-            credentials = json.dumps({
-                'login': config['username'],
-                'password': config['password']
-            })
-            return scrapy.Request(
-                url='https://pay.blendle.com/core/credentials',
-                callback=self._after_login,
-                errback=self._after_login,
-                method='POST',
-                body=credentials,
-                meta={
-                    'handle_httpstatus_all': True,
-                    'callback': callback,
-                },
-                dont_filter=True,
-            )
-        except (KeyError, AttributeError, TypeError):
+        login = self._spider.spider_settings.get('username')
+        password = self._spider.spider_settings.get('password')
+        if not (login and password):
             # Username, password or section not found in feeds.cfg.
             raise BlendleAuthenticationError(
                 'Login failed: No username or password given. '
                 'Only free articles are available in full text.'
             )
+        credentials = json.dumps({
+            'login': login,
+            'password': password,
+        })
+        return scrapy.Request(
+            url='https://pay.blendle.com/core/credentials',
+            callback=self._after_login,
+            errback=self._after_login,
+            method='POST',
+            body=credentials,
+            meta={
+                'handle_httpstatus_all': True,
+                'callback': callback,
+            },
+            dont_filter=True,
+        )
 
     def parse_article(self, response, item_jwt, callback_url, callback):
         if not self._subscription:

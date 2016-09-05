@@ -3,23 +3,27 @@
 import scrapy
 
 from feeds.loaders import FeedEntryItemLoader
-from feeds.loaders import FeedItemLoader
+from feeds.spiders import FeedsSpider
 
 
-class BibliowebAtSpider(scrapy.Spider):
+class BibliowebAtSpider(FeedsSpider):
     name = 'biblioweb.at'
     allowed_domains = ['biblioweb.at']
+
     _days = 60
 
     def start_requests(self):
-        try:
-            config = self.settings.get('FEEDS_CONFIG')[self.name]
-            self._library = config['location'].lower()
+        self._library = self.spider_settings.get('location', '').lower()
+        if self._library:
+            self._path = self._library
             self._library_user = 'Bibliothek {}'.format(self._library.title())
+            self._title = self._library_user
+            self._subtitle = 'Neue Titel in der {}'.format(self._library_user)
+            self._link = 'http://www.biblioweb.at/{}/'.format(self._library)
             yield scrapy.Request(
                 'http://www.biblioweb.at/{}/start.asp'.format(self._library),
                 callback=self.parse)
-        except KeyError:
+        else:
             # Key location or section biblioweb.at not found in feeds.cfg.
             self.logger.error(
                 "A location is required for spider '{name}'. Please add a "
@@ -34,16 +38,6 @@ class BibliowebAtSpider(scrapy.Spider):
             'http://www.biblioweb.at/webopac123/webopac.asp'
             '?kat=1&content=show_new&seit={}&order_by=Sachtitel'.format(
                 self._days), callback=self.parse_overview_page)
-
-        il = FeedItemLoader()
-        il.add_value('path', self._path())
-        il.add_value('title', self._library_user)
-        il.add_value('subtitle',
-                     'Neue Titel in der {}'.format(self._library_user))
-        il.add_value('link',
-                     'http://www.biblioweb.at/{}/'.format(self._library))
-        il.add_value('author_name', self._library_user)
-        yield il.load_item()
 
     def parse_overview_page(self, response):
         # Find other pages
@@ -61,7 +55,7 @@ class BibliowebAtSpider(scrapy.Spider):
         parts = self._extract_parts(response)
         il = FeedEntryItemLoader(response=response, timezone='Europe/Vienna',
                                  dayfirst=True)
-        il.add_value('path', self._path())
+        il.add_value('path', self._library)
         il.add_value('title', ' - '.join(parts[:self._find_first_meta(parts)]))
         il.add_value('link', response.url)
         il.add_xpath('updated', '//td/span/text()',
@@ -85,8 +79,5 @@ class BibliowebAtSpider(scrapy.Spider):
         parts = [p.strip() for p in
                  response.xpath('//td/span/text()').extract()]
         return [p for p in parts if p not in ('', ', ,')]
-
-    def _path(self):
-        return self._library
 
 # vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4 smartindent autoindent

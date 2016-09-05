@@ -3,33 +3,23 @@
 import scrapy
 
 from feeds.loaders import FeedEntryItemLoader
-from feeds.loaders import FeedItemLoader
+from feeds.spiders import FeedsSpider
 
 
-class HelpGvAtSpider(scrapy.Spider):
+class HelpGvAtSpider(FeedsSpider):
     name = 'help.gv.at'
     allowed_domains = [name]
     start_urls = ['https://www.{}/Portal.Node/hlpd/public'.format(name)]
 
+    _title = 'HELP.gv.at'
+    _subtitle = 'Ihr Wegweiser durch die Behörden und Ämter in Österreich'
+    _link = 'https://www.{}'.format(name)
+    _icon = 'https://www.{}/HLPD_Static/img/favicon.ico'.format(name)
+    _logo = ('https://www.{}/HLPD_Static/img/'
+             '120924_Header_helpgv_links.jpg'.format(name))
     _timezone = 'Europe/Vienna'
 
     def parse(self, response):
-        il = FeedItemLoader()
-        il.add_value('title', 'HELP.gv.at')
-        il.add_value(
-            'subtitle',
-            'Ihr Wegweiser durch die Behörden und Ämter in Österreich')
-        il.add_value('link', 'https://www.{}'.format(self.name))
-        il.add_value('author_name', self.name)
-        il.add_value(
-            'icon',
-            'https://www.{}/HLPD_Static/img/favicon.ico'.format(self.name))
-        il.add_value(
-            'logo',
-            'https://www.{}/HLPD_Static/img/120924_Header_helpgv_links.jpg'.
-            format(self.name))
-        yield il.load_item()
-
         yield scrapy.Request(
             'https://www.{}/Portal.Node/hlpd/public/content/171/'
             'Seite.1710000.html'.format(self.name), self._parse_lists)

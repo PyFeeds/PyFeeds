@@ -1,14 +1,13 @@
 #!/usr/bin/python3
 
 from scrapy.http import HtmlResponse
-from scrapy.spiders import Spider
 import scrapy
 
+from feeds.spiders import FeedsSpider
 from feeds.loaders import FeedEntryItemLoader
-from feeds.loaders import FeedItemLoader
 
 
-class WienerLinienAtSpider(Spider):
+class WienerLinienAtSpider(FeedsSpider):
     name = 'wienerlinien.at'
     allowed_domains = ['wienerlinien.at']
     custom_settings = {
@@ -23,16 +22,11 @@ class WienerLinienAtSpider(Spider):
         'scrolling=true&startIndex=0&channelId=-47186&programId=74577'
     ]
 
+    _title = 'Wiener Linien'
+    _subtitle = 'Aktuelle Meldungen'
     _timezone = 'Europe/Vienna'
 
     def parse(self, response):
-        il = FeedItemLoader()
-        il.add_value('title', 'Wiener Linien')
-        il.add_value('subtitle', 'Aktuelle Meldungen')
-        il.add_value('link', 'http://wienerlinien.at')
-        il.add_value('author_name', self.name)
-        yield il.load_item()
-
         # Wiener Linien returns HTML with an XML content type which creates an
         # XmlResponse.
         response = HtmlResponse(url=response.url, body=response.body)

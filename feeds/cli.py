@@ -1,39 +1,37 @@
 import configparser
 import logging
 
-import click
 from scrapy.crawler import CrawlerProcess
 from scrapy.utils.project import get_project_settings
+import click
 
 logger = logging.getLogger(__name__)
 
 
-def load_feeds_config(settings, loglevel, stats, f):
-    settings.set('LOG_LEVEL', loglevel.upper())
+def load_feeds_config(cmdline, file_=None):
+    if file_:
+        logger.debug('Parsing configuration file {} ...'.format(file_.name))
+        # Parse configuration file and store result under FEEDS_CONFIG of
+        # scrapy's settings API.
+        parser = configparser.ConfigParser()
+        parser.read_file(file_)
+        config = {s: dict(parser.items(s)) for s in parser.sections()}
+        import feeds.settings
+        feeds.settings.FEEDS_CONFIG = config
 
-    if not stats:
-        settings.set('STATS_CLASS',
-                     'scrapy.statscollectors.DummyStatsCollector')
+    settings = get_project_settings()
+    feeds_settings = settings.get('FEEDS_CONFIG').get('feeds', {})
 
-    if not f:
-        # No configuration file given.
-        settings.set('FEEDS_CONFIG', {})
-        return
+    # Mapping of feeds config section to setting names.
+    for settings_key, config_key in (
+            settings.get('FEEDS_CFGFILE_MAPPING', {}).items()):
+        settings.set(settings_key, feeds_settings.get(config_key))
 
-    logger.debug('Parsing configuration file {} ...'.format(f.name))
-    # Parse configuration file and store result under FEEDS_CONFIG of scrapy's
-    # settings API.
-    parser = configparser.ConfigParser()
-    parser.read_file(f)
-    config = {s: dict(parser.items(s)) for s in parser.sections()}
-    settings.set('FEEDS_CONFIG', config)
+    for settings_key, value_from_cmdline in (
+            settings.get('FEEDS_CMDLINE_MAPPING', {}).items()):
+        settings.set(settings_key, value_from_cmdline(cmdline))
 
-    try:
-        useragent = config['feeds']['useragent']
-        settings.set('USER_AGENT', useragent)
-        logger.debug('Setting user agent to "{}"'.format(useragent))
-    except KeyError:
-        pass
+    return settings
 
 
 def spiders_to_crawl(process, argument_spiders):
@@ -54,7 +52,7 @@ def spiders_to_crawl(process, argument_spiders):
 
 
 @click.group()
-@click.option('--loglevel', default='info',
+@click.option('--loglevel', '-l', default='info',
               type=click.Choice(['debug', 'info', 'warning', 'error']))
 @click.option('--config', '-c', type=click.File(),
               help='Feeds configuration for feeds.')
@@ -87,13 +85,16 @@ def crawl(ctx, spiders, stats):
     crawl if no arguments are given and no spiders are configured.
     """
     # Start a new crawler process.
-    settings = get_project_settings()
-    load_feeds_config(settings, ctx.obj['loglevel'], stats, ctx.obj['config'])
+    cmdline = {
+        'loglevel': ctx.obj['loglevel'],
+        'stats': stats,
+    }
+    settings = load_feeds_config(cmdline, ctx.obj['config'])
     process = CrawlerProcess(settings)
 
     spiders = spiders_to_crawl(process, spiders)
     if not spiders:
-        logger.error('Please specifiy what spiders you want to run!')
+        logger.error('Please specify what spiders you want to run!')
     else:
         for spider in spiders:
             logger.info('Starting crawl of {} ...'.format(spider))

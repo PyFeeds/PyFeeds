@@ -3,19 +3,19 @@
 from datetime import datetime
 from datetime import timedelta
 
-from scrapy.spiders import Spider
 import delorean
 import scrapy
 
 from feeds.loaders import FeedEntryItemLoader
-from feeds.loaders import FeedItemLoader
+from feeds.spiders import FeedsSpider
 
 
-class ProfilAtSpider(Spider):
+class ProfilAtSpider(FeedsSpider):
     name = 'profil.at'
     allowed_domains = ['profil.at']
 
-    _emitted_feed_item = False
+    _title = 'PROFIL'
+    _subtitle = 'Österreichs unabhängiges Nachrichtenmagazin'
     _timezone = 'Europe/Vienna'
     _max_days = 3
 
@@ -30,16 +30,6 @@ class ProfilAtSpider(Spider):
                 self.parse_archive_page)
 
     def parse_archive_page(self, response):
-        if not self._emitted_feed_item:
-            self._emitted_feed_item = True
-            il = FeedItemLoader()
-            il.add_value('title', 'PROFIL')
-            il.add_value('subtitle',
-                         'Österreichs unabhängiges Nachrichtenmagazin')
-            il.add_value('link', 'http://www.profil.at')
-            il.add_value('author_name', self.name)
-            yield il.load_item()
-
         for link in response.xpath('//h1/a/@href').extract():
             yield scrapy.Request(response.urljoin(link), self.parse_item)
 

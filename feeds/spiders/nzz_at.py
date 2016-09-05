@@ -4,43 +4,39 @@ from datetime import datetime
 import urllib.parse
 import json
 
-from scrapy.spiders import Spider
 import scrapy
 
 from feeds.loaders import FeedEntryItemLoader
-from feeds.loaders import FeedItemLoader
+from feeds.spiders import FeedsSpider
 
 
-class NzzAtSpider(Spider):
+class NzzAtSpider(FeedsSpider):
     name = 'nzz.at'
     allowed_domains = ['nzz.at']
     start_urls = ['https://nzz.at/wp/wp-login.php']
 
+    _title = 'NZZ.at'
+    _subtitle = 'Hintergrund, Analyse, Kommentar'
+    _link = 'https://nzz.at'
     _timezone = 'GMT'
     _excluded = []
     _max_items = 20
     _num_items = 0
 
     def parse(self, response):
-        il = FeedItemLoader()
-        il.add_value('title', 'NZZ.at')
-        il.add_value('subtitle', 'Hintergrund, Analyse, Kommentar')
-        il.add_value('link', 'https://nzz.at')
-        il.add_value('author_name', self.name)
-        yield il.load_item()
-
-        try:
-            config = self.settings.get('FEEDS_CONFIG')[self.name]
+        username = self.spider_settings.get('username')
+        password = self.spider_settings.get('password')
+        if username and password:
             yield scrapy.FormRequest.from_response(
                 response,
                 formname='loginform',
-                formdata={'log': config['username'],
-                          'pwd': config['password'],
+                formdata={'log': username,
+                          'pwd': password,
                           'redirect_to': '/',
                           'testcookie': '1'},
                 callback=self._after_login
             )
-        except (KeyError, AttributeError, TypeError):
+        else:
             # Username, password or section nzz.at not found in feeds.cfg.
             self.logger.error('Login failed: No username or password given')
             yield self._create_error_item('Error: Login failed',
@@ -52,7 +48,7 @@ class NzzAtSpider(Spider):
             return self._create_error_item('Error: Login failed',
                                            'Username or password wrong')
         url = response.css('.c-teaser--hero a').xpath('@href').extract_first()
-        yield scrapy.Request(url, callback=self._parse_ajax_url)
+        return scrapy.Request(url, callback=self._parse_ajax_url)
 
     def _create_error_item(self, title, body):
         il = FeedEntryItemLoader(timezone=self._timezone)

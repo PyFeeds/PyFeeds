@@ -5,6 +5,7 @@ from lxml.html import HtmlComment
 from lxml.cssselect import CSSSelector
 import os
 from scrapy.loader import ItemLoader
+from scrapy.loader.processors import Compose
 from scrapy.loader.processors import Identity
 from scrapy.loader.processors import Join
 from scrapy.loader.processors import MapCompose
@@ -124,6 +125,8 @@ class BaseItemLoader(ItemLoader):
     id_in = MapCompose(str.strip)
 
     title_in = MapCompose(str.strip)
+    # Join first two elements on ": " and the rest on " - ".
+    title_out = Compose(lambda t: [': '.join(t[:2])] + t[2:], Join(' - '))
 
     updated_in = MapCompose(str.strip, parse_datetime)
 

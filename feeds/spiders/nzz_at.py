@@ -37,24 +37,13 @@ class NzzAtSpider(FeedsSpider):
         else:
             # Username, password or section nzz.at not found in feeds.cfg.
             self.logger.error('Login failed: No username or password given')
-            yield self._create_error_item('Error: Login failed',
-                                          'No username or password given')
 
     def _after_login(self, response):
         if 'FEHLER' in response.body_as_unicode():
             self.logger.error('Login failed: Username or password wrong')
-            return self._create_error_item('Error: Login failed',
-                                           'Username or password wrong')
+            return
         url = response.css('.c-teaser--hero a').xpath('@href').extract_first()
         return scrapy.Request(url, callback=self._parse_ajax_url)
-
-    def _create_error_item(self, title, body):
-        il = FeedEntryItemLoader(timezone=self._timezone)
-        il.add_value('link', self.start_urls[0])
-        il.add_value('title', title)
-        il.add_value('content_html', body)
-        il.add_value('updated', str(datetime.utcnow()))
-        return il.load_item()
 
     def _parse_ajax_url(self, response):
         self.ajax_url = (

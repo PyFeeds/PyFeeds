@@ -3,6 +3,7 @@ import logging
 
 from scrapy.crawler import CrawlerProcess
 from scrapy.utils.project import get_project_settings
+from twisted.python import failure
 import click
 
 logger = logging.getLogger(__name__)
@@ -56,13 +57,16 @@ def spiders_to_crawl(process, argument_spiders):
               type=click.Choice(['debug', 'info', 'warning', 'error']))
 @click.option('--config', '-c', type=click.File(),
               help='Feeds configuration for feeds.')
+@click.option('--pdb/--no-pdb', default=False, help='Enable pdb on failure.')
 @click.pass_context
-def cli(ctx, loglevel, config):
+def cli(ctx, loglevel, config, pdb):
     """
     feeds creates feeds for pages that don't have feeds.
     """
     ctx.obj['loglevel'] = loglevel
     ctx.obj['config'] = config
+    if pdb:
+        failure.startDebugMode()
 
 
 @cli.command()

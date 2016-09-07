@@ -1,4 +1,3 @@
-
 import scrapy
 
 from feeds.loaders import FeedEntryItemLoader

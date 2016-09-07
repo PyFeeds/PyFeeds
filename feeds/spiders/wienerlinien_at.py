@@ -1,5 +1,3 @@
-#!/usr/bin/python3
-
 from scrapy.http import HtmlResponse
 import scrapy
 

@@ -1,5 +1,3 @@
-#!/usr/bin/python3
-
 import uuid
 
 from scrapy import signals

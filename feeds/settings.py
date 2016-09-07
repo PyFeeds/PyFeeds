@@ -1,5 +1,3 @@
-#!/usr/bin/python3
-
 import logging
 
 # Feeds configuration populated by an optional feeds configuration file.

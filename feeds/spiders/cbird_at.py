@@ -1,5 +1,3 @@
-#!/usr/bin/python3
-
 from scrapy.linkextractors import LinkExtractor
 from scrapy.spiders import Rule
 

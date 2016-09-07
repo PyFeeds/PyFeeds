@@ -1,5 +1,3 @@
-#!/usr/bin/python3
-
 from datetime import datetime
 import urllib.parse
 import json

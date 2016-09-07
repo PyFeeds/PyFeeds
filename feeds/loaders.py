@@ -1,5 +1,3 @@
-#!/usr/bin/python3
-
 import delorean
 import lxml
 from lxml import etree

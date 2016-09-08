@@ -38,7 +38,7 @@ useragent = feeds (+https://github.com/nblock/feeds)
 
 #[biblioweb.at]
 ## Location of your library that uses biblioweb.at.
-#location =
+# location =
 
 #[uebermedien.de]
 ## uebermedien.de has a paywall for certain articles.

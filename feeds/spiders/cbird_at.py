@@ -2,7 +2,6 @@ from scrapy.linkextractors import LinkExtractor
 from scrapy.spiders import Rule
 
 from feeds.loaders import CbirdFeedEntryItemLoader
-
 from feeds.spiders import FeedsCrawlSpider
 
 

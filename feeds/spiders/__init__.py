@@ -1,4 +1,6 @@
-from scrapy.spiders import Spider, CrawlSpider, XMLFeedSpider
+from scrapy.spiders import CrawlSpider
+from scrapy.spiders import Spider
+from scrapy.spiders import XMLFeedSpider
 
 from feeds.loaders import FeedItemLoader
 

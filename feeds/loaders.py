@@ -1,9 +1,8 @@
-import delorean
-import lxml
-from lxml import etree
-from lxml.html import HtmlComment
-from lxml.cssselect import CSSSelector
 import os
+
+from lxml import etree
+from lxml.cssselect import CSSSelector
+from lxml.html import HtmlComment
 from scrapy.loader import ItemLoader
 from scrapy.loader.processors import Compose
 from scrapy.loader.processors import Identity
@@ -11,6 +10,8 @@ from scrapy.loader.processors import Join
 from scrapy.loader.processors import MapCompose
 from scrapy.loader.processors import TakeFirst
 from w3lib.html import remove_tags
+import delorean
+import lxml
 
 from feeds.items import FeedItem
 from feeds.items import FeedEntryItem

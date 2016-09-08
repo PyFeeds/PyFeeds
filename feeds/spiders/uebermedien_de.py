@@ -3,8 +3,9 @@ import html
 import scrapy
 
 from feeds.loaders import FeedEntryItemLoader
-from feeds.spiders.blendle import BlendleSession, BlendleAuthenticationError
 from feeds.spiders import FeedsXMLFeedSpider
+from feeds.spiders.blendle import BlendleAuthenticationError
+from feeds.spiders.blendle import BlendleSession
 
 
 class UebermedienDeSpider(FeedsXMLFeedSpider):

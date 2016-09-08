@@ -14,9 +14,8 @@ class BibliowebAtSpider(FeedsSpider):
         self._library = self.spider_settings.get('location', '').lower()
         if self._library:
             self._path = self._library
-            self._library_user = 'Bibliothek {}'.format(self._library.title())
-            self._title = self._library_user
-            self._subtitle = 'Neue Titel in der {}'.format(self._library_user)
+            self._title = 'Bibliothek {}'.format(self._library.title())
+            self._subtitle = 'Neue Titel in der {}'.format(self._title)
             self._link = 'http://www.biblioweb.at/{}/'.format(self._library)
             yield scrapy.Request(
                 'http://www.biblioweb.at/{}/start.asp'.format(self._library),

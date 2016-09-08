@@ -118,24 +118,39 @@ def skip_empty_tree(tree):
     return None
 
 
+def skip_false(value):
+    """
+    Skip values that evaluate to False.
+
+    Scrapy only skips values that are None by default. In feeds we want to
+    tighten that policy and also skip empty strings, False and everything else
+    that evaluates to False.
+    """
+    if value:
+        return value
+
+    return None
+
+
 class BaseItemLoader(ItemLoader):
     # Defaults
+    default_input_processor = skip_false
     default_output_processor = TakeFirst()
 
     # Field specific
-    id_in = MapCompose(str.strip)
+    id_in = MapCompose(skip_false, str.strip)
 
-    title_in = MapCompose(str.strip)
+    title_in = MapCompose(skip_false, str.strip)
     # Join first two elements on ": " and the rest on " - ".
     title_out = Compose(lambda t: [': '.join(t[:2])] + t[2:], Join(' - '))
 
-    updated_in = MapCompose(str.strip, parse_datetime)
+    updated_in = MapCompose(skip_false, str.strip, parse_datetime)
 
-    author_name_in = MapCompose(str.strip)
+    author_name_in = MapCompose(skip_false, str.strip)
 
-    author_email_in = MapCompose(str.strip)
+    author_email_in = MapCompose(skip_false, str.strip)
 
-    link_in = MapCompose(str.strip)
+    link_in = MapCompose(skip_false, str.strip)
 
     # Optional
     path_out = Join(os.sep)
@@ -145,32 +160,32 @@ class FeedItemLoader(BaseItemLoader):
     default_item_class = FeedItem
 
     # Field specific
-    subtitle_in = MapCompose(str.strip)
+    subtitle_in = MapCompose(skip_false, str.strip)
 
     # Optional
-    icon_in = MapCompose(str.strip)
+    icon_in = MapCompose(skip_false, str.strip)
 
     # Optional
-    logo_in = MapCompose(str.strip)
+    logo_in = MapCompose(skip_false, str.strip)
 
 
 class FeedEntryItemLoader(BaseItemLoader):
     default_item_class = FeedEntryItem
 
     # Field specific
-    content_text_in = MapCompose(str.strip, remove_tags)
+    content_text_in = MapCompose(skip_false, str.strip, remove_tags)
     content_text_out = Join('\n')
 
-    content_html_in = MapCompose(build_tree, convert_footnotes, cleanup_html,
-                                 skip_empty_tree, make_links_absolute,
-                                 serialize_tree)
+    content_html_in = MapCompose(skip_false, build_tree, convert_footnotes,
+                                 cleanup_html, skip_empty_tree,
+                                 make_links_absolute, serialize_tree)
     content_html_out = Join()
 
-    enclosure_iri_in = MapCompose(str.strip)
+    enclosure_iri_in = MapCompose(skip_false, str.strip)
 
-    enclosure_type_in = MapCompose(str.strip)
+    enclosure_type_in = MapCompose(skip_false, str.strip)
 
-    category_in = MapCompose(str.strip)
+    category_in = MapCompose(skip_false, str.strip)
     category_out = Identity()
 
 

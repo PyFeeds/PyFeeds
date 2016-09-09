@@ -61,11 +61,7 @@ class FalterAtSpider(FeedsSpider):
                 il.add_value('author_name', author)
             except IndexError:
                 pass
-            if item['subtitle']:
-                title = '{}: {}'.format(item['title'], item['subtitle'])
-            else:
-                title = item['title']
-            il.add_value('title', title)
+            il.add_value('title', item['title'])
             # All articles have the same date.
             # We add an offset so they are sorted in the right order.
             date = (delorean.parse(item['date'], dayfirst=False,

@@ -70,11 +70,8 @@ class NzzAtSpider(FeedsSpider):
                                  convert_footnotes=['.c-footnote__content'])
         article = json.loads(response.body_as_unicode())['data']
         il.add_value('link', article['shorturl'])
-        if article['overline']:
-            il.add_value('title', '{}: {}'.format(
-                article['overline'], article['post']['post_title']))
-        else:
-            il.add_value('title', article['post']['post_title'])
+        il.add_value('title', article['overline'])
+        il.add_value('title', article['post']['post_title'])
         il.add_value('content_html', article['reading_time'])
         il.add_value('content_html', '<hr>')
         il.add_value('content_html', article['post']['post_content'])

@@ -40,6 +40,7 @@ Feeds is currently able to create Atom feeds for the following sites:
 * `ORF TVthek <http://tvthek.orf.at>`_: Newest episodes of TV shows
 * `profil <http://www.profil.at>`_: Newest articles
 * `Übermedien <http://www.uebermedien.de>`_: Newest articles
+* `Verbraucherrecht <https://verbraucherrecht.at>`_: Newest articles
 * `Wiener Linien <http://www.wienerlinien.at>`_: Newest articles
 
 Some sites (Falter, Konsument, NZZ, Übermedien) offer articles only behind a

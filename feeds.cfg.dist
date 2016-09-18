@@ -46,3 +46,14 @@ useragent = feeds (+https://github.com/nblock/feeds)
 ## and password.
 # username =
 # password =
+
+#[facebook.com]
+## App id and app secret for your app.
+## Can be gathered by creating your own app at https://developers.facebook.com/.
+# app_id =
+# app_secret =
+## List of pages to crawl (one per line, app_id/app_secret needed).
+## WARNING: Only pages can be crawled, NOT user profiles!
+# pages =
+#     one_page_id
+#     per_line

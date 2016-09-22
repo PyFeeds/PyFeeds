@@ -134,23 +134,13 @@ def skip_false(value):
 
 class BaseItemLoader(ItemLoader):
     # Defaults
-    default_input_processor = skip_false
+    default_input_processor = MapCompose(skip_false, str.strip)
     default_output_processor = TakeFirst()
 
-    # Field specific
-    id_in = MapCompose(skip_false, str.strip)
-
-    title_in = MapCompose(skip_false, str.strip)
     # Join first two elements on ": " and the rest on " - ".
     title_out = Compose(lambda t: [': '.join(t[:2])] + t[2:], Join(' - '))
 
     updated_in = MapCompose(skip_false, str.strip, parse_datetime)
-
-    author_name_in = MapCompose(skip_false, str.strip)
-
-    author_email_in = MapCompose(skip_false, str.strip)
-
-    link_in = MapCompose(skip_false, str.strip)
 
     # Optional
     path_out = Join(os.sep)
@@ -158,15 +148,6 @@ class BaseItemLoader(ItemLoader):
 
 class FeedItemLoader(BaseItemLoader):
     default_item_class = FeedItem
-
-    # Field specific
-    subtitle_in = MapCompose(skip_false, str.strip)
-
-    # Optional
-    icon_in = MapCompose(skip_false, str.strip)
-
-    # Optional
-    logo_in = MapCompose(skip_false, str.strip)
 
 
 class FeedEntryItemLoader(BaseItemLoader):
@@ -181,11 +162,6 @@ class FeedEntryItemLoader(BaseItemLoader):
                                  make_links_absolute, serialize_tree)
     content_html_out = Join()
 
-    enclosure_iri_in = MapCompose(skip_false, str.strip)
-
-    enclosure_type_in = MapCompose(skip_false, str.strip)
-
-    category_in = MapCompose(skip_false, str.strip)
     category_out = Identity()
 
 

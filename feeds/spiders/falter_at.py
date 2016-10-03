@@ -38,8 +38,8 @@ class FalterAtSpider(FeedsSpider):
     def parse_archive(self, response):
         # The perks of having a JavaScript frontend ...
         revisions = json.loads(response.xpath(
-            '//div[@class="content-main"]/script/text()').re(
-                'revisions\s*=\s*(.*);')[0], object_pairs_hook=OrderedDict)
+            '//div[@class="content-main"]/script/text()').re_first(
+                'revisions\s*:\s*(.*)'), object_pairs_hook=OrderedDict)
         latest_issue_date = revisions.popitem(last=False)[1][-1]
         issuenr = ''.join(map(str, delorean.parse(
             latest_issue_date, dayfirst=False).datetime.isocalendar()[:2]))

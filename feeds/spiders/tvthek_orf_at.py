@@ -10,13 +10,14 @@ from feeds.spiders import FeedsSpider
 
 class TvthekOrfAtSpider(FeedsSpider):
     name = 'tvthek.orf.at'
-    allowed_domains = ['tvthek.orf.at']
+    allowed_domains = ['api-tvthek.orf.at']
+    http_user = 'ps_android_v3'
+    http_pass = '6a63d4da29c721d4a986fdd31edc9e41'
 
     _title = 'TVthek.ORF.at'
     _subtitle = 'ORF TVTHEK'
     _link = 'http://tvthek.orf.at'
     _timezone = 'Europe/Vienna'
-    _token = '027f84a09ec56b'
 
     def start_requests(self):
         # We only parse today and yesterday because at the end of the day this
@@ -27,44 +28,40 @@ class TvthekOrfAtSpider(FeedsSpider):
         # (see also https://github.com/nblock/feeds/issues/27)
         today = delorean.utcnow().shift(self._timezone)
         for day in [today, today - timedelta(days=1)]:
-            yield Request('http://{}/service_api/token/{}/episodes/by_date/{}'.
-                          format(self.name, self._token,
-                                 day.format_datetime('YMMdd')))
+            yield Request(
+                'https://api-tvthek.orf.at/api/v3/schedule/{}?limit=1000'.
+                format(day.format_datetime('Y-MM-dd')))
 
     def parse(self, response):
-        json_response = json.loads(response.body_as_unicode())
-        if 'nextPage' in json_response['paginationMetaData']:
-            yield Request(json_response['paginationMetaData']['nextPage'])
+        json_response = json.loads(response.text)
 
-        for item in json_response['episodeShorts']:
-            yield Request(item['detailApiCall'], self.parse_item_details)
+        if 'next' in json_response['_links']:
+            yield Request(json_response['_links']['nextPage'])
 
-    def parse_item_details(self, response):
-        item = json.loads(response.body_as_unicode())['episodeDetail']
-        il = FeedEntryItemLoader(response=response,
-                                 timezone=self._timezone,
-                                 dayfirst=True)
-        self.logger.info('Episode name: {}, program name: {}'.format(
-            item['title'], item['program']['name']))
-        il.add_value('title', item['title'])
-        text = item['descriptions'][0]['text']
-        if text:
-            il.add_value('content_html', text.replace('\r\n', '<br>'))
-        # WARNING: The API uses multiple datetime formats, depending on the
-        # field. You might need to adjust dayfirst if you change the field.
-        il.add_value('updated', item['date'])
-        il.add_value('category', self._categories_from_oewa_base_path(
-                     item['oewaBasePath']))
-        # The "id"s are bogus values because we don't know the actual values
-        # for the URL. We make another request to see where we get redirected.
-        yield Request('http://{}/program/id/{}/id/{}'.format(
-            self.name, item['program']['programId'], item['episodeId']),
-            self.parse_item_link, meta={'dont_redirect': True, 'item': il,
-                                        'handle_httpstatus_list': [301]})
+        for item in json_response['_embedded']['items']:
+            il = FeedEntryItemLoader(response=response,
+                                     timezone=self._timezone,
+                                     dayfirst=False)
+            il.add_value('title', item['title'])
+            il.add_value(
+                'content_html',
+                '<img src="{}">'.format(item['playlist']['preview_image_url']))
+            if item['description']:
+                il.add_value('content_html',
+                             item['description'].replace('\r\n', '<br>'))
+            il.add_value('updated', item['date'])
+            il.add_value(
+                'link',
+                item['url'].replace('api-tvthek.orf.at', 'tvthek.orf.at'))
+            yield Request(item['_links']['profile']['href'],
+                          self._parse_profile, meta={'item': il},
+                          dont_filter=True)
 
-    def parse_item_link(self, response):
+    def _parse_profile(self, response):
         il = response.meta['item']
-        il.add_value('link', response.headers['Location'].decode('ascii'))
+        profile = json.loads(response.text)
+        il.add_value('category', self._categories_from_oewa_base_path(
+                     profile['oewa_base_path']))
         yield il.load_item()
 
     def _categories_from_oewa_base_path(self, oewa_base_path):

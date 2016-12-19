@@ -57,3 +57,9 @@ useragent = feeds (+https://github.com/nblock/feeds)
 # pages =
 #     one_page_id
 #     per_line
+
+#[lwn.net]
+## LWN.net has paywalled articles.
+## If you want to crawl them, please provide username and password.
+# username =
+# password =

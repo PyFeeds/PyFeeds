@@ -1,7 +1,9 @@
+from datetime import timedelta
 import re
 
 from scrapy.loader.processors import TakeFirst
 import scrapy
+import delorean
 
 from feeds.loaders import FeedEntryItemLoader
 from feeds.spiders import FeedsXMLFeedSpider
@@ -67,8 +69,15 @@ class LwnNetSpider(FeedsXMLFeedSpider):
     # Use XML iterator instead of regex magic which would fail due to the
     # introduced rss namespace prefix.
     iterator = 'xml'
+    # lwn.net doesn't like it (i.e. blocks us) if we impose too much load.
+    custom_settings = {
+        'DOWNLOAD_DELAY': 1.0,
+    }
 
     _subscribed = False
+    # Only scrape articles from the last 3 days.
+    # This should be enough since articles are cached by a feed reader anyway.
+    _num_days = 3
 
     def start_requests(self):
         username = self.spider_settings.get('username')
@@ -108,6 +117,11 @@ class LwnNetSpider(FeedsXMLFeedSpider):
                                  base_url='https://{}'.format(self.name),
                                  dayfirst=False)
         updated = node.xpath('dc:date/text()').extract_first()
+        if (delorean.parse(updated) + timedelta(days=self._num_days) <
+                delorean.utcnow()):
+            self.logger.debug(('Skipping item from {} since older than {} '
+                               'days').format(updated, self._num_days))
+            return
         il.add_value('updated', updated)
         title = node.xpath('rss:title/text()').extract_first()
         paywalled = title.startswith('[$]')
@@ -115,7 +129,9 @@ class LwnNetSpider(FeedsXMLFeedSpider):
             il.add_value('category', 'paywalled')
         title = title.replace('[$] ', '')
         il.add_value('title', title)
-        link = node.xpath('rss:link/text()').extract_first().replace('rss', '')
+        link = node.xpath('rss:link/text()').extract_first()
+        link = link.replace('rss', '')
+        link = link.replace('http://', 'https://')
         meta = {'il': il}
         if paywalled and not self._subscribed:
             il.add_value('author_name',

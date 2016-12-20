@@ -18,8 +18,10 @@ from feeds.items import FeedEntryItem
 
 
 def parse_datetime(text, loader_context):
+    if not isinstance(text, str):
+        return text
     return delorean.parse(
-        text,
+        text.strip(),
         timezone=loader_context.get('timezone', 'UTC'),
         dayfirst=loader_context.get('dayfirst', False),
         yearfirst=loader_context.get('yearfirst', True)).shift('UTC')
@@ -140,7 +142,9 @@ class BaseItemLoader(ItemLoader):
     # Join first two elements on ": " and the rest on " - ".
     title_out = Compose(lambda t: [': '.join(t[:2])] + t[2:], Join(' - '))
 
-    updated_in = MapCompose(skip_false, str.strip, parse_datetime)
+    updated_in = MapCompose(skip_false, parse_datetime)
+
+    author_name_out = Join(', ')
 
     # Optional
     path_out = Join(os.sep)

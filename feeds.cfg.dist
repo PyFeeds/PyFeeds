@@ -63,3 +63,8 @@ useragent = feeds (+https://github.com/nblock/feeds)
 ## If you want to crawl them, please provide username and password.
 # username =
 # password =
+
+#[vice.com]
+#locales =
+#    alps
+#    de

@@ -43,6 +43,7 @@ Feeds is currently able to create Atom feeds for the following sites:
 * `profil <http://www.profil.at>`_: Newest articles
 * `Übermedien <http://www.uebermedien.de>`_: Newest articles
 * `Verbraucherrecht <https://verbraucherrecht.at>`_: Newest articles
+* `VICE <https://www.vice.com>`_: Newest articles
 * `Wiener Linien <http://www.wienerlinien.at>`_: Newest articles
 
 Some sites (Falter, Konsument, LWN, NZZ, Übermedien) offer articles only

@@ -126,14 +126,14 @@ class LwnNetSpider(FeedsXMLFeedSpider):
         title = node.xpath('rss:title/text()').extract_first()
         paywalled = title.startswith('[$]')
         if paywalled:
+            title = title.replace('[$] ', '')
             il.add_value('category', 'paywalled')
-        title = title.replace('[$] ', '')
-        il.add_value('title', title)
         link = node.xpath('rss:link/text()').extract_first()
         link = link.replace('rss', '')
         link = link.replace('http://', 'https://')
         meta = {'il': il}
         if paywalled and not self._subscribed:
+            il.add_value('title', title)
             il.add_value('author_name',
                          node.xpath('dc:creator/text()').extract_first())
             il.add_value(
@@ -210,8 +210,8 @@ class LwnNetSpider(FeedsXMLFeedSpider):
 
         for url in response.css('h2.SummaryHL a::attr(href)').extract():
             yield scrapy.Request(
-                    response.urljoin(url), self._parse_article,
-                    meta={'il': None, 'updated': response.meta['updated']})
+                response.urljoin(url), self._parse_article,
+                meta={'il': None, 'updated': response.meta['updated']})
 
         # Remove articles that have their own page.
         text = []
@@ -235,6 +235,7 @@ class LwnNetSpider(FeedsXMLFeedSpider):
         # Recursively remove headings with no content.
         text = _remove_empty_headings(text)
 
+        il.add_css('title', 'h1::text')
         il.add_value('content_html', text)
         il.add_value('link', response.url)
         yield il.load_item()

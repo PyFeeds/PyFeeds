@@ -54,10 +54,9 @@ class ViceComSpider(FeedsSpider):
                 [contribution['contributor']['full_name'] for contribution in
                  article['contributions']])
             il.add_value('category', article['channel']['name'])
-            il.add_value(
-                'category',
-                [topic['name'].title() for topic in
-                 article['topics'] + [article['primary_topic']]])
+            for topic in article['topics'] + [article['primary_topic']]:
+                if topic and 'name' in topic:
+                    il.add_value('category', topic['name'].title())
             if article['nsfw']:
                 il.add_value('category', 'nsfw')
             if article['nsfb']:

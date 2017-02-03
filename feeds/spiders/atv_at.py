@@ -23,21 +23,8 @@ class AtvAtSpider(FeedsSpider):
             yield scrapy.Request(link, self.parse_item)
 
     def parse_item(self, response):
-        # ATV.at is really hard to parse properly since there are so few clues
-        # what is a link to a video and what not.
-        # The easiest way is to look for the mod_teasers class, take the
-        # parent section and use the id of that to feed an Ajax API. Sigh.
-        for program_id in (response.xpath(
-                "//section[child::div[@class and contains(concat(' ', "
-                "normalize-space(@class), ' '), ' mod_teasers ')]]/@id").
-                re('pi_(.*)')):
-            yield scrapy.Request(
-                response.urljoin('/uri/fepe/{}/?page=1'.format(program_id)),
-                self.parse_video_links)
-
-    def parse_video_links(self, response):
-        for link in response.xpath('//a/@href').extract():
-            yield scrapy.Request(link, self.parse_program)
+        for url in response.css('.video').xpath('../../@href').extract():
+            yield scrapy.Request(url, self.parse_program)
 
     def parse_program(self, response):
         if not response.css('.jsb_video\/FlashPlayer'):

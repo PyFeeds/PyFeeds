@@ -9,8 +9,9 @@ setup(
         'bleach>=1.4.3',
         'Click>=6.6',
         'Delorean>=0.6.0',
-        'Scrapy>=1.1',
+        'js2xml>=0.2.1',
         'lxml>=3.5.0',
+        'Scrapy>=1.1',
     ],
     entry_points='''
         [console_scripts]

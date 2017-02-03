@@ -35,6 +35,10 @@ EXTENSIONS = {
     'feeds.extensions.SpiderSettings': 500,
 }
 
+SPIDER_MIDDLEWARES = {
+    'feeds.middlewares.FeedsHttpErrorMiddleware': 51,
+}
+
 # Default user agent. Can be overriden in feeds.cfg.
 USER_AGENT = 'feeds (+https://github.com/nblock/feeds)'
 

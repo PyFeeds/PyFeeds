@@ -8,6 +8,11 @@ class HelpGvAtSpider(FeedsSpider):
     name = 'help.gv.at'
     allowed_domains = [name]
     start_urls = ['https://www.{}/Portal.Node/hlpd/public'.format(name)]
+    custom_settings = {
+        # The redirect logic by help.gv.at relies on state saved for a session
+        # so we have to limit the requests to one at a time.
+        'CONCURRENT_REQUESTS': 1,
+    }
 
     _title = 'HELP.gv.at'
     _subtitle = 'Ihr Wegweiser durch die Behörden und Ämter in Österreich'

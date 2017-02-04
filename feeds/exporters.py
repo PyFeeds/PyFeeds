@@ -1,4 +1,5 @@
 from urllib.parse import urljoin
+import logging
 import os
 
 from lxml import etree
@@ -44,6 +45,9 @@ class AtomExporter(BaseItemExporter):
 
         def tostring(self, **kwargs):
             return etree.tostring(self._xml, **kwargs)
+
+        def __len__(self):
+            return len(self._feed_items)
 
         def _convert_feed_item(self, item):
             xml_items = []
@@ -160,9 +164,12 @@ class AtomExporter(BaseItemExporter):
         self._name = name
         self._feeds = {}
         self._pretty_print = kwargs.pop('pretty_print', True)
+        self._logger = logging.getLogger(__name__)
 
     def finish_exporting(self):
         for path, feed in self._feeds.items():
+            if len(feed) == 0:
+                self._logger.warning('Feed {} contains no items!'.format(path))
             feed.insert_updated()
             feed.sort()
             path = os.path.join(self._output_path, path)

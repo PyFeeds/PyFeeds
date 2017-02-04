@@ -41,8 +41,8 @@ class FalterAtSpider(FeedsSpider):
             '//div[@class="content-main"]/script/text()').re_first(
                 'revisions\s*:\s*(.*)'), object_pairs_hook=OrderedDict)
         latest_issue_date = revisions.popitem(last=False)[1][-1]
-        issuenr = ''.join(map(str, delorean.parse(
-            latest_issue_date, dayfirst=False).datetime.isocalendar()[:2]))
+        issuenr = (delorean.parse(latest_issue_date, dayfirst=False).
+                   format_datetime('Yww'))
         yield scrapy.Request(response.urljoin(
             '/archiv/ajax/search?count=1000&issuenr={}'.format(issuenr)),
             self.parse_archive_search)

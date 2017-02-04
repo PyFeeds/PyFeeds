@@ -71,9 +71,13 @@ class BlendleSession:
         self._subscription = False
 
         if response.status != 200:
-            self._spider.logger.error(
-                'Login failed: Blendle returned status code {}'.format(
-                    response.status))
+            if response.status in [500, 502, 503]:
+                # Blendle is doing maintenance or is currently not available.
+                logger = self._spider.logger.info
+            else:
+                logger = self._spider.logger.error
+            logger('Login failed: Blendle returned status code {}'.format(
+                response.status))
             return response.meta['callback']()
 
         try:

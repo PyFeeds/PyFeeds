@@ -17,6 +17,9 @@ class ViceComSpider(FeedsSpider):
     _icon = _logo
 
     def feed_headers(self):
+        if not self._locales:
+            return
+
         for locale in self._locales:
             yield self.generate_feed_header(
                 title='{} {}'.format(self._title, locale.title()),

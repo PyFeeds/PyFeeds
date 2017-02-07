@@ -37,7 +37,8 @@ class ViceComSpider(FeedsSpider):
         for locale in self._locales:
             yield scrapy.Request(
                 'https://www.{}/api/v1/articles?locale={}'.format(
-                    self.name, locale), meta={'locale': locale})
+                    self.name, locale), meta={'locale': locale,
+                                              'dont_cache': True})
 
     def parse(self, response):
         articles = json.loads(response.text)

@@ -1,6 +1,7 @@
 from scrapy.spiders import CrawlSpider
 from scrapy.spiders import Spider
 from scrapy.spiders import XMLFeedSpider
+import scrapy
 
 from feeds.loaders import FeedItemLoader
 
@@ -28,6 +29,12 @@ class FeedsSpider(Spider):
 
     def feed_headers(self):
         return self.generate_feed_header()
+
+    def start_requests(self):
+        for url in self.start_urls:
+            # Don't cache start requests otherwise we never find new content.
+            yield scrapy.Request(url, dont_filter=True,
+                                 meta={'dont_cache': True})
 
 
 class FeedsCrawlSpider(CrawlSpider, FeedsSpider):

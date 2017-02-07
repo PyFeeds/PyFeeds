@@ -17,7 +17,7 @@ class NzzAtSpider(FeedsSpider):
     _logo = 'https://nzz.at/wp-content/themes/flair/img/apple-touch-icon.png'
     _icon = 'https://nzz.at/wp-content/themes/flair/favicon.ico'
 
-    _max_items = 3  # for each ressort
+    _max_items = 5  # for each ressort
     _track_url = 'https://track.nzz.ch/cam-1.0/api/auth_v3/public/{}/xhr'
     _login_url = 'https://login.nzz.at/cam-1.0/api/auth_v3/public/{}/xhr'
     _headers = {
@@ -39,7 +39,8 @@ class NzzAtSpider(FeedsSpider):
                 callback=self._login_global,
                 method='POST',
                 headers=self._headers,
-                body=json.dumps(self._login_data)
+                body=json.dumps(self._login_data),
+                meta={'dont_cache': True},
             )
         else:
             # Username, password or section nzz.at not found in feeds.cfg.
@@ -57,7 +58,8 @@ class NzzAtSpider(FeedsSpider):
             callback=self._login_local,
             method='POST',
             headers=self._headers,
-            body=json.dumps(self._login_data)
+            body=json.dumps(self._login_data),
+            meta={'dont_cache': True},
         )
 
     def _login_local(self, response):
@@ -73,16 +75,19 @@ class NzzAtSpider(FeedsSpider):
             callback=self._after_login,
             method='POST',
             headers=self._headers,
-            body=json.dumps(self._login_data)
+            body=json.dumps(self._login_data),
+            meta={'dont_cache': True},
         )
 
     def _after_login(self, response):
-        yield scrapy.Request('https://nzz.at', self._parse_menu)
+        yield scrapy.Request('https://nzz.at', self._parse_menu,
+                             meta={'dont_cache': True})
 
     def _parse_menu(self, response):
         for url in response.css(
                 '.c-menu--main .c-menu__link::attr(href)').extract():
-            yield scrapy.Request(url, self._parse_ressort)
+            yield scrapy.Request(url, self._parse_ressort,
+                                 meta={'dont_cache': True})
 
     def _parse_ressort(self, response):
         for url in response.css(

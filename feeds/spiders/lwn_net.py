@@ -75,9 +75,9 @@ class LwnNetSpider(FeedsXMLFeedSpider):
     }
 
     _subscribed = False
-    # Only scrape articles from the last 3 days.
+    # Only scrape articles from the last 2 days.
     # This should be enough since articles are cached by a feed reader anyway.
-    _num_days = 3
+    _num_days = 2
 
     def start_requests(self):
         username = self.spider_settings.get('username')
@@ -89,7 +89,8 @@ class LwnNetSpider(FeedsXMLFeedSpider):
                           'Password': password,
                           'target': '/MyAccount/',
                           'submit': 'Log+in'},
-                callback=self._after_login
+                callback=self._after_login,
+                meta={'dont_cache': True},
             )
         else:
             # Username, password or section not found in feeds.cfg.
@@ -110,7 +111,7 @@ class LwnNetSpider(FeedsXMLFeedSpider):
 
     def _start_requests(self):
         return scrapy.Request('https://{}/headlines/Features'.format(
-            self.name), self.parse)
+            self.name), self.parse, meta={'dont_cache': True})
 
     def parse_node(self, response, node):
         il = FeedEntryItemLoader(response=response,

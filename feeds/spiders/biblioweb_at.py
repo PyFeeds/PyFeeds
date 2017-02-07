@@ -19,7 +19,8 @@ class BibliowebAtSpider(FeedsSpider):
             self._link = 'http://www.biblioweb.at/{}/'.format(self._library)
             yield scrapy.Request(
                 'http://www.biblioweb.at/{}/start.asp'.format(self._library),
-                callback=self.parse)
+                callback=self.parse,
+                meta={'dont_cache': True})
         else:
             # Key location or section biblioweb.at not found in feeds.cfg.
             self.logger.error(
@@ -34,14 +35,16 @@ class BibliowebAtSpider(FeedsSpider):
         yield scrapy.Request(
             'http://www.biblioweb.at/webopac123/webopac.asp'
             '?kat=1&content=show_new&seit={}&order_by=Sachtitel'.format(
-                self._days), callback=self.parse_overview_page)
+                self._days), callback=self.parse_overview_page,
+            meta={'dont_cache': True})
 
     def parse_overview_page(self, response):
         # Find other pages
         for href in response.xpath(
                 '//div[@id="p_main"][1]/div/a/div[@id!="p_aktuell"]/../@href'):
             url = response.urljoin(href.extract())
-            yield scrapy.Request(url, self.parse_overview_page)
+            yield scrapy.Request(url, self.parse_overview_page,
+                                 meta={'dont_cache': True})
 
         # Find content
         for href in response.xpath('//a[contains(@href, "mnr")]/@href'):

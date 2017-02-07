@@ -12,6 +12,10 @@ class AtvAtSpider(FeedsSpider):
     name = 'atv.at'
     allowed_domains = ['atv.at']
     start_urls = ['http://atv.at/mediathek/neue-folgen/']
+    custom_settings = {
+        # The site is really shitty, don't overwhelm it with more requests.
+        'CONCURRENT_REQUESTS': 1,
+    }
 
     _title = 'ATV.at'
     _subtitle = 'Mediathek'
@@ -20,7 +24,8 @@ class AtvAtSpider(FeedsSpider):
 
     def parse(self, response):
         for link in response.css('.program_link').xpath('@href').extract():
-            yield scrapy.Request(link, self.parse_item)
+            yield scrapy.Request(link, self.parse_item,
+                                 meta={'dont_cache': True})
 
     def parse_item(self, response):
         for url in response.css('.video').xpath('../../@href').extract():

@@ -5,6 +5,8 @@ FEEDS_CONFIG = {}
 FEEDS_CFGFILE_MAPPING = {
     'USER_AGENT': 'useragent',
     'LOG_LEVEL': 'loglevel',
+    'HTTPCACHE_ENABLED': 'cache_enabled',
+    'HTTPCACHE_DIR': 'cache_dir',
 }
 FEEDS_CMDLINE_MAPPING = {
     'LOG_LEVEL': lambda cmdline: cmdline['loglevel'].upper(),
@@ -38,6 +40,11 @@ EXTENSIONS = {
 SPIDER_MIDDLEWARES = {
     'feeds.middlewares.FeedsHttpErrorMiddleware': 51,
 }
+
+HTTPCACHE_ENABLED = False
+HTTPCACHE_STORAGE = 'scrapy.extensions.httpcache.FilesystemCacheStorage'
+HTTPCACHE_POLICY = 'scrapy.extensions.httpcache.DummyPolicy'
+HTTPCACHE_DIR = 'cache'
 
 # Default user agent. Can be overriden in feeds.cfg.
 USER_AGENT = 'feeds (+https://github.com/nblock/feeds)'

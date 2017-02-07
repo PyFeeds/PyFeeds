@@ -22,7 +22,8 @@ class KonsumentAtSpider(FeedsSpider):
                 formcss='#login form',
                 formdata={'user': user,
                           'pwd': pwd},
-                callback=self._after_login
+                callback=self._after_login,
+                meta={'dont_cache': True},
             )
         else:
             # Username, password or section not found in feeds.cfg.

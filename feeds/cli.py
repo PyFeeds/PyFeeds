@@ -1,5 +1,6 @@
 import configparser
 import logging
+import os
 
 from scrapy.crawler import CrawlerProcess
 from scrapy.utils.project import get_project_settings
@@ -67,6 +68,7 @@ def cli(ctx, loglevel, config, pdb):
     ctx.obj['config'] = config
     if pdb:
         failure.startDebugMode()
+    os.chdir(os.path.dirname(os.path.realpath(__file__)))
 
 
 @cli.command()

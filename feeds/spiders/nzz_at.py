@@ -1,6 +1,4 @@
-from datetime import datetime
 import json
-import urllib.parse
 
 import scrapy
 
@@ -10,80 +8,107 @@ from feeds.spiders import FeedsSpider
 
 class NzzAtSpider(FeedsSpider):
     name = 'nzz.at'
-    allowed_domains = ['nzz.at']
-    start_urls = ['https://nzz.at/wp/wp-login.php']
+    allowed_domains = ['nzz.at', 'track.nzz.ch']
 
     _title = 'NZZ.at'
-    _subtitle = 'Hintergrund, Analyse, Kommentar'
     _link = 'https://nzz.at'
-    _timezone = 'GMT'
-    _excluded = []
-    _max_items = 20
-    _num_items = 0
+    _subtitle = 'Hintergrund, Analyse, Kommentar'
+    _timezone = 'Europe/Vienna'
+    _logo = 'https://nzz.at/wp-content/themes/flair/img/apple-touch-icon.png'
+    _icon = 'https://nzz.at/wp-content/themes/flair/favicon.ico'
 
-    def parse(self, response):
+    _max_items = 3  # for each ressort
+    _track_url = 'https://track.nzz.ch/cam-1.0/api/auth_v3/public/{}/xhr'
+    _login_url = 'https://login.nzz.at/cam-1.0/api/auth_v3/public/{}/xhr'
+    _headers = {
+        'Content-Type': 'application/json',
+        'X-Requested-With': 'XMLHttpRequest',
+    }
+
+    def start_requests(self):
         username = self.spider_settings.get('username')
         password = self.spider_settings.get('password')
         if username and password:
-            yield scrapy.FormRequest.from_response(
-                response,
-                formname='loginform',
-                formdata={'log': username,
-                          'pwd': password,
-                          'redirect_to': '/',
-                          'testcookie': '1'},
-                callback=self._after_login
+            self._login_data = {
+                'password': password,
+                'login': username,
+                'remember_me': False
+            }
+            yield scrapy.Request(
+                url=self._track_url.format('login_ticket'),
+                callback=self._login_global,
+                method='POST',
+                headers=self._headers,
+                body=json.dumps(self._login_data)
             )
         else:
             # Username, password or section nzz.at not found in feeds.cfg.
             self.logger.error('Login failed: No username or password given')
 
-    def _after_login(self, response):
-        if 'FEHLER' in response.body_as_unicode():
-            self.logger.error('Login failed: Username or password wrong')
-            return
-        url = response.css('.c-teaser--hero a').xpath('@href').extract_first()
-        return scrapy.Request(url, callback=self._parse_ajax_url)
-
-    def _parse_ajax_url(self, response):
-        self.ajax_url = (
-            response.selector.re('"ajaxurl":"([^"]+)"')[0].replace('\\', '')
+    def _login_global(self, response):
+        login_ticket = json.loads(response.text)['data']['login_ticket']
+        self._login_data.update({
+            'login_ticket': login_ticket,
+            'service': 'nzzat',
+            'service_id': 'nzzat',
+        })
+        yield scrapy.Request(
+            url=self._track_url.format('login'),
+            callback=self._login_local,
+            method='POST',
+            headers=self._headers,
+            body=json.dumps(self._login_data)
         )
-        yield scrapy.Request(self._next_url(), self.parse_item)
 
-    def _next_url(self):
-        params = [
-            ('order', 'DESC'),
-            ('orderby', 'date'),
-            ('post_type', 'phenomenon'),
-            ('date', str(datetime.utcnow().replace(microsecond=0))),
-        ]
-        for exclude in self._excluded:
-            params.append(('excluded[]', exclude))
-        params.append(('action', 'endless_scroll_phenomenon'))
-        return self.ajax_url + '&' + urllib.parse.urlencode(params)
+    def _login_local(self, response):
+        service_ticket = json.loads(response.text)['service_ticket']
+        self._login_data = {
+            'service_ticket': service_ticket,
+            'service': 'nzzat',
+            'service_id': 'nzzat',
+            'remember_me': False,
+        }
+        yield scrapy.Request(
+            url=self._login_url.format('servicesession'),
+            callback=self._after_login,
+            method='POST',
+            headers=self._headers,
+            body=json.dumps(self._login_data)
+        )
 
-    def parse_item(self, response):
+    def _after_login(self, response):
+        yield scrapy.Request('https://nzz.at', self._parse_menu)
+
+    def _parse_menu(self, response):
+        for url in response.css(
+                '.c-menu--main .c-menu__link::attr(href)').extract():
+            yield scrapy.Request(url, self._parse_ressort)
+
+    def _parse_ressort(self, response):
+        for url in response.css(
+                '.teaser__text .teaser__wrapper::attr(href)').extract()[
+                    :self._max_items]:
+            yield scrapy.Request(url, self._parse_article)
+
+    def _parse_article(self, response):
         il = FeedEntryItemLoader(response=response,
                                  timezone=self._timezone,
-                                 base_url='http://{}'.format(self.name),
-                                 convert_footnotes=['.c-footnote__content'])
-        article = json.loads(response.body_as_unicode())['data']
-        il.add_value('link', article['shorturl'])
-        il.add_value('title', article['overline'])
-        il.add_value('title', article['post']['post_title'])
-        il.add_value('content_html', article['reading_time'])
-        il.add_value('content_html', '<hr>')
-        il.add_value('content_html', article['post']['post_content'])
-        il.add_value('author_name', article['author']['name'])
-        il.add_value('updated', article['post']['post_modified_gmt'])
-        if article['channel']:
-            il.add_value('category', article['channel'])
-        self._excluded.append(article['post']['ID'])
-        self._num_items += 1
+                                 base_url='https://{}'.format(self.name))
+        il.add_css('link', '.c-input--share::attr(value)')
+        il.add_css('author_name', '.hero--inner-meta__author::text',
+                   re='von (.*)')
+        il.add_css('title', '.hero--inner-meta__header::text')
+        il.add_css('title', 'h1::text')
+        il.add_css('updated', '.hero--inner-meta__date::text')
+        il.add_value('content_html', '<img src="{}">'.format(
+            response.xpath('//meta[@itemprop="image"]/@content').
+            extract_first())
+        )
+        il.add_css('content_html', '.o-post')
+        for category in response.css(
+                '.o-path-inner ul li a::text').extract()[1:]:
+            il.add_value('category', category)
+        il.add_css('category', '.hero--inner-meta__term::text')
         yield il.load_item()
-
-        if self._num_items < self._max_items:
-            yield scrapy.Request(self._next_url(), self.parse_item)
 
 # vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4 smartindent autoindent

@@ -11,6 +11,7 @@ from scrapy.loader.processors import MapCompose
 from scrapy.loader.processors import TakeFirst
 from w3lib.html import remove_tags
 import delorean
+import dateparser
 import lxml
 
 from feeds.items import FeedItem
@@ -20,11 +21,16 @@ from feeds.items import FeedEntryItem
 def parse_datetime(text, loader_context):
     if not isinstance(text, str):
         return text
-    return delorean.parse(
-        text.strip(),
-        timezone=loader_context.get('timezone', 'UTC'),
-        dayfirst=loader_context.get('dayfirst', False),
-        yearfirst=loader_context.get('yearfirst', True)).shift('UTC')
+    try:
+        return delorean.parse(
+            text.strip(),
+            timezone=loader_context.get('timezone', 'UTC'),
+            dayfirst=loader_context.get('dayfirst', False),
+            yearfirst=loader_context.get('yearfirst', True)).shift('UTC')
+    except ValueError:
+        return delorean.Delorean(
+            dateparser.parse(text),
+            timezone=loader_context.get('timezone', 'UTC'))
 
 
 def build_tree(text, loader_context):

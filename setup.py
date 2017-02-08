@@ -8,6 +8,7 @@ setup(
     install_requires=[
         'bleach>=1.4.3',
         'Click>=6.6',
+        'dateparser>=0.5.1',
         'Delorean>=0.6.0',
         'Scrapy>=1.1',
         'lxml>=3.5.0',

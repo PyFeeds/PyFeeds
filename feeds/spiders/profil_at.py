@@ -1,4 +1,3 @@
-from datetime import datetime
 from datetime import timedelta
 
 import delorean
@@ -15,21 +14,38 @@ class ProfilAtSpider(FeedsSpider):
     _title = 'PROFIL'
     _subtitle = 'Österreichs unabhängiges Nachrichtenmagazin'
     _timezone = 'Europe/Vienna'
+    # Parse articles from the last 3 days that have content.
     _max_days = 3
+    # Don't try more than 14 days for content.
+    _max_days_limit = 14
+
+    def build_request(self, day, max_days, max_days_limit):
+        return scrapy.Request(
+            'https://www.{}/archiv/{}'.format(
+                self.name,
+                day.shift(self._timezone).format_datetime('Y/M/d')),
+            self.parse_archive_page,
+            meta={'handle_httpstatus_list': [404],
+                  'day': day,
+                  'max_days': max_days,
+                  'max_days_limit': max_days_limit})
 
     def start_requests(self):
-        start = datetime.utcnow() - timedelta(days=self._max_days - 1)
-        for day in delorean.range_daily(start=start, count=self._max_days,
-                                        timezone='UTC'):
-            yield scrapy.Request(
-                'http://{}/archiv/{}'.format(
-                    self.name,
-                    day.shift(self._timezone).format_datetime('Y/M/d')),
-                self.parse_archive_page)
+        yield self.build_request(delorean.utcnow(), self._max_days,
+                                 self._max_days_limit)
 
     def parse_archive_page(self, response):
-        for link in response.xpath('//h1/a/@href').extract():
-            yield scrapy.Request(response.urljoin(link), self.parse_item)
+        day = response.meta['day'] - timedelta(days=1)
+        max_days_limit = response.meta['max_days_limit'] - 1
+        max_days = response.meta['max_days']
+
+        if response.status == 200:
+            for link in response.xpath('//h1/a/@href').extract():
+                yield scrapy.Request(response.urljoin(link), self.parse_item)
+            max_days -= 1
+
+        if max_days > 0 and max_days_limit > 0:
+            yield self.build_request(day, max_days, max_days_limit)
 
     def parse_item(self, response):
         remove_elems = [

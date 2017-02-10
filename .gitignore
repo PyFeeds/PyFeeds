@@ -17,3 +17,6 @@ venv/
 
 # custom config
 feeds.cfg
+
+# pyenv
+.python-version

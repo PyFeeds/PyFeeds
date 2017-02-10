@@ -45,6 +45,7 @@ HTTPCACHE_ENABLED = False
 HTTPCACHE_STORAGE = 'scrapy.extensions.httpcache.FilesystemCacheStorage'
 HTTPCACHE_POLICY = 'scrapy.extensions.httpcache.DummyPolicy'
 HTTPCACHE_DIR = 'cache'
+HTTPCACHE_IGNORE_HTTP_CODES = [404, 500, 502, 503, 504]
 
 # Default user agent. Can be overriden in feeds.cfg.
 USER_AGENT = 'feeds (+https://github.com/nblock/feeds)'

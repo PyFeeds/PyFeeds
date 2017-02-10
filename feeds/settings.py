@@ -2,19 +2,6 @@ import logging
 
 # Feeds configuration populated by an optional feeds configuration file.
 FEEDS_CONFIG = {}
-FEEDS_CFGFILE_MAPPING = {
-    'USER_AGENT': 'useragent',
-    'LOG_LEVEL': 'loglevel',
-    'HTTPCACHE_ENABLED': 'cache_enabled',
-    'HTTPCACHE_DIR': 'cache_dir',
-}
-FEEDS_CMDLINE_MAPPING = {
-    'LOG_LEVEL': lambda cmdline: cmdline['loglevel'].upper(),
-    'STATS_CLASS': lambda cmdline: (
-        'scrapy.statscollectors.MemoryStatsCollector' if cmdline['stats'] else
-        'scrapy.statscollectors.DummyStatsCollector'
-    ),
-}
 
 # Low level settings intended for scrapy.
 # Please use feeds.cfg to configure feeds.

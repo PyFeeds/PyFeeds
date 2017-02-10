@@ -9,8 +9,15 @@ import click
 
 logger = logging.getLogger(__name__)
 
+FEEDS_CFGFILE_MAPPING = {
+    'USER_AGENT': 'useragent',
+    'LOG_LEVEL': 'loglevel',
+    'HTTPCACHE_ENABLED': 'cache_enabled',
+    'HTTPCACHE_DIR': 'cache_dir',
+}
 
-def load_feeds_config(cmdline, file_=None):
+
+def get_feeds_settings(file_=None):
     if file_:
         logger.debug('Parsing configuration file {} ...'.format(file_.name))
         # Parse configuration file and store result under FEEDS_CONFIG of
@@ -18,20 +25,17 @@ def load_feeds_config(cmdline, file_=None):
         parser = configparser.ConfigParser()
         parser.read_file(file_)
         config = {s: dict(parser.items(s)) for s in parser.sections()}
-        import feeds.settings
-        feeds.settings.FEEDS_CONFIG = config
+    else:
+        config = {}
 
     settings = get_project_settings()
-    feeds_settings = settings.get('FEEDS_CONFIG').get('feeds', {})
+    settings.set('FEEDS_CONFIG', config)
 
     # Mapping of feeds config section to setting names.
-    for settings_key, config_key in (
-            settings.get('FEEDS_CFGFILE_MAPPING', {}).items()):
-        settings.set(settings_key, feeds_settings.get(config_key))
-
-    for settings_key, value_from_cmdline in (
-            settings.get('FEEDS_CMDLINE_MAPPING', {}).items()):
-        settings.set(settings_key, value_from_cmdline(cmdline))
+    for settings_key, config_key in FEEDS_CFGFILE_MAPPING.items():
+        config_value = config.get('feeds', {}).get(config_key)
+        if config_value:
+            settings.set(settings_key, config_value)
 
     return settings
 
@@ -64,11 +68,13 @@ def cli(ctx, loglevel, config, pdb):
     """
     feeds creates feeds for pages that don't have feeds.
     """
-    ctx.obj['loglevel'] = loglevel
-    ctx.obj['config'] = config
     if pdb:
         failure.startDebugMode()
     os.chdir(os.path.dirname(os.path.realpath(__file__)))
+
+    settings = get_feeds_settings(config)
+    settings.set('LOG_LEVEL', loglevel.upper())
+    ctx.obj['settings'] = settings
 
 
 @cli.command()
@@ -90,14 +96,13 @@ def crawl(ctx, spiders, stats):
     configuration file are ignored. All available spiders will be used to
     crawl if no arguments are given and no spiders are configured.
     """
-    # Start a new crawler process.
-    cmdline = {
-        'loglevel': ctx.obj['loglevel'],
-        'stats': stats,
-    }
-    settings = load_feeds_config(cmdline, ctx.obj['config'])
-    process = CrawlerProcess(settings)
+    settings = ctx.obj['settings']
+    if stats:
+        settings.set('STATS_CLASS',
+                     'scrapy.statscollectors.MemoryStatsCollector')
 
+    # Start a new crawler process.
+    process = CrawlerProcess(settings)
     spiders = spiders_to_crawl(process, spiders)
     if not spiders:
         logger.error('Please specify what spiders you want to run!')

@@ -13,7 +13,13 @@ class FeedsHttpErrorMiddleware:
 
     def process_spider_exception(self, response, exception, spider):
         if isinstance(exception, HttpError):
-            logger.warning(
+            if response.status in [500, 502, 503, 504]:
+                # These status codes are usually induced by overloaded sites,
+                # updates, short downtimes, etc. and are not that relevant.
+                lgr = logger.info
+            else:
+                lgr = logger.warning
+            lgr(
                 "Ignoring response %(response)r: HTTP status code is not "
                 "handled or not allowed",
                 {'response': response}, extra={'spider': spider},

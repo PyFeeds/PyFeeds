@@ -1,11 +1,16 @@
+from datetime import datetime
+from datetime import timedelta
 import configparser
 import logging
 import os
 
 from scrapy.crawler import CrawlerProcess
 from scrapy.utils.project import get_project_settings
+from scrapy.utils.project import data_path
 from twisted.python import failure
 import click
+
+from feeds.cache import cleanup_cache
 
 logger = logging.getLogger(__name__)
 
@@ -122,6 +127,23 @@ def list():
     process = CrawlerProcess(settings)
     for s in sorted(process.spider_loader.list()):
         print(s)
+
+
+@cli.command()
+@click.pass_context
+def cleanup(ctx):
+    """Cleanup old cache entries."""
+    settings = ctx.obj['settings']
+
+    if not settings.getbool('HTTPCACHE_ENABLED'):
+        print('Cache is disabled, will not clean up cache dir.')
+        return 1
+
+    days = int(settings.get('FEEDS_CONFIG', {}).
+               get('feeds', {}).
+               get('cache_expires', 14))
+    cleanup_cache(data_path(settings['HTTPCACHE_DIR']),
+                  datetime.now() - timedelta(days=days))
 
 
 def main():

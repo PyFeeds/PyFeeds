@@ -23,6 +23,14 @@ FEEDS_CFGFILE_MAPPING = {
 }
 
 
+def run_cleanup_cache(settings):
+    days = int(settings.get('FEEDS_CONFIG', {}).
+               get('feeds', {}).
+               get('cache_expires', 14))
+    cleanup_cache(data_path(settings['HTTPCACHE_DIR']),
+                  datetime.now() - timedelta(days=days))
+
+
 def get_feeds_settings(file_=None):
     if file_:
         logger.debug('Parsing configuration file {} ...'.format(file_.name))
@@ -119,6 +127,9 @@ def crawl(ctx, spiders, stats):
 
     process.start()
 
+    if settings.getbool('HTTPCACHE_ENABLED'):
+        run_cleanup_cache(settings)
+
 
 @cli.command()
 def list():
@@ -148,11 +159,7 @@ def cleanup(ctx):
         logger.error('Cache is disabled, will not clean up cache dir.')
         return 1
 
-    days = int(settings.get('FEEDS_CONFIG', {}).
-               get('feeds', {}).
-               get('cache_expires', 14))
-    cleanup_cache(data_path(settings['HTTPCACHE_DIR']),
-                  datetime.now() - timedelta(days=days))
+    run_cleanup_cache(settings)
 
 
 def main():

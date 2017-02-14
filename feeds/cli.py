@@ -5,6 +5,7 @@ import logging
 import os
 
 from scrapy.crawler import CrawlerProcess
+from scrapy.utils.log import configure_logging
 from scrapy.utils.project import get_project_settings
 from scrapy.utils.project import data_path
 from twisted.python import failure
@@ -139,9 +140,12 @@ def cleanup(ctx):
     overriden in the config file.
     """
     settings = ctx.obj['settings']
+    # Manually configure logging since we don't have a CrawlerProcess which
+    # would take care of that.
+    configure_logging(settings)
 
     if not settings.getbool('HTTPCACHE_ENABLED'):
-        print('Cache is disabled, will not clean up cache dir.')
+        logger.error('Cache is disabled, will not clean up cache dir.')
         return 1
 
     days = int(settings.get('FEEDS_CONFIG', {}).

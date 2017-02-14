@@ -99,6 +99,19 @@ Quickstart
 * Run ``feeds --help`` or ``feeds <subcommand> --help`` for help and usage
   details.
 
+Caching
+-------
+
+Feeds can be configured to use a cache for HTTP responses which is highly
+recommended to save bandwidth. It can be enabled in the config file. See
+feeds.cfg.dist for an example on how to do that.
+
+Entries are cached for 14 days by default (this can be overwritten in the
+config file). Entries are purged from cache automatically after a crawl. It's
+also possible to explicitly invalidate the cache::
+
+  $ feeds --config feeds.cfg cleanup
+
 Related work
 ------------
 

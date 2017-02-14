@@ -132,7 +132,12 @@ def list():
 @cli.command()
 @click.pass_context
 def cleanup(ctx):
-    """Cleanup old cache entries."""
+    """
+    Cleanup old cache entries.
+
+    By default, entries older than 14 days will be removed. This value can be
+    overriden in the config file.
+    """
     settings = ctx.obj['settings']
 
     if not settings.getbool('HTTPCACHE_ENABLED'):

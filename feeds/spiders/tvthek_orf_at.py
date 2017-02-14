@@ -30,13 +30,15 @@ class TvthekOrfAtSpider(FeedsSpider):
         for day in [today, today - timedelta(days=1)]:
             yield Request(
                 'https://api-tvthek.orf.at/api/v3/schedule/{}?limit=1000'.
-                format(day.format_datetime('Y-MM-dd')))
+                format(day.format_datetime('Y-MM-dd')),
+                meta={'dont_cache': True})
 
     def parse(self, response):
         json_response = json.loads(response.text)
 
         if 'next' in json_response['_links']:
-            yield Request(json_response['_links']['nextPage'])
+            yield Request(json_response['_links']['nextPage'],
+                          meta={'dont_cache': True})
 
         for item in json_response['_embedded']['items']:
             il = FeedEntryItemLoader(response=response,

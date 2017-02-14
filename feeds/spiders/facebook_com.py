@@ -37,7 +37,7 @@ class FacebookComSpider(FeedsSpider):
                         'id', 'link', 'name', 'message', 'picture',
                         'status_type', 'type', 'created_time']) + '}'
                 ]))
-            yield Request(url, meta={'page_id': page_id})
+            yield Request(url, meta={'page_id': page_id, 'dont_cache': True})
 
     def parse(self, response):
         page = json.loads(response.text)

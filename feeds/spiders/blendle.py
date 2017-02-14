@@ -1,6 +1,5 @@
 from base64 import b64decode
 import json
-import uuid
 
 import scrapy
 
@@ -44,6 +43,7 @@ class BlendleSession:
             meta={
                 'handle_httpstatus_all': True,
                 'callback': callback,
+                'dont_cache': True,
             },
             dont_filter=True,
         )
@@ -56,6 +56,7 @@ class BlendleSession:
 
         response.meta['blendle_callback_url'] = callback_url
         response.meta['callback'] = callback
+        response.meta['dont_cache'] = True
         return scrapy.Request(
             url='https://pay.blendle.com/api/provider/{}/items'.format(
                 self._provider),
@@ -119,9 +120,9 @@ class BlendleSession:
     def _parse_user_item(self, response):
         # Now we have the token for the article and make the final request.
         pwb_token = response.body.decode('utf-8')
+        response.meta['dont_cache'] = False
         return scrapy.Request(
-            url=response.meta['blendle_callback_url'].format(
-                cache_bust=uuid.uuid4()),
+            url=response.meta['blendle_callback_url'].format(cache_bust=0),
             headers={'X-Pwb-Token': pwb_token},
             callback=response.meta['callback'],
             meta=response.meta,

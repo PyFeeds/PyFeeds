@@ -2,17 +2,6 @@ import logging
 
 # Feeds configuration populated by an optional feeds configuration file.
 FEEDS_CONFIG = {}
-FEEDS_CFGFILE_MAPPING = {
-    'USER_AGENT': 'useragent',
-    'LOG_LEVEL': 'loglevel',
-}
-FEEDS_CMDLINE_MAPPING = {
-    'LOG_LEVEL': lambda cmdline: cmdline['loglevel'].upper(),
-    'STATS_CLASS': lambda cmdline: (
-        'scrapy.statscollectors.MemoryStatsCollector' if cmdline['stats'] else
-        'scrapy.statscollectors.DummyStatsCollector'
-    ),
-}
 
 # Low level settings intended for scrapy.
 # Please use feeds.cfg to configure feeds.
@@ -38,6 +27,12 @@ EXTENSIONS = {
 SPIDER_MIDDLEWARES = {
     'feeds.middlewares.FeedsHttpErrorMiddleware': 51,
 }
+
+HTTPCACHE_ENABLED = False
+HTTPCACHE_STORAGE = 'scrapy.extensions.httpcache.FilesystemCacheStorage'
+HTTPCACHE_POLICY = 'scrapy.extensions.httpcache.DummyPolicy'
+HTTPCACHE_DIR = 'cache'
+HTTPCACHE_IGNORE_HTTP_CODES = [404, 500, 502, 503, 504]
 
 # Default user agent. Can be overriden in feeds.cfg.
 USER_AGENT = 'feeds (+https://github.com/nblock/feeds)'

@@ -17,6 +17,15 @@ useragent = feeds (+https://github.com/nblock/feeds)
 ## See also: https://validator.w3.org/feed/docs/warning/MissingSelf.html
 # output_url = https://example.com/feeds
 
+## Enable caching of responses
+# cache_enabled = 0
+## Path to the cache.
+# cache_dir = .cache
+## Expire (remove) entries from cache after 14 days
+## Note: The command "cleanup" has to be called manually to remove old cache
+## entries.
+# cache_expires = 14
+
 #[nzz.at]
 ## NZZ.at is a paywalled site.
 ## If you want to crawl it, please provide username and password.

@@ -1,16 +1,37 @@
+from datetime import datetime
+from datetime import timedelta
 import configparser
 import logging
 import os
 
 from scrapy.crawler import CrawlerProcess
+from scrapy.utils.log import configure_logging
 from scrapy.utils.project import get_project_settings
+from scrapy.utils.project import data_path
 from twisted.python import failure
 import click
 
+from feeds.cache import cleanup_cache
+
 logger = logging.getLogger(__name__)
 
+FEEDS_CFGFILE_MAPPING = {
+    'USER_AGENT': 'useragent',
+    'LOG_LEVEL': 'loglevel',
+    'HTTPCACHE_ENABLED': 'cache_enabled',
+    'HTTPCACHE_DIR': 'cache_dir',
+}
 
-def load_feeds_config(cmdline, file_=None):
+
+def run_cleanup_cache(settings):
+    days = int(settings.get('FEEDS_CONFIG', {}).
+               get('feeds', {}).
+               get('cache_expires', 14))
+    cleanup_cache(data_path(settings['HTTPCACHE_DIR']),
+                  datetime.now() - timedelta(days=days))
+
+
+def get_feeds_settings(file_=None):
     if file_:
         logger.debug('Parsing configuration file {} ...'.format(file_.name))
         # Parse configuration file and store result under FEEDS_CONFIG of
@@ -18,20 +39,17 @@ def load_feeds_config(cmdline, file_=None):
         parser = configparser.ConfigParser()
         parser.read_file(file_)
         config = {s: dict(parser.items(s)) for s in parser.sections()}
-        import feeds.settings
-        feeds.settings.FEEDS_CONFIG = config
+    else:
+        config = {}
 
     settings = get_project_settings()
-    feeds_settings = settings.get('FEEDS_CONFIG').get('feeds', {})
+    settings.set('FEEDS_CONFIG', config)
 
     # Mapping of feeds config section to setting names.
-    for settings_key, config_key in (
-            settings.get('FEEDS_CFGFILE_MAPPING', {}).items()):
-        settings.set(settings_key, feeds_settings.get(config_key))
-
-    for settings_key, value_from_cmdline in (
-            settings.get('FEEDS_CMDLINE_MAPPING', {}).items()):
-        settings.set(settings_key, value_from_cmdline(cmdline))
+    for settings_key, config_key in FEEDS_CFGFILE_MAPPING.items():
+        config_value = config.get('feeds', {}).get(config_key)
+        if config_value:
+            settings.set(settings_key, config_value)
 
     return settings
 
@@ -64,11 +82,13 @@ def cli(ctx, loglevel, config, pdb):
     """
     feeds creates feeds for pages that don't have feeds.
     """
-    ctx.obj['loglevel'] = loglevel
-    ctx.obj['config'] = config
     if pdb:
         failure.startDebugMode()
-    os.chdir(os.path.dirname(os.path.realpath(__file__)))
+    os.chdir(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
+
+    settings = get_feeds_settings(config)
+    settings.set('LOG_LEVEL', loglevel.upper())
+    ctx.obj['settings'] = settings
 
 
 @cli.command()
@@ -90,14 +110,13 @@ def crawl(ctx, spiders, stats):
     configuration file are ignored. All available spiders will be used to
     crawl if no arguments are given and no spiders are configured.
     """
-    # Start a new crawler process.
-    cmdline = {
-        'loglevel': ctx.obj['loglevel'],
-        'stats': stats,
-    }
-    settings = load_feeds_config(cmdline, ctx.obj['config'])
-    process = CrawlerProcess(settings)
+    settings = ctx.obj['settings']
+    if stats:
+        settings.set('STATS_CLASS',
+                     'scrapy.statscollectors.MemoryStatsCollector')
 
+    # Start a new crawler process.
+    process = CrawlerProcess(settings)
     spiders = spiders_to_crawl(process, spiders)
     if not spiders:
         logger.error('Please specify what spiders you want to run!')
@@ -108,6 +127,9 @@ def crawl(ctx, spiders, stats):
 
     process.start()
 
+    if settings.getbool('HTTPCACHE_ENABLED'):
+        run_cleanup_cache(settings)
+
 
 @cli.command()
 def list():
@@ -117,6 +139,27 @@ def list():
     process = CrawlerProcess(settings)
     for s in sorted(process.spider_loader.list()):
         print(s)
+
+
+@cli.command()
+@click.pass_context
+def cleanup(ctx):
+    """
+    Cleanup old cache entries.
+
+    By default, entries older than 14 days will be removed. This value can be
+    overriden in the config file.
+    """
+    settings = ctx.obj['settings']
+    # Manually configure logging since we don't have a CrawlerProcess which
+    # would take care of that.
+    configure_logging(settings)
+
+    if not settings.getbool('HTTPCACHE_ENABLED'):
+        logger.error('Cache is disabled, will not clean up cache dir.')
+        return 1
+
+    run_cleanup_cache(settings)
 
 
 def main():

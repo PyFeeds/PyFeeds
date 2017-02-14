@@ -41,6 +41,7 @@ Feeds is currently able to create Atom feeds for the following sites:
 * `ORF Ö1 <http://oe1.orf.at>`_: Newest episodes of radio shows
 * `ORF TVthek <http://tvthek.orf.at>`_: Newest episodes of TV shows
 * `profil <http://www.profil.at>`_: Newest articles
+* `puls4.com <http://www.puls4.com>`_: Newest episodes of TV shows
 * `Übermedien <http://www.uebermedien.de>`_: Newest articles
 * `Verbraucherrecht <https://verbraucherrecht.at>`_: Newest articles
 * `VICE <https://www.vice.com>`_: Newest articles
@@ -97,6 +98,19 @@ Quickstart
   works best when run periodically in a cron job.
 * Run ``feeds --help`` or ``feeds <subcommand> --help`` for help and usage
   details.
+
+Caching
+-------
+
+Feeds can be configured to use a cache for HTTP responses which is highly
+recommended to save bandwidth. It can be enabled in the config file. See
+feeds.cfg.dist for an example on how to do that.
+
+Entries are cached for 14 days by default (this can be overwritten in the
+config file). Entries are purged from cache automatically after a crawl. It's
+also possible to explicitly invalidate the cache::
+
+  $ feeds --config feeds.cfg cleanup
 
 Related work
 ------------

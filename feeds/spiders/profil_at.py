@@ -28,7 +28,8 @@ class ProfilAtSpider(FeedsSpider):
             meta={'handle_httpstatus_list': [404],
                   'day': day,
                   'max_days': max_days,
-                  'max_days_limit': max_days_limit})
+                  'max_days_limit': max_days_limit,
+                  'dont_cache': True})
 
     def start_requests(self):
         yield self.build_request(delorean.utcnow(), self._max_days,

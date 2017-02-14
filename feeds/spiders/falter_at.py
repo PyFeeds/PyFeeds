@@ -26,14 +26,15 @@ class FalterAtSpider(FeedsSpider):
                 formdata={'login[abonr]': abonr,
                           'login[password]': password,
                           'redirect_url': '/archiv/'},
-                callback=self.parse_archive
+                callback=self.parse_archive,
+                meta={'dont_cache': True},
             )
         else:
             # Username, password or section falter.at not found in feeds.cfg.
             self.logger.info('Login failed: No username or password given. '
                              'Only free articles are available in full text.')
             yield scrapy.Request('https://www.{}/archiv/'.format(
-                self.name), self.parse_archive)
+                self.name), self.parse_archive, meta={'dont_cache': True})
 
     def parse_archive(self, response):
         # The perks of having a JavaScript frontend ...

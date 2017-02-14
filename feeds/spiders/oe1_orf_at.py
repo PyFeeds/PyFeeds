@@ -22,7 +22,7 @@ class Oe1OrfAtSpider(FeedsSpider):
         for day in json.loads(response.body_as_unicode())['nav'][-3:-1]:
             self.logger.debug('day: {}'.format(day))
             yield scrapy.Request('http://{}{}'.format(self.name, day['url']),
-                                 self.parse_item)
+                                 self.parse_item, meta={'dont_cache': True})
 
         yield from self.parse_item(response)
 

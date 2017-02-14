@@ -75,7 +75,7 @@ def cli(ctx, loglevel, config, pdb):
     """
     if pdb:
         failure.startDebugMode()
-    os.chdir(os.path.dirname(os.path.realpath(__file__)))
+    os.chdir(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
 
     settings = get_feeds_settings(config)
     settings.set('LOG_LEVEL', loglevel.upper())

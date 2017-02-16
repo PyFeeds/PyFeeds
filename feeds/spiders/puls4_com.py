@@ -51,7 +51,7 @@ class Pusl4ComSpider(FeedsSpider):
                                  dayfirst=True)
         il.add_value('link', response.url)
         il.add_xpath('title', '//meta[@name="title"]/@content',
-                     re='(.*)(?: vom.*)')
+                     re='(.*?)(?: vom .*)? - puls4\.com')
         il.add_value('updated', '{} {}'.format(
             response.xpath('//meta[@name="title"]/@content').
             re_first(r'.*vom (\d{2}\.\d{2}\.\d{4}).*'),

@@ -27,7 +27,11 @@ class VerbraucherrechtAtSpider(FeedsSpider):
             response=response,
             base_url='{}/cms/'.format(self._link),
             timezone=self._timezone,
-            remove_elems=['font'])
+            remove_elems=['.news-latest-date', '.news-single-rightbox', 'hr',
+                          'h7'],
+            remove_elems_xpath=['//div[@class="news-single-item"]/b[1]',
+                                '//div[@class="news-single-item"]/br[1]'],
+        )
 
         il.add_value(
             'title',
@@ -49,10 +53,9 @@ class VerbraucherrechtAtSpider(FeedsSpider):
 
         il.add_xpath('author_email', '//head/meta[@name="reply-to"]/@content')
 
-        il.add_xpath('content_html', '//div[@class="news-single-item"]/h7')
-        il.add_xpath('content_html', '//div[@class="news-single-item"]/p')
-        il.add_xpath(
-            'content_html', '//div[@class="news-single-additional-info"]')
+        il.add_css('content_html', '.news-single-item h7 font strong')
+        il.add_css('content_html', '.news-single-item')
+
         yield il.load_item()
 
 # vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4 smartindent autoindent

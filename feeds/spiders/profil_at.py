@@ -41,7 +41,7 @@ class ProfilAtSpider(FeedsSpider):
         max_days = response.meta['max_days']
 
         if response.status == 200:
-            for link in response.xpath('//h1/a/@href').extract():
+            for link in response.css('h1 a::attr(href)').extract():
                 yield scrapy.Request(response.urljoin(link), self.parse_item)
             max_days -= 1
 
@@ -59,18 +59,14 @@ class ProfilAtSpider(FeedsSpider):
                                  base_url='http://{}'.format(self.name),
                                  remove_elems=remove_elems)
         il.add_value('link', response.url)
-        il.add_xpath('author_name', '//a[@rel="author"]/text()')
-        il.add_xpath(
-            'author_name', 'substring-before(substring-after('
-            '(//section[@class="author-date"]/text())[1]'
-            ', "Von"), "(")')
-        il.add_value('author_name', 'Red.')
-        il.add_xpath('title', '//h1/text()')
-        il.add_xpath(
-            'updated', 'substring-before('
-            '//meta[@property="article:published_time"]/@content'
-            ', "+")')
-        il.add_xpath('content_html', '//article')
+        author_name = (response.css('.author-date ::text').
+                       re(r'(?:Von)?\s*(\w+ \w+)') or 'Red.')
+        il.add_value('author_name', author_name)
+        il.add_css('title', 'h1[itemprop="headline"]::text')
+        il.add_css('updated',
+                   'meta[property="article:published_time"]::attr(content)',
+                   re='([^+]*)')
+        il.add_css('content_html', 'article')
         yield il.load_item()
 
 # vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4 smartindent autoindent

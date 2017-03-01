@@ -52,7 +52,8 @@ class ProfilAtSpider(FeedsSpider):
         remove_elems = [
             'aside', 'script', 'h1', '.breadcrumbs', '.author-date',
             '.artikel-social-kommentar', '.bild-copyright',
-            '.ressortTitleMobile', '.article-number', '.artikel-kommentarlink'
+            '.ressortTitleMobile', '.article-number',
+            '.artikel-kommentarlink', '.umfrage-wrapper',
         ]
         il = FeedEntryItemLoader(response=response,
                                  timezone=self._timezone,

@@ -22,8 +22,6 @@ useragent = feeds (+https://github.com/nblock/feeds)
 ## Path to the cache.
 # cache_dir = .cache
 ## Expire (remove) entries from cache after 14 days
-## Note: The command "cleanup" has to be called manually to remove old cache
-## entries.
 # cache_expires = 14
 
 #[nzz.at]

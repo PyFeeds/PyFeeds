@@ -23,9 +23,12 @@ class AtvAtSpider(FeedsSpider):
     _timerange = datetime.timedelta(days=7)
 
     def parse(self, response):
-        for link in response.css('.program_link').xpath('@href').extract():
+        for link in response.css('.program_link::attr(href)').extract():
             yield scrapy.Request(link, self.parse_item,
                                  meta={'dont_cache': True})
+
+        for url in response.css('.topteaser_wrapper::attr(href)').extract():
+            yield scrapy.Request(url, self.parse_program)
 
     def parse_item(self, response):
         for url in response.css('.video').xpath('../../@href').extract():

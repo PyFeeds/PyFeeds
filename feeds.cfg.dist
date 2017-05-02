@@ -24,12 +24,6 @@ useragent = feeds (+https://github.com/nblock/feeds)
 ## Expire (remove) entries from cache after 14 days
 # cache_expires = 14
 
-#[nzz.at]
-## NZZ.at is a paywalled site.
-## If you want to crawl it, please provide username and password.
-# username =
-# password =
-
 #[falter.at]
 ## falter.at has a paywall for certain articles.
 ## If you want to crawl paid articles, please provide abonr (subscription
@@ -73,5 +67,5 @@ useragent = feeds (+https://github.com/nblock/feeds)
 
 #[vice.com]
 #locales =
-#    alps
+#    de_at
 #    de

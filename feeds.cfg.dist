@@ -73,5 +73,5 @@ useragent = feeds (+https://github.com/nblock/feeds)
 
 #[vice.com]
 #locales =
-#    alps
+#    de_at
 #    de

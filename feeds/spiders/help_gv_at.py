@@ -77,7 +77,7 @@ class HelpGvAtSpider(FeedsSpider):
             'author_name',
             '//div[@class="acceptance_org"]/text()[preceding-sibling::br]',
         )
-        il.add_xpath('title', '//meta[@name="og:title"]/@content')
+        il.add_css('title', 'title::text', re=r'HELP.gv.at:\s*(.*)')
         il.add_value('updated',
                      response.css('.state').re_first(r'(\d{2}\.\d{2}\.\d{4})'))
         il.add_css('content_html', '.Content')

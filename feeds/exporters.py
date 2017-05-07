@@ -168,17 +168,22 @@ class AtomExporter(BaseItemExporter):
 
     def finish_exporting(self):
         for path, feed in self._feeds.items():
-            if len(feed) == 0:
-                self._logger.warning('Feed {} contains no items!'.format(path))
-            feed.insert_updated()
-            feed.sort()
             path = os.path.join(self._output_path, path)
             os.makedirs(os.path.dirname(path), exist_ok=True)
-            with open(path, 'wb') as f:
-                f.write(feed.tostring(
-                        encoding=self.encoding,
-                        pretty_print=self._pretty_print,
-                        xml_declaration=True))
+            if len(feed) == 0:
+                self._logger.warning('Feed {} contains no items!'.format(path))
+                try:
+                    os.remove(path)
+                except OSError:
+                    pass
+            else:
+                feed.insert_updated()
+                feed.sort()
+                with open(path, 'wb') as f:
+                    f.write(feed.tostring(
+                            encoding=self.encoding,
+                            pretty_print=self._pretty_print,
+                            xml_declaration=True))
 
     def export_item(self, item):
         path = os.path.join(self._name, item.pop('path', ''), 'feed.atom')

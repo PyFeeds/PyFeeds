@@ -8,8 +8,8 @@ from feeds.spiders import FeedsSpider
 
 class Oe1OrfAtSpider(FeedsSpider):
     name = 'oe1.orf.at'
-    allowed_domains = ['oe1.orf.at']
-    start_urls = ['http://oe1.orf.at/programm/konsole/heute']
+    allowed_domains = ['audioapi.orf.at']
+    start_urls = ['https://audioapi.orf.at/oe1/api/json/current/broadcasts']
 
     _title = 'oe1.ORF.at'
     _subtitle = 'Ö1 Webradio'
@@ -17,56 +17,32 @@ class Oe1OrfAtSpider(FeedsSpider):
     _timezone = 'Europe/Vienna'
 
     def parse(self, response):
-        # Only scrape today and the last two days. Exclude the last entry
-        # (i.e. today) which is the the current response.
-        for day in json.loads(response.body_as_unicode())['nav'][-3:-1]:
-            self.logger.debug('day: {}'.format(day))
-            yield scrapy.Request('http://{}{}'.format(self.name, day['url']),
-                                 self.parse_item, meta={'dont_cache': True})
+        for day in json.loads(response.text)[-2:]:
+            for broadcast in day['broadcasts']:
+                # Only parse if already recorded (i.e. not live/in the future).
+                if broadcast['state'] == 'C':
+                    yield scrapy.Request(broadcast['href'],
+                                         self.parse_broadcast,
+                                         meta={'oe1_day': day['day']})
 
-        yield from self.parse_item(response)
-
-    def parse_item(self, response):
-        for item in json.loads(response.body_as_unicode())['list']:
-            il = FeedEntryItemLoader(response=response,
-                                     timezone=self._timezone,
-                                     base_url='http://{}'.format(self.name),
-                                     dayfirst=True)
-            if 'url_json' not in item:
-                continue
-            link = 'http://{}{}'.format(
-                self.name, item['url_json'].replace('/konsole', ''))
-            il.add_value('link', link)
-            il.add_value('title', item['title'])
-            il.add_value('enclosure_iri', item['url_stream'])
-            il.add_value('enclosure_type', 'audio/mpeg')
-            il.add_value('updated', '{} {}'.format(item['day_label'],
-                                                   item['time']))
-            yield scrapy.Request(link, self.parse_item_text, meta={'il': il})
-
-    def parse_item_text(self, response):
-        remove_elems = [
-            'script', 'object', '.copyright', '.copyright-small', '.hidden',
-            '.overlay-7tage', '.overlay-7tage-hover', '.hover-infobar',
-            '.overlay-download', '.gallerynav', '.audiolink', '.autor',
-            '.outerleft', '.socialmediaArtikel', '.copyright', '.tags', 'h1'
-        ]
-        il = FeedEntryItemLoader(response=response,
-                                 parent=response.meta['il'],
-                                 remove_elems=remove_elems,
-                                 base_url='http://{}'.format(self.name))
-        il.add_xpath('content_html', '(//div[@class="textbox-wide"])[1]')
-        il.add_css('category', '.tags a::text')
-        link = response.xpath(
-                '//p[@class="autor"]/a[contains(., "Sendereihe")]/@href'
-            ).extract_first()
-        yield scrapy.Request(link, self.parse_item_category, meta={'il': il})
-
-    def parse_item_category(self, response):
-        il = FeedEntryItemLoader(response=response,
-                                 parent=response.meta['il'],
-                                 base_url='http://{}'.format(self.name))
-        il.add_xpath('category', '//meta[@name="title"]/@content')
+    def parse_broadcast(self, response):
+        broadcast = json.loads(response.text)
+        il = FeedEntryItemLoader(response=response, timezone=self._timezone,
+                                 dayfirst=False)
+        link = 'https://{}/programm/{}/{}'.format(
+            self.name, response.meta['oe1_day'], broadcast['programKey'])
+        il.add_value('link', link)
+        il.add_value('title', broadcast['title'])
+        stream = 'http://loopstream01.apa.at/?channel=oe1&id={}'.format(
+            broadcast['streams'][0]['loopStreamId'])
+        il.add_value('enclosure_iri', stream)
+        il.add_value('enclosure_type', 'audio/mpeg')
+        il.add_value('updated', broadcast['niceTimeISO'])
+        if broadcast['subtitle']:
+            il.add_value('content_html', '<strong>{}</strong>'.format(
+                broadcast['subtitle']))
+        for item in broadcast['items']:
+            il.add_value('content_html', '<h3>{}</h3>'.format(item['title']))
+            il.add_value('content_html', item['description'])
+        il.add_value('content_html', broadcast['description'])
         yield il.load_item()
-
-# vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4 smartindent autoindent

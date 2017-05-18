@@ -42,7 +42,9 @@ class Oe1OrfAtSpider(FeedsSpider):
             il.add_value('content_html', '<strong>{}</strong>'.format(
                 broadcast['subtitle']))
         for item in broadcast['items']:
-            il.add_value('content_html', '<h3>{}</h3>'.format(item['title']))
-            il.add_value('content_html', item['description'])
+            if 'title' in item:
+                il.add_value('content_html',
+                             '<h3>{}</h3>'.format(item['title']))
+            il.add_value('content_html', item.get('description'))
         il.add_value('content_html', broadcast['description'])
         yield il.load_item()

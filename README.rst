@@ -145,7 +145,7 @@ Author
 ------
 
 Feeds is written and maintained by `Florian Preinstorfer
-<https://www.nblock.org>`_ (`@krippala <https://twitter.com/krippala>`_) and
+<https://nblock.org>`_ and
 `Lukas Anzinger <https://www.notinventedhere.org>`_.
 
 License

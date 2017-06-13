@@ -28,7 +28,7 @@ Feeds is currently able to create Atom feeds for the following sites:
 * `Bibliothek der Arbeiterkammer <http://ak.ciando.com>`_: Most recently added
   books to the e-library
 * `Libraries based on biblioweb <http://biblioweb.at>`_: Most recently added
-  media to libraries based on the biblioweb software.
+  media to libraries based on the biblioweb software
 * `cbird.at <http://www.cbird.at>`_: Newest releases of the cbird software
 * `Facebook.com <https://www.facebook.com>`_: Newest entries of selected page
   feeds (crawling user feeds is **not** supported)

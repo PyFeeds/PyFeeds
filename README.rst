@@ -35,6 +35,7 @@ Feeds is currently able to create Atom feeds for the following sites:
 * `falter.at <http://www.falter.at>`_: Newest articles
 * `HELP.gv.at <https://help.gv.at>`_: News and changes in Austrian law
 * `KONSUMENT.AT <http://www.konsument.at>`_: Newest articles
+* `lede-project.org <https://lede-project.org>`_: Newest LEDE releases
 * `LWN.net <https://lwn.net>`_: Newest articles; special treatment
   of Weekly Editions
 * `ORF Ö1 <http://oe1.orf.at>`_: Newest episodes of radio shows

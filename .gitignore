@@ -20,3 +20,6 @@ feeds.cfg
 
 # pyenv
 .python-version
+
+# vim tags
+tags

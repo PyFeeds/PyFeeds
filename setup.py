@@ -13,6 +13,12 @@ setup(
         'Scrapy>=1.1',
         'lxml>=3.5.0',
     ],
+    extras_require={
+        'doc': [
+            'doc8',
+            'sphinx',
+        ],
+    },
     entry_points='''
         [console_scripts]
         feeds=feeds.cli:main

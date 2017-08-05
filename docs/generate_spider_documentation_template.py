@@ -31,6 +31,7 @@ def render_template(spider_name):
 def main(spider_name):
     print(render_template(spider_name))
 
+
 if __name__ == '__main__':
     main()
 

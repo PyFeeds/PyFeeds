@@ -16,6 +16,7 @@ setup(
     extras_require={
         'doc': [
             'doc8',
+            'restructuredtext_lint',
             'sphinx',
         ],
     },

@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='feeds',
-    version='0.1-dev',
+    version='2017.08.14',
     # Author details
     author='Florian Preinstorfer, Lukas Anzinger',
     author_email='florian@nblock.org, lukas@lukasanzinger.at',

@@ -9,6 +9,12 @@ __pycache__/
 # egg
 *.egg-info
 
+# Tox
+.tox/
+
+# Sphinx
+docs/_build
+
 # Scrapy stuff
 .scrapy
 
@@ -20,3 +26,6 @@ feeds.cfg
 
 # pyenv
 .python-version
+
+# vim tags
+tags

@@ -3,6 +3,10 @@ from setuptools import setup, find_packages
 setup(
     name='feeds',
     version='0.1-dev',
+    # Author details
+    author='Florian Preinstorfer, Lukas Anzinger',
+    author_email='florian@nblock.org, lukas@lukasanzinger.at',
+    url='https://github.com/nblock/feeds',
     packages=find_packages(),
     include_package_data=True,
     install_requires=[
@@ -13,6 +17,16 @@ setup(
         'Scrapy>=1.1',
         'lxml>=3.5.0',
     ],
+    extras_require={
+        'doc': [
+            'doc8',
+            'restructuredtext_lint',
+            'sphinx',
+        ],
+        'test': [
+            'flake8',
+        ],
+    },
     entry_points='''
         [console_scripts]
         feeds=feeds.cli:main

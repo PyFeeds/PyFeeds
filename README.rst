@@ -73,7 +73,7 @@ master branch::
 
 After installation ``feeds`` is available in your virtual environment.
 
-Feeds supports Python 3.3+.
+Feeds supports Python 3.4+.
 
 Quickstart
 ----------

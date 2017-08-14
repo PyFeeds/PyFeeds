@@ -1,8 +1,7 @@
 Feeds
 =====
 
-.. image:: https://travis-ci.org/nblock/feeds.svg?branch=master
-    :target: https://travis-ci.org/nblock/feeds
+|build-status| |docs|
 
 Once upon a time every website offered an RSS feed to keep readers updated
 about new articles/blog posts via the users' feed readers. These times are
@@ -158,3 +157,13 @@ AGPL3, see `LICENSE`_ for details.
 .. _issue tracker: https://github.com/nblock/feeds/issues
 .. _new issue: https://github.com/nblock/feeds/issues/new
 .. _Scrapy: http://www.scrapy.org
+
+.. |build-status| image:: https://travis-ci.org/nblock/feeds.svg?branch=master
+    :alt: build status
+    :scale: 100%
+    :target: https://travis-ci.org/nblock/feeds
+
+.. |docs| image:: https://readthedocs.org/projects/pyfeeds/badge/?version=latest
+    :alt: documentation status
+    :scale: 100%
+    :target: https://pyfeeds.readthedocs.io/en/latest/?badge=latest

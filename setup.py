@@ -22,6 +22,7 @@ setup(
             'doc8',
             'restructuredtext_lint',
             'sphinx',
+            'sphinx_rtd_theme',
         ],
         'test': [
             'flake8',

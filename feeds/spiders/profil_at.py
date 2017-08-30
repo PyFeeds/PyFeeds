@@ -54,6 +54,7 @@ class ProfilAtSpider(FeedsSpider):
             '.artikel-social-kommentar', '.bild-copyright',
             '.ressortTitleMobile', '.article-number',
             '.artikel-kommentarlink', '.umfrage-wrapper',
+            '.articleIssueInfo',
         ]
         il = FeedEntryItemLoader(response=response,
                                  timezone=self._timezone,

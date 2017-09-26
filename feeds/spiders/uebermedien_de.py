@@ -4,8 +4,6 @@ import scrapy
 
 from feeds.loaders import FeedEntryItemLoader
 from feeds.spiders import FeedsXMLFeedSpider
-from feeds.spiders.blendle import BlendleAuthenticationError
-from feeds.spiders.blendle import BlendleSession
 
 
 class UebermedienDeSpider(FeedsXMLFeedSpider):
@@ -16,23 +14,6 @@ class UebermedienDeSpider(FeedsXMLFeedSpider):
 
     _title = 'uebermedien.de'
     _subtitle = 'Medien besser kritisieren.'
-
-    def parse(self, response):
-        # Try to login to Blendle.
-        self._blendle_session = BlendleSession(spider=self,
-                                               provider='uebermedien')
-        try:
-            # Continue with parsing the feed after trying to log in.
-            yield self._blendle_session.login(
-                callback=(
-                    # Continue with parsing the feed after logging in.
-                    lambda: super(UebermedienDeSpider, self).parse(response)
-                )
-            )
-        except BlendleAuthenticationError as ex:
-            # No username or password given.
-            self.logger.info(str(ex))
-            yield from super().parse(response)
 
     def parse_node(self, response, node):
         il = FeedEntryItemLoader(response=response,
@@ -56,25 +37,7 @@ class UebermedienDeSpider(FeedsXMLFeedSpider):
         return scrapy.Request(link, self._parse_article, meta={'il': il})
 
     def _parse_article(self, response):
-        if response.css('.entry_blendle_text'):
-            self.logger.debug('Article {} is paywalled'.format(response.url))
-            response.meta['il'].add_value('category', 'paywalled')
-            callback_url = response.css(
-                '.pwb-item::attr(data-purchase-callback-url)').extract_first()
-            item_jwt = (
-                response.css('.pwb-item::attr(data-item-jwt)').extract_first()
-            )
-            return self._blendle_session.parse_article(
-                response=response, item_jwt=item_jwt,
-                callback_url=callback_url,
-                callback=self._parse_article_text)
-        else:
-            # Not paywalled.
-            return self._parse_article_text(response)
-
-    def _parse_article_text(self, response):
-        remove_elems = ['iframe', '.blendlebutton__hide__post', '.pwb-item',
-                        '.uebermedien_slogan', '.pwb-subscription']
+        remove_elems = ['iframe', 'script']
         il = FeedEntryItemLoader(response=response,
                                  parent=response.meta['il'],
                                  remove_elems=remove_elems,

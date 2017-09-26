@@ -15,7 +15,7 @@ TELNETCONSOLE_ENABLED = False
 
 # Custom item pipeline
 ITEM_PIPELINES = {
-    'feeds.pipelines.AtomAutogenerateIdPipeline': 100,
+    'feeds.pipelines.AtomAutogenerateFieldsPipeline': 100,
     'feeds.pipelines.AtomCheckRequiredFieldsPipeline': 110,
     'feeds.pipelines.AtomExportPipeline': 400
 }

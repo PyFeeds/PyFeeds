@@ -8,18 +8,22 @@ from feeds.exporters import AtomExporter
 from feeds.items import FeedEntryItem
 
 
-class AtomAutogenerateIdPipeline(object):
-    """Autogenerate the id field in case it is missing."""
+class AtomAutogenerateFieldsPipeline(object):
+    """Autogenerate missing fields in case they are missing."""
     def process_item(self, item, spider):
-        if 'id' in item:
-            return item
-        else:
+        if 'id' not in item:
             if 'link' in item:
                 item['id'] = uuid.uuid5(uuid.NAMESPACE_DNS, item['link']).urn
-                return item
             else:
                 raise DropItem('A link is required to autogenerate the feed '
                                'id for: {}'.format(item))
+
+        if 'title' not in item:
+            # Having a title is mandatory, so we use an empty string if none
+            # is set.
+            item['title'] = ''
+
+        return item
 
 
 class AtomCheckRequiredFieldsPipeline(object):

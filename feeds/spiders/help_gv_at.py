@@ -23,24 +23,29 @@ class HelpGvAtSpider(FeedsSpider):
     _timezone = 'Europe/Vienna'
 
     def parse(self, response):
-        yield scrapy.Request(
-            'https://www.{}/Portal.Node/hlpd/public/content/171/'
-            'Seite.1710000.html'.format(self.name), self._parse_lists,
-            meta={'dont_cache': True})
+        paths = [
+            '171/Seite.1710000.html',
+            '194/Seite.1940000.html',
+        ]
+        for path in paths:
+            yield scrapy.Request(
+                ('https://www.{}/Portal.Node/hlpd/public/content/' + path)
+                .format(self.name), self._parse_lists,
+                meta={'dont_cache': True})
 
         yield scrapy.Request(
-            'https://www.{}/Portal.Node/hlpd/public/content/194/'
-            'Seite.1940000.html'.format(self.name), self._parse_lists,
+            ('https://www.{}/Portal.Node/hlpd/public/content/340/' +
+             'weiterenews.html').format(self.name), self._parse_news,
             meta={'dont_cache': True})
-
-        for link in response.css('.Aktuelles a::attr(href)').extract():
-            yield scrapy.Request(response.urljoin(link), self._parse_item,
-                                 meta={'dont_cache': True})
 
     def _parse_lists(self, response):
-        for link in response.css('.Content ul a::attr(href)').extract():
+        for link in response.css('.Content > ul a::attr(href)').extract():
             yield scrapy.Request(response.urljoin(link), self._parse_item,
                                  meta={'dont_cache': True})
+
+    def _parse_news(self, response):
+        for link in response.css('.Content article a::attr(href)').extract():
+            yield scrapy.Request(response.urljoin(link), self._parse_item)
 
     def _parse_item(self, response):
         remove_elems = [

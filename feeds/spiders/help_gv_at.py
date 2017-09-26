@@ -29,8 +29,8 @@ class HelpGvAtSpider(FeedsSpider):
         ]
         for path in paths:
             yield scrapy.Request(
-                ('https://www.{}/Portal.Node/hlpd/public/content/' + path)
-                .format(self.name), self._parse_lists,
+                'https://www.{}/Portal.Node/hlpd/public/content/{}'.format(
+                    self.name, path), self._parse_lists,
                 meta={'dont_cache': True})
 
         yield scrapy.Request(

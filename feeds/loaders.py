@@ -85,6 +85,10 @@ def cleanup_html(tree, loader_context):
         # in the feed.
         elem.attrib.pop('class', None)
         elem.attrib.pop('id', None)
+        # Delete data- attributes that have no general meaning.
+        for attrib in list(elem.attrib.keys()):
+            if attrib.startswith('data-'):
+                elem.attrib.pop(attrib)
 
     return [tree]
 

@@ -1,4 +1,5 @@
 import os
+import re
 
 from lxml import etree
 from lxml.cssselect import CSSSelector
@@ -31,6 +32,13 @@ def parse_datetime(text, loader_context):
         return delorean.Delorean(
             dateparser.parse(text),
             timezone=loader_context.get('timezone', 'UTC'))
+
+
+def replace_regex(text, loader_context):
+    for pattern, repl in loader_context.get('replace_regex', {}).items():
+        text = re.sub(pattern, repl, text)
+
+    return text
 
 
 def build_tree(text, loader_context):
@@ -171,9 +179,10 @@ class FeedEntryItemLoader(BaseItemLoader):
     content_text_in = MapCompose(skip_false, str.strip, remove_tags)
     content_text_out = Join('\n')
 
-    content_html_in = MapCompose(skip_false, build_tree, convert_footnotes,
-                                 cleanup_html, skip_empty_tree,
-                                 make_links_absolute, serialize_tree)
+    content_html_in = MapCompose(skip_false, replace_regex, build_tree,
+                                 convert_footnotes, cleanup_html,
+                                 skip_empty_tree, make_links_absolute,
+                                 serialize_tree)
     content_html_out = Join()
 
     category_out = Identity()

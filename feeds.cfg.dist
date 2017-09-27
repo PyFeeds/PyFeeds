@@ -41,13 +41,6 @@ useragent = feeds (+https://github.com/nblock/feeds)
 ## Location of your library that uses biblioweb.at.
 # location =
 
-#[uebermedien.de]
-## uebermedien.de has a paywall for certain articles.
-## If you want to crawl paid articles, please provide your Blendle username
-## and password.
-# username =
-# password =
-
 #[facebook.com]
 ## App id and app secret for your app.
 ## Can be gathered by creating your own app at https://developers.facebook.com/.

@@ -14,13 +14,4 @@ Add ``uebermedien.com`` to the list of spiders:
    spiders =
      uebermedien.com
 
-Übermedien_ has a paywall for certain articles. If you want to crawl paid
-articles, please provide your Blendle ``username`` and ``password``.
-
-.. code-block:: ini
-
-   [uebermedien.de]
-   username =
-   password =
-
 .. _Übermedien: http://www.uebermedien.de

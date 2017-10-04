@@ -32,6 +32,7 @@ class Oe1OrfAtSpider(FeedsSpider):
         link = 'https://{}/programm/{}/{}'.format(
             self.name, response.meta['oe1_day'], broadcast['programKey'])
         il.add_value('link', link)
+        il.add_value('title', broadcast['programTitle'])
         il.add_value('title', broadcast['title'])
         if broadcast.get('streams'):
             stream = 'http://loopstream01.apa.at/?channel=oe1&id={}'.format(

@@ -15,7 +15,8 @@ class UsenixOrgSpider(FeedsSpider):
 
     def start_requests(self):
         yield scrapy.Request('https://www.usenix.org/publications/login',
-                             self.parse_login_issues)
+                             self.parse_login_issues,
+                             meta={'dont_cache': True})
 
     def parse_login_issues(self, response):
         # Only scrape the last 8 issues.

@@ -2,7 +2,6 @@ import uuid
 
 from scrapy import signals
 from scrapy.exceptions import DropItem
-from scrapy.utils.spider import iterate_spider_output
 
 from feeds.exporters import AtomExporter
 from feeds.items import FeedEntryItem
@@ -79,7 +78,7 @@ class AtomExportPipeline(object):
 
     def spider_closed(self, spider):
         # Add feed header(s) at the end so they can be dynamic.
-        for feed_header in iterate_spider_output(spider.feed_headers()):
+        for feed_header in spider.feed_headers():
             self._exporters[spider].export_item(feed_header)
         self._exporters[spider].finish_exporting()
         self._exporters.pop(spider)

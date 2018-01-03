@@ -13,7 +13,7 @@ class FacebookComSpider(FeedsSpider):
     allowed_domains = ['facebook.com']
 
     def feed_headers(self):
-        return
+        return []
 
     def start_requests(self):
         app_id = self.spider_settings.get('app_id')

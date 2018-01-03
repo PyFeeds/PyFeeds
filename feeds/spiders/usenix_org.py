@@ -11,7 +11,7 @@ class UsenixOrgSpider(FeedsSpider):
     allowed_domains = ['usenix.org']
 
     def feed_headers(self):
-        return
+        return []
 
     def start_requests(self):
         yield scrapy.Request('https://www.usenix.org/publications/login',

@@ -18,7 +18,7 @@ class ViceComSpider(FeedsSpider):
 
     def feed_headers(self):
         if not self._locales:
-            return
+            return []
 
         for locale in self._locales:
             yield self.generate_feed_header(

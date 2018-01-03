@@ -23,6 +23,7 @@ Supported Websites
 
 Feeds is currently able to create Atom feeds for the following sites:
 
+* `addendum <https://www.addendum.org>`_: Newest articles
 * `ATV.at <http://www.atv.at>`_: Newest episodes of TV shows
 * `Bibliothek der Arbeiterkammer <http://ak.ciando.com>`_: Most recently added
   books to the e-library

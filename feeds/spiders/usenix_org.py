@@ -42,7 +42,7 @@ class UsenixOrgSpider(FeedsSpider):
                                  remove_elems=remove_elems,
                                  dayfirst=True)
         il.add_value('link', response.url)
-        title = response.css('h1::text').extract_first()
+        title = response.css('h1::text').extract_first().strip()
         il.add_value('title', title)
         il.add_value('updated', self._date_from_title(title))
         il.add_css('content_html', '.content-wrapper')
@@ -51,8 +51,7 @@ class UsenixOrgSpider(FeedsSpider):
             il.add_value('category', 'paywalled')
         yield il.load_item()
 
-    @staticmethod
-    def _date_from_title(issue):
+    def _date_from_title(self, issue):
         """Try to guess the publication date of an issue from the title."""
         match = re.search(
             r'(?P<season>Spring|Summer|Fall|Winter) (?P<year>\d{4})', issue)
@@ -62,3 +61,6 @@ class UsenixOrgSpider(FeedsSpider):
             month = seasons[match.group('season')]
             return '01-{month}-{year}'.format(
                 month=month, year=match.group('year'))
+        else:
+            self.logger.warning(
+                'Could not extract date from title "{}"!'.format(issue))

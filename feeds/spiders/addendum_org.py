@@ -1,13 +1,13 @@
 import scrapy
 
 from feeds.loaders import FeedEntryItemLoader
-from feeds.spiders import FeedsSpider
+from feeds.spiders import FeedsXMLFeedSpider
 
 
-class AddendumOrgSpider(FeedsSpider):
+class AddendumOrgSpider(FeedsXMLFeedSpider):
     name = 'addendum.org'
     allowed_domains = [name]
-    start_urls = ['https://www.addendum.org/projekte-ubersicht/']
+    start_urls = ['https://www.addendum.org/feed/rss2-addendum']
 
     _title = 'Addendum'
     _subtitle = 'das, was fehlt'
@@ -15,16 +15,19 @@ class AddendumOrgSpider(FeedsSpider):
     _icon = ('https://www.{}/resources/dist/favicons/'
              'android-chrome-192x192.png').format(name)
     _timezone = 'Europe/Vienna'
+    _max_articles = 10
+    _num_articles = 0
 
-    def parse(self, response):
-        url = response.css('section::attr(data-url-project)').extract_first()
-        yield scrapy.Request(url, self.parse_item, meta={'dont_cache': True})
-
-    def parse_item(self, response):
-        # First URL is the overview page.
-        for url in (
-                response.css('.projectNav__meta a::attr(href)').extract()[1:]):
-            yield scrapy.Request(url, self._parse_article)
+    def parse_node(self, response, node):
+        url = node.xpath('link/text()').extract_first()
+        if not node.xpath('category'):
+            # Overview pages don't have a category.
+            return
+        if self._num_articles >= self._max_articles:
+            # Maximum number of articles reached.
+            return
+        self._num_articles += 1
+        yield scrapy.Request(url, self._parse_article)
 
     def _parse_article(self, response):
         remove_elems = [
@@ -32,7 +35,8 @@ class AddendumOrgSpider(FeedsSpider):
             '.overlayCTA', '.authors', '.socialMedia', '.sidebar',
             '.sectionBackground--colorTheme1', '.heroStage__copyright',
             '.heroStage__downLink', 'script', 'iframe', '.image__zoom ',
-            '.image__copyrightWrapper'
+            '.image__copyrightWrapper', '.callToAction', '.print-action',
+            '.internalLink span',
         ]
         change_tags = {
             'div.heroStage__introText': 'strong',

@@ -23,6 +23,7 @@ Supported Websites
 
 Feeds is currently able to create Atom feeds for the following sites:
 
+* `addendum <https://www.addendum.org>`_: Newest articles
 * `ATV.at <http://www.atv.at>`_: Newest episodes of TV shows
 * `Bibliothek der Arbeiterkammer <http://ak.ciando.com>`_: Most recently added
   books to the e-library
@@ -42,6 +43,7 @@ Feeds is currently able to create Atom feeds for the following sites:
 * `profil <http://www.profil.at>`_: Newest articles
 * `puls4.com <http://www.puls4.com>`_: Newest episodes of TV shows
 * `Übermedien <http://www.uebermedien.de>`_: Newest articles
+* `USENIX <https://www.usenix.org>`_: Newest ;login: issues
 * `Verbraucherrecht <https://verbraucherrecht.at>`_: Newest articles
 * `VICE <https://www.vice.com>`_: Newest articles
 * `Wiener Linien <http://www.wienerlinien.at>`_: Newest articles

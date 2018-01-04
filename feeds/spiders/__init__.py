@@ -28,7 +28,7 @@ class FeedsSpider(Spider):
         return il.load_item()
 
     def feed_headers(self):
-        return self.generate_feed_header()
+        yield self.generate_feed_header()
 
     def start_requests(self):
         for url in self.start_urls:

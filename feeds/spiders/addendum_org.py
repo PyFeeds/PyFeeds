@@ -60,6 +60,9 @@ class AddendumOrgSpider(FeedsXMLFeedSpider):
         il.add_value('author_name', 'Addendum')
         il.add_css('title', 'meta[property="og:title"]::attr(content)')
         il.add_css('updated',
-                   'meta[property="og:updated_time"]::attr(content)')
+                   'meta[property="article:modified_time"]::attr(content)')
+        # If not yet modified:
+        il.add_css('updated',
+                   'meta[property="article:published_time"]::attr(content)')
         il.add_css('content_html', '.content')
         yield il.load_item()

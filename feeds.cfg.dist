@@ -62,3 +62,13 @@ useragent = feeds (+https://github.com/nblock/feeds)
 #locales =
 #    de_at
 #    de
+
+#[nachrichten.at]
+## Nachrichten.at has paywalled articles.
+## If you want to crawl them, please provide username and password.
+#username =
+#password =
+#ressorts =
+#    wels
+#    linz
+#    nachrichten

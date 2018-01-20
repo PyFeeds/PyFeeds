@@ -1,5 +1,3 @@
-import html
-
 import scrapy
 
 from feeds.loaders import FeedEntryItemLoader
@@ -19,19 +17,16 @@ class UebermedienDeSpider(FeedsXMLFeedSpider):
         il = FeedEntryItemLoader(response=response,
                                  base_url='http://{}'.format(self.name),
                                  dayfirst=True)
-        il.add_value('updated', node.xpath('//pubDate/text()').extract_first())
+        il.add_xpath('updated', '//pubDate/text()')
         il.add_value('author_name',
-                     html.unescape(node.xpath('//dc:creator/text()').
-                                   extract_first()))
-        categories = node.xpath('//category/text()').extract()
-        for category in categories:
-            il.add_value('category', html.unescape(category))
+                     node.xpath('//dc:creator/text()').extract_first())
+        il.add_xpath('category', '//category/text()')
         title = node.xpath('(//title)[2]/text()').extract()
-        if not title and categories:
+        if not title:
             # Fallback to the first category if no title is provided
             # (e.g. comic).
-            title = categories[0]
-        il.add_value('title', html.unescape(title))
+            title = response.xpath('//category/text()').extract_first()
+        il.add_value('title', title)
         link = node.xpath('(//link)[2]/text()').extract_first()
         il.add_value('link', link)
         return scrapy.Request(link, self._parse_article, meta={'il': il})

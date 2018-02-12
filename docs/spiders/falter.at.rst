@@ -2,7 +2,7 @@
 
 falter.at
 ---------
-Get newest articles from Falter_.
+Get newest articles and restaurant reviews from Falter_.
 
 Configuration
 ~~~~~~~~~~~~~

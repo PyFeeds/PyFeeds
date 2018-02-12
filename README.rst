@@ -32,12 +32,14 @@ Feeds is currently able to create Atom feeds for the following sites:
 * `cbird.at <http://www.cbird.at>`_: Newest releases of the cbird software
 * `Facebook.com <https://www.facebook.com>`_: Newest entries of selected page
   feeds (crawling user feeds is **not** supported)
-* `falter.at <http://www.falter.at>`_: Newest articles
+* `falter.at <http://www.falter.at>`_: Newest articles and restaurant reviews
 * `HELP.gv.at <https://help.gv.at>`_: News and changes in Austrian law
 * `KONSUMENT.AT <http://www.konsument.at>`_: Newest articles
 * `lede-project.org <https://lede-project.org>`_: Newest LEDE releases
 * `LWN.net <https://lwn.net>`_: Newest articles; special treatment
   of Weekly Editions
+* `Oberösterreichische Nachrichten <https://www.nachrichten.at>`_:
+  Newest articles
 * `ORF Ö1 <http://oe1.orf.at>`_: Newest episodes of radio shows
 * `ORF TVthek <http://tvthek.orf.at>`_: Newest episodes of TV shows
 * `profil <http://www.profil.at>`_: Newest articles
@@ -48,12 +50,12 @@ Feeds is currently able to create Atom feeds for the following sites:
 * `VICE <https://www.vice.com>`_: Newest articles
 * `Wiener Linien <http://www.wienerlinien.at>`_: Newest articles
 
-Some sites (Falter, Konsument, LWN, Übermedien) offer articles only
-behind a paywall. If you have a paid subscription, you can configure your
-username and password in ``feeds.cfg`` and also read paywalled articles from
-within your feed reader. For the less fortunate who don't have a subscription,
-paywalled articles are tagged with ``paywalled`` so they can be filtered, if
-desired.
+Some sites (Falter, Konsument, LWN, Oberösterreichische Nachrichten,
+Übermedien) offer articles only behind a paywall. If you have a paid
+subscription, you can configure your username and password in ``feeds.cfg``
+and also read paywalled articles from within your feed reader. For the less
+fortunate who don't have a subscription, paywalled articles are tagged with
+``paywalled`` so they can be filtered, if desired.
 
 All feeds contain the articles in full text so you never have to leave your
 feed reader while reading.

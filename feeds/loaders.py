@@ -1,3 +1,4 @@
+import html
 import os
 import re
 
@@ -154,7 +155,9 @@ def skip_false(value):
 
 class BaseItemLoader(ItemLoader):
     # Defaults
-    default_input_processor = MapCompose(skip_false, str.strip)
+    # Unescape twice to get rid of &amp;&xxx; encoding errors.
+    default_input_processor = MapCompose(skip_false, str.strip, html.unescape,
+                                         html.unescape)
     default_output_processor = TakeFirst()
 
     # Join first two elements on ": " and the rest on " - ".

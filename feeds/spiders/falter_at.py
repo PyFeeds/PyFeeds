@@ -36,6 +36,36 @@ class FalterAtSpider(FeedsSpider):
             yield scrapy.Request('https://www.{}/archiv/'.format(
                 self.name), self.parse_archive, meta={'dont_cache': True})
 
+        yield scrapy.Request(
+            ('https://wwei-api.{}/api/v1/simple_search?v=true&' +
+             'sort_pos=front&sort=review.post_date:desc&c=10').
+            format(self.name), self.parse_wwei, meta={'dont_cache': True})
+
+    def feed_headers(self):
+        for path in ['magazine', 'wwei']:
+            yield self.generate_feed_header(path=path)
+
+    def parse_wwei(self, response):
+        entries = json.loads(response.text)[0]['hits']
+        for entry in entries:
+            review = entry['review']
+            il = FeedEntryItemLoader(response=response,
+                                     base_url='http://{}'.format(self.name),
+                                     timezone=self._timezone,
+                                     dayfirst=False)
+            il.add_value('path', 'wwei')
+            il.add_value('title', review['post_title'])
+            il.add_value('title', review['post_subtitle'])
+            il.add_value('updated', review['post_date'])
+            il.add_value('link', 'https://www.{}/lokal/{}'.format(self.name,
+                                                                  entry['id']))
+            il.add_value('author_name', review['meta'].split('|')[0].title())
+            il.add_value('content_html',
+                         '<img src="https://fcc.at/ef/tmb200/{}">'.format(
+                             entry['pictures'][0]['filename']))
+            il.add_value('content_html', review['post_content'])
+            yield il.load_item()
+
     def parse_archive(self, response):
         # The perks of having a JavaScript frontend ...
         revisions = json.loads(response.xpath(
@@ -54,6 +84,7 @@ class FalterAtSpider(FeedsSpider):
             il = FeedEntryItemLoader(response=response,
                                      base_url='http://{}'.format(self.name),
                                      timezone=self._timezone)
+            il.add_value('path', 'magazine')
             link = response.urljoin(item['detail_link'])
             il.add_value('link', link)
             try:

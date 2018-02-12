@@ -32,7 +32,7 @@ Feeds is currently able to create Atom feeds for the following sites:
 * `cbird.at <http://www.cbird.at>`_: Newest releases of the cbird software
 * `Facebook.com <https://www.facebook.com>`_: Newest entries of selected page
   feeds (crawling user feeds is **not** supported)
-* `falter.at <http://www.falter.at>`_: Newest articles
+* `falter.at <http://www.falter.at>`_: Newest articles and restaurant reviews
 * `HELP.gv.at <https://help.gv.at>`_: News and changes in Austrian law
 * `KONSUMENT.AT <http://www.konsument.at>`_: Newest articles
 * `lede-project.org <https://lede-project.org>`_: Newest LEDE releases

@@ -6,17 +6,17 @@ from feeds.loaders import FeedEntryItemLoader
 from feeds.spiders import FeedsCrawlSpider
 
 
-class LedeProjectOrgSpider(FeedsCrawlSpider):
-    name = 'lede-project.org'
-    allowed_domains = ['lede-project.org']
-    start_urls = ['https://lede-project.org/releases/start']
+class OpenwrtOrgSpider(FeedsCrawlSpider):
+    name = 'openwrt.org'
+    allowed_domains = ['openwrt.org']
+    start_urls = ['https://openwrt.org/releases/start']
     rules = (
         Rule(LinkExtractor(
             allow=('releases/(.*)/start',)), callback='parse_release'),
     )
 
-    _title = 'New LEDE Release Builds',
-    _subtitle = 'Newest release builds from the LEDE project.'
+    _title = 'New OpenWRT Release Builds',
+    _subtitle = 'Newest release builds from OpenWRT.'
     _timezone = 'Europe/Berlin'
     _base_url = 'https://{}'.format(name)
 
@@ -38,7 +38,8 @@ class LedeProjectOrgSpider(FeedsCrawlSpider):
         )
         il.add_xpath('title', '//h1/text()')
         il.add_value('link', response.url)
-        il.add_xpath('updated', '//span[@class="docInfo"]/ul/li/span/text()')
+        il.add_xpath(
+            'updated', '//div[@class="docInfo"]', re='Last modified: (.*) by')
         il.add_value('content_html', '<h1>Release Notes</h1>')
         il.add_xpath('content_html', '//h1/following-sibling::*')
         yield scrapy.Request(

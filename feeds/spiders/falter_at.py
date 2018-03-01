@@ -60,9 +60,10 @@ class FalterAtSpider(FeedsSpider):
             il.add_value('link', 'https://www.{}/lokal/{}'.format(self.name,
                                                                   entry['id']))
             il.add_value('author_name', review['meta'].split('|')[0].title())
-            il.add_value('content_html',
-                         '<img src="https://fcc.at/ef/tmb200/{}">'.format(
-                             entry['pictures'][0]['filename']))
+            if 'pictures' in entry and entry['pictures']:
+                il.add_value('content_html',
+                             '<img src="https://fcc.at/ef/tmb200/{}">'.format(
+                                 entry['pictures'][0]['filename']))
             il.add_value('content_html', review['post_content'])
             yield il.load_item()
 

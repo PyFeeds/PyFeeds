@@ -49,6 +49,7 @@ Feeds is currently able to create Atom feeds for the following sites:
 * `Verbraucherrecht <https://verbraucherrecht.at>`_: Newest articles
 * `VICE <https://www.vice.com>`_: Newest articles
 * `Wiener Linien <http://www.wienerlinien.at>`_: Newest articles
+* `zeitdiebin <https://zeit.diebin.at/>`_: Newest events
 
 Some sites (Falter, Konsument, LWN, Oberösterreichische Nachrichten,
 Übermedien) offer articles only behind a paywall. If you have a paid

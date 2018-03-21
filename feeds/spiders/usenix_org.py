@@ -1,3 +1,4 @@
+from datetime import datetime
 import re
 
 import scrapy
@@ -40,7 +41,7 @@ class UsenixOrgSpider(FeedsSpider):
         il = FeedEntryItemLoader(response=response,
                                  base_url='https://www.{}'.format(self.name),
                                  remove_elems=remove_elems,
-                                 dayfirst=True)
+                                 dayfirst=False)
         il.add_value('link', response.url)
         title = response.css('h1::text').extract_first().strip()
         il.add_value('title', title)
@@ -56,11 +57,15 @@ class UsenixOrgSpider(FeedsSpider):
         match = re.search(
             r'(?P<season>Spring|Summer|Fall|Winter) (?P<year>\d{4})', issue)
         if match:
-            seasons = {'Spring': '03', 'Summer': '06', 'Fall': '09',
+            seasons = {'Spring': '3', 'Summer': '6', 'Fall': '9',
                        'Winter': '12'}
-            month = seasons[match.group('season')]
-            return '01-{month}-{year}'.format(
-                month=month, year=match.group('year'))
+            month = int(seasons[match.group('season')])
+            year = int(match.group('year'))
+            date = datetime(day=1, month=month, year=year)
+            # Issues become free after a year which should be reflected by
+            # bumping the updated date by a year as well.
+            date_free = datetime(day=1, month=month, year=year + 1)
+            return date_free if date_free < date.utcnow() else date
         else:
             self.logger.warning(
                 'Could not extract date from title "{}"!'.format(issue))

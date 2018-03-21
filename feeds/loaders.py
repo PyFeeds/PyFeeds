@@ -1,3 +1,4 @@
+from datetime import datetime
 import html
 import os
 import re
@@ -21,18 +22,22 @@ from feeds.items import FeedEntryItem
 
 
 def parse_datetime(text, loader_context):
-    if not isinstance(text, str):
-        return text
-    try:
-        return delorean.parse(
-            text.strip(),
-            timezone=loader_context.get('timezone', 'UTC'),
-            dayfirst=loader_context.get('dayfirst', False),
-            yearfirst=loader_context.get('yearfirst', True)).shift('UTC')
-    except ValueError:
+    if isinstance(text, datetime):
         return delorean.Delorean(
-            dateparser.parse(text),
-            timezone=loader_context.get('timezone', 'UTC'))
+            text, timezone=loader_context.get('timezone', 'UTC'))
+    elif isinstance(text, str):
+        try:
+            return delorean.parse(
+                text.strip(),
+                timezone=loader_context.get('timezone', 'UTC'),
+                dayfirst=loader_context.get('dayfirst', False),
+                yearfirst=loader_context.get('yearfirst', True)).shift('UTC')
+        except ValueError:
+            return delorean.Delorean(
+                dateparser.parse(text),
+                timezone=loader_context.get('timezone', 'UTC'))
+    else:
+        return text
 
 
 def replace_regex(text, loader_context):

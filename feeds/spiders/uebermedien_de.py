@@ -17,15 +17,15 @@ class UebermedienDeSpider(FeedsXMLFeedSpider):
         il = FeedEntryItemLoader(response=response,
                                  base_url='http://{}'.format(self.name),
                                  dayfirst=True)
-        il.add_xpath('updated', '//pubDate/text()')
+        il.add_value('updated', node.xpath('//pubDate/text()').extract_first())
         il.add_value('author_name',
                      node.xpath('//dc:creator/text()').extract_first())
-        il.add_xpath('category', '//category/text()')
+        il.add_value('category', node.xpath('//category/text()').extract())
         title = node.xpath('(//title)[2]/text()').extract()
         if not title:
             # Fallback to the first category if no title is provided
             # (e.g. comic).
-            title = response.xpath('//category/text()').extract_first()
+            title = node.xpath('//category/text()').extract_first()
         il.add_value('title', title)
         link = node.xpath('(//link)[2]/text()').extract_first()
         il.add_value('link', link)

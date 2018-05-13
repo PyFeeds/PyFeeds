@@ -63,10 +63,7 @@ class UebermedienDeSpider(FeedsXMLFeedSpider):
             "https://steadyhq.com/api/v1/oauth/token",
             method="POST",
             body=json.dumps(body),
-            headers={
-                "Accept": "application/json",
-                "Content-Type": "application/json",
-            },
+            headers={"Accept": "application/json", "Content-Type": "application/json"},
             meta={"dont_cache": True},
             callback=self._set_steady_token,
         )
@@ -77,14 +74,10 @@ class UebermedienDeSpider(FeedsXMLFeedSpider):
 
     def parse_node(self, response, node):
         il = FeedEntryItemLoader(
-            response=response,
-            base_url="http://{}".format(self.name),
-            dayfirst=True,
+            response=response, base_url="http://{}".format(self.name), dayfirst=True
         )
         il.add_value("updated", node.xpath("//pubDate/text()").extract_first())
-        il.add_value(
-            "author_name", node.xpath("//dc:creator/text()").extract_first()
-        )
+        il.add_value("author_name", node.xpath("//dc:creator/text()").extract_first())
         il.add_value("category", node.xpath("//category/text()").extract())
         title = node.xpath("(//title)[2]/text()").extract()
         if not title:

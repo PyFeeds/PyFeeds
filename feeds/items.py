@@ -3,7 +3,7 @@ import scrapy
 
 class BaseItem(scrapy.Item):
     # Required date format: RFC 3339 (ISO 8601 extended format)
-    UPDATED_FMT = 'Y-MM-ddTHH:mm:ssZZZZZ'
+    UPDATED_FMT = "Y-MM-ddTHH:mm:ssZZZZZ"
 
     # Required
     # The feed/entry id. It may be auto generated in case a link is present.
@@ -13,8 +13,7 @@ class BaseItem(scrapy.Item):
     title = scrapy.Field()
 
     # The last updated date of the feed as Delorean object.
-    updated = scrapy.Field(
-        serializer=lambda x: x.format_datetime(BaseItem.UPDATED_FMT))
+    updated = scrapy.Field(serializer=lambda x: x.format_datetime(BaseItem.UPDATED_FMT))
 
     # Recommended
     author_name = scrapy.Field()
@@ -53,5 +52,6 @@ class FeedEntryItem(BaseItem):
     enclosure_iri = scrapy.Field()
     # Optional
     enclosure_type = scrapy.Field()
+
 
 # vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4 smartindent autoindent

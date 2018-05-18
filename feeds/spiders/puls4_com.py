@@ -33,7 +33,9 @@ class Pusl4ComSpider(FeedsSpider):
                 response.urljoin(show["channelUrl"] + "/videos/Ganze-Folgen"),
                 self._parse_show,
                 meta={
-                    "dont_cache": True, "time": time, "handle_httpstatus_list": [404]
+                    "dont_cache": True,
+                    "time": time,
+                    "handle_httpstatus_list": [404],
                 },
             )
 

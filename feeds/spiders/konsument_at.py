@@ -59,10 +59,8 @@ class KonsumentAtSpider(FeedsSpider):
             "veröffentlicht:\s*([0-9]{2}\.[0-9]{2}\.[0-9]{4})"
         )
         il.add_value("updated", date)
-        url = (
-            response.xpath('//a[text()="Druckversion"]/@onclick').re_first(
-                r"window\.open\('(.*)'\);"
-            )
+        url = response.xpath('//a[text()="Druckversion"]/@onclick').re_first(
+            r"window\.open\('(.*)'\);"
         )
         il.add_css("title", "h1::text")
         if url:

@@ -62,7 +62,7 @@ class BibliowebAtSpider(FeedsSpider):
             response=response, timezone="Europe/Vienna", dayfirst=True
         )
         il.add_value("path", self._library)
-        il.add_value("title", " - ".join(parts[:self._find_first_meta(parts)]))
+        il.add_value("title", " - ".join(parts[: self._find_first_meta(parts)]))
         il.add_value("link", response.url)
         il.add_xpath("updated", "//td/span/text()", re="In der Bibliothek seit: (.*)")
 

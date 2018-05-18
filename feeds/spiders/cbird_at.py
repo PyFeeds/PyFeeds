@@ -11,7 +11,7 @@ class CbirdAtSpider(FeedsCrawlSpider):
     start_urls = ["http://cbird.at/hilfe/neu/", "http://cbird.at/impressum"]
     rules = (Rule(LinkExtractor(allow=("hilfe/neu/(\d+)",)), callback="parse_item"),)
 
-    _title = "Neue cbird Versionen",
+    _title = "Neue cbird Versionen"
     _subtitle = "Die neuesten Versionen von cbird."
     _link = start_urls[0]
 

@@ -14,7 +14,7 @@ class OpenwrtOrgSpider(FeedsCrawlSpider):
         Rule(LinkExtractor(allow=("releases/(.*)/start",)), callback="parse_release"),
     )
 
-    _title = "New OpenWRT Release Builds",
+    _title = ("New OpenWRT Release Builds",)
     _subtitle = "Newest release builds from OpenWRT."
     _timezone = "Europe/Berlin"
     _base_url = "https://{}".format(name)

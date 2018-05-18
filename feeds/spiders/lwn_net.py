@@ -162,7 +162,12 @@ class LwnNetSpider(FeedsXMLFeedSpider):
 
     def _parse_article(self, response):
         remove_elems = [
-            ".FeatureByline", ".GAByline", ".Form", "form", ".MakeALink", "br"
+            ".FeatureByline",
+            ".GAByline",
+            ".Form",
+            "form",
+            ".MakeALink",
+            "br",
         ]
         il = FeedEntryItemLoader(
             response=response,
@@ -209,7 +214,10 @@ class LwnNetSpider(FeedsXMLFeedSpider):
     def _parse_weekly_edition(self, response):
         remove_elems = ["h1"]
         change_tags = {
-            ".Cat1HL": "h1", ".Cat2HL": "h2", ".Cat3HL": "h3", ".SummaryHL": "h4"
+            ".Cat1HL": "h1",
+            ".Cat2HL": "h2",
+            ".Cat3HL": "h3",
+            ".SummaryHL": "h4",
         }
         il = FeedEntryItemLoader(
             response=response,

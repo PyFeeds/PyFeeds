@@ -13,7 +13,7 @@ class VerbraucherrechtAtSpider(FeedsSpider):
     _subtitle = "Neuigkeiten rund um Konsumentenschutz und Verbraucherrechte"
     _author_name = "Verein für Konsumenteninformation"
     _link = "https://{}".format(name)
-    _logo = ("https://{}/cms/fileadmin/imag/logo.gif".format(name))
+    _logo = "https://{}/cms/fileadmin/imag/logo.gif".format(name)
     _timezone = "Europe/Vienna"
 
     def parse(self, response):

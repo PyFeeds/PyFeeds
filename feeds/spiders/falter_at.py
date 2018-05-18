@@ -47,9 +47,7 @@ class FalterAtSpider(FeedsSpider):
             (
                 "https://wwei-api.{}/api/v1/simple_search?v=true&"
                 + "sort_pos=front&sort=review.post_date:desc&c=10"
-            ).format(
-                self.name
-            ),
+            ).format(self.name),
             self.parse_wwei,
             meta={"dont_cache": True},
         )
@@ -95,8 +93,8 @@ class FalterAtSpider(FeedsSpider):
             object_pairs_hook=OrderedDict,
         )
         latest_issue_date = revisions.popitem(last=False)[1][-1]
-        issuenr = (
-            delorean.parse(latest_issue_date, dayfirst=False).format_datetime("Yww")
+        issuenr = delorean.parse(latest_issue_date, dayfirst=False).format_datetime(
+            "Yww"
         )
         yield scrapy.Request(
             response.urljoin(
@@ -130,9 +128,7 @@ class FalterAtSpider(FeedsSpider):
             date = (
                 delorean.parse(item["date"], dayfirst=False, timezone=self._timezone)
                 + timedelta(hours=17, seconds=i)
-            ).format_datetime(
-                "y-MM-dd HH:mm:ss"
-            )
+            ).format_datetime("y-MM-dd HH:mm:ss")
             il.add_value("updated", date)
             yield scrapy.Request(link, self.parse_item_text, meta={"il": il})
 

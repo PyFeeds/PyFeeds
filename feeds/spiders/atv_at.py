@@ -36,12 +36,10 @@ class AtvAtSpider(FeedsSpider):
     def parse_program(self, response):
         if not response.css(".jsb_video\/FlashPlayer"):
             return
-        data = (
-            json.loads(
-                response.css(".jsb_video\/FlashPlayer").xpath("@data-jsb").extract()[0]
-            )
+        data = json.loads(
+            response.css(".jsb_video\/FlashPlayer").xpath("@data-jsb").extract()[0]
         )
-        data = (data["config"]["initial_video"]["parts"][0]["tracking"]["nurago"])
+        data = data["config"]["initial_video"]["parts"][0]["tracking"]["nurago"]
         il = FeedEntryItemLoader(
             response=response,
             base_url="http://{}".format(self.name),

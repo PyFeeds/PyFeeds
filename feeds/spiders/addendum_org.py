@@ -14,9 +14,7 @@ class AddendumOrgSpider(FeedsXMLFeedSpider):
     _link = "https://www.{}".format(name)
     _icon = (
         "https://www.{}/resources/dist/favicons/" "android-chrome-192x192.png"
-    ).format(
-        name
-    )
+    ).format(name)
     _timezone = "Europe/Vienna"
     _max_articles = 10
     _num_articles = 0
@@ -54,7 +52,9 @@ class AddendumOrgSpider(FeedsXMLFeedSpider):
             ".internalLink span",
         ]
         change_tags = {
-            "div.heroStage__introText": "strong", "figcaption": "i", "figure": "div"
+            "div.heroStage__introText": "strong",
+            "figcaption": "i",
+            "figure": "div",
         }
         replace_regex = {
             r'<span data-src="([^"]+)"></span>.*?<span data-src="([^"]+)" '

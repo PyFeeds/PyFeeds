@@ -62,11 +62,11 @@ class AtomExportPipeline(object):
     @classmethod
     def from_crawler(cls, crawler):
         try:
-            output_path = (crawler.settings.get("FEEDS_CONFIG")["feeds"]["output_path"])
+            output_path = crawler.settings.get("FEEDS_CONFIG")["feeds"]["output_path"]
         except (KeyError, TypeError):
             output_path = "output"
         try:
-            output_url = (crawler.settings.get("FEEDS_CONFIG")["feeds"]["output_url"])
+            output_url = crawler.settings.get("FEEDS_CONFIG")["feeds"]["output_url"]
         except (KeyError, TypeError):
             output_url = None
         pipeline = cls(output_path=output_path, output_url=output_url)

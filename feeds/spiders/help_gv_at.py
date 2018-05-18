@@ -18,8 +18,8 @@ class HelpGvAtSpider(FeedsSpider):
     _subtitle = "Ihr Wegweiser durch die Behörden und Ämter in Österreich"
     _link = "https://www.{}".format(name)
     _icon = "https://www.{}/HLPD_Static/img/favicon.ico".format(name)
-    _logo = (
-        "https://www.{}/HLPD_Static/img/" "120924_Header_helpgv_links.jpg".format(name)
+    _logo = "https://www.{}/HLPD_Static/img/" "120924_Header_helpgv_links.jpg".format(
+        name
     )
     _timezone = "Europe/Vienna"
 
@@ -38,9 +38,7 @@ class HelpGvAtSpider(FeedsSpider):
             (
                 "https://www.{}/Portal.Node/hlpd/public/content/340/"
                 + "weiterenews.html"
-            ).format(
-                self.name
-            ),
+            ).format(self.name),
             self._parse_news,
             meta={"dont_cache": True},
         )

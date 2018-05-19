@@ -1,3 +1,4 @@
+from datetime import datetime
 import html
 import os
 import re
@@ -21,31 +22,34 @@ from feeds.items import FeedEntryItem
 
 
 def parse_datetime(text, loader_context):
-    if not isinstance(text, str):
+    if isinstance(text, datetime):
+        return delorean.Delorean(text, timezone=loader_context.get("timezone", "UTC"))
+    elif isinstance(text, str):
+        try:
+            return delorean.parse(
+                text.strip(),
+                timezone=loader_context.get("timezone", "UTC"),
+                dayfirst=loader_context.get("dayfirst", False),
+                yearfirst=loader_context.get("yearfirst", True),
+            ).shift("UTC")
+        except ValueError:
+            return delorean.Delorean(
+                dateparser.parse(text), timezone=loader_context.get("timezone", "UTC")
+            )
+    else:
         return text
-    try:
-        return delorean.parse(
-            text.strip(),
-            timezone=loader_context.get('timezone', 'UTC'),
-            dayfirst=loader_context.get('dayfirst', False),
-            yearfirst=loader_context.get('yearfirst', True)).shift('UTC')
-    except ValueError:
-        return delorean.Delorean(
-            dateparser.parse(text),
-            timezone=loader_context.get('timezone', 'UTC'))
 
 
 def replace_regex(text, loader_context):
-    for pattern, repl in loader_context.get('replace_regex', {}).items():
+    for pattern, repl in loader_context.get("replace_regex", {}).items():
         text = re.sub(pattern, repl, text)
 
     return text
 
 
 def build_tree(text, loader_context):
-    base_url = loader_context.get('base_url', None)
-    tree = lxml.html.fragment_fromstring(text, create_parent='div',
-                                         base_url=base_url)
+    base_url = loader_context.get("base_url", None)
+    tree = lxml.html.fragment_fromstring(text, create_parent="div", base_url=base_url)
 
     # Workaround for https://bugs.launchpad.net/lxml/+bug/1576598.
     # FIXME: Remove this when a workaround is released.
@@ -58,29 +62,29 @@ def build_tree(text, loader_context):
 
 
 def serialize_tree(tree, in_make_links=False):
-    return lxml.html.tostring(tree, encoding='unicode')
+    return lxml.html.tostring(tree, encoding="unicode")
 
 
 def make_links_absolute(tree):
     if tree.base_url:
         # Make references in tags like <a> and <img> absolute.
-        tree.make_links_absolute(handle_failures='ignore')
+        tree.make_links_absolute(handle_failures="ignore")
     return [tree]
 
 
 def cleanup_html(tree, loader_context):
     # Remove tags.
-    for elem_sel in loader_context.get('remove_elems', []):
+    for elem_sel in loader_context.get("remove_elems", []):
         selector = CSSSelector(elem_sel)
         for elem in selector(tree):
             elem.getparent().remove(elem)
 
-    for elem_sel in loader_context.get('remove_elems_xpath', []):
+    for elem_sel in loader_context.get("remove_elems_xpath", []):
         for elem in tree.xpath(elem_sel):
             elem.getparent().remove(elem)
 
     # Change tag names.
-    for elem_sel, elem_tag in loader_context.get('change_tags', {}).items():
+    for elem_sel, elem_tag in loader_context.get("change_tags", {}).items():
         selector = CSSSelector(elem_sel)
         for elem in selector(tree):
             elem.tag = elem_tag
@@ -92,11 +96,11 @@ def cleanup_html(tree, loader_context):
             elem.getparent().remove(elem)
         # Remove class and id attribute from all elements which are not needed
         # in the feed.
-        elem.attrib.pop('class', None)
-        elem.attrib.pop('id', None)
+        elem.attrib.pop("class", None)
+        elem.attrib.pop("id", None)
         # Delete data- attributes that have no general meaning.
         for attrib in list(elem.attrib.keys()):
-            if attrib.startswith('data-'):
+            if attrib.startswith("data-"):
                 elem.attrib.pop(attrib)
 
     return [tree]
@@ -106,22 +110,22 @@ def convert_footnotes(tree, loader_context):
     footnotes = []
 
     # Convert footnotes.
-    for elem_sel in loader_context.get('convert_footnotes', []):
+    for elem_sel in loader_context.get("convert_footnotes", []):
         selector = CSSSelector(elem_sel)
         for elem in selector(tree):
             footnotes.append(elem.text_content())
-            ref = etree.Element('span')
-            ref.text = ' [{}]'.format(len(footnotes))
+            ref = etree.Element("span")
+            ref.text = " [{}]".format(len(footnotes))
             elem.getparent().replace(elem, ref)
 
     # Add new <div> with all the footnotes, one per <p>
     if footnotes:
-        footnotes_elem = etree.Element('div')
+        footnotes_elem = etree.Element("div")
         tree.append(footnotes_elem)
 
     for i, footnote in enumerate(footnotes):
-        footnote_elem = etree.Element('p')
-        footnote_elem.text = '[{}] {}'.format(i + 1, footnote)
+        footnote_elem = etree.Element("p")
+        footnote_elem.text = "[{}] {}".format(i + 1, footnote)
         footnotes_elem.append(footnote_elem)
 
     return [tree]
@@ -156,16 +160,17 @@ def skip_false(value):
 class BaseItemLoader(ItemLoader):
     # Defaults
     # Unescape twice to get rid of &amp;&xxx; encoding errors.
-    default_input_processor = MapCompose(skip_false, str.strip, html.unescape,
-                                         html.unescape)
+    default_input_processor = MapCompose(
+        skip_false, str.strip, html.unescape, html.unescape
+    )
     default_output_processor = TakeFirst()
 
     # Join first two elements on ": " and the rest on " - ".
-    title_out = Compose(lambda t: [': '.join(t[:2])] + t[2:], Join(' - '))
+    title_out = Compose(lambda t: [": ".join(t[:2])] + t[2:], Join(" - "))
 
     updated_in = MapCompose(skip_false, parse_datetime)
 
-    author_name_out = Join(', ')
+    author_name_out = Join(", ")
 
     # Optional
     path_out = Join(os.sep)
@@ -180,12 +185,18 @@ class FeedEntryItemLoader(BaseItemLoader):
 
     # Field specific
     content_text_in = MapCompose(skip_false, str.strip, remove_tags)
-    content_text_out = Join('\n')
+    content_text_out = Join("\n")
 
-    content_html_in = MapCompose(skip_false, replace_regex, build_tree,
-                                 convert_footnotes, cleanup_html,
-                                 skip_empty_tree, make_links_absolute,
-                                 serialize_tree)
+    content_html_in = MapCompose(
+        skip_false,
+        replace_regex,
+        build_tree,
+        convert_footnotes,
+        cleanup_html,
+        skip_empty_tree,
+        make_links_absolute,
+        serialize_tree,
+    )
     content_html_out = Join()
 
     category_out = Identity()
@@ -194,5 +205,6 @@ class FeedEntryItemLoader(BaseItemLoader):
 # Site specific loaders
 class CbirdFeedEntryItemLoader(FeedEntryItemLoader):
     content_html_out = Join()
+
 
 # vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4 smartindent autoindent

@@ -6,8 +6,7 @@ class SpiderSettings:
     @classmethod
     def from_crawler(cls, crawler):
         ext = cls()
-        crawler.signals.connect(ext.spider_opened,
-                                signal=signals.spider_opened)
+        crawler.signals.connect(ext.spider_opened, signal=signals.spider_opened)
         return ext
 
     def spider_opened(self, spider):
@@ -15,4 +14,4 @@ class SpiderSettings:
 
     @classmethod
     def spider_settings(cls, spider):
-        return spider.settings.get('FEEDS_CONFIG').get(spider.name, {})
+        return spider.settings.get("FEEDS_CONFIG").get(spider.name, {})

@@ -22,6 +22,7 @@ class FeedsHttpErrorMiddleware:
             lgr(
                 "Ignoring response %(response)r: HTTP status code is not "
                 "handled or not allowed",
-                {'response': response}, extra={'spider': spider},
+                {"response": response},
+                extra={"spider": spider},
             )
             return []

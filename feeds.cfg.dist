@@ -72,3 +72,10 @@ useragent = feeds (+https://github.com/nblock/feeds)
 #    wels
 #    linz
 #    nachrichten
+
+#[uebermedien.de]
+## uebermedien.de has a paywall for certain articles.
+## If you want to crawl paid articles, please provide your Steady username
+## and password.
+# username =
+# password =

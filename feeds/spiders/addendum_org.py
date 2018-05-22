@@ -50,6 +50,9 @@ class AddendumOrgSpider(FeedsXMLFeedSpider):
             ".callToAction",
             ".print-action",
             ".internalLink span",
+            ".addCommunity",
+            ".download",
+            ".BCaudioPlayer",
         ]
         change_tags = {
             "div.heroStage__introText": "strong",

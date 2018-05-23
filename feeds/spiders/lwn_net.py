@@ -1,9 +1,9 @@
-from datetime import timedelta
 import re
+from datetime import timedelta
 
-from scrapy.loader.processors import TakeFirst
-import scrapy
 import delorean
+import scrapy
+from scrapy.loader.processors import TakeFirst
 
 from feeds.loaders import FeedEntryItemLoader
 from feeds.spiders import FeedsXMLFeedSpider

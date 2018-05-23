@@ -1,5 +1,6 @@
-import scrapy
 import datetime
+
+import scrapy
 
 from feeds.loaders import FeedEntryItemLoader
 from feeds.spiders import FeedsSpider

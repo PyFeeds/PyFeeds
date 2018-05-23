@@ -1,8 +1,8 @@
-from datetime import timedelta
 import json
+from datetime import timedelta
 
-from scrapy import Request
 import delorean
+from scrapy import Request
 
 from feeds.loaders import FeedEntryItemLoader
 from feeds.spiders import FeedsSpider

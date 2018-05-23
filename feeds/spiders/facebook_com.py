@@ -1,8 +1,8 @@
 import json
 
-from scrapy import Request
 import bleach
 import w3lib.url
+from scrapy import Request
 
 from feeds.loaders import FeedEntryItemLoader
 from feeds.spiders import FeedsSpider

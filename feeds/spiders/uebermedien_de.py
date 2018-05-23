@@ -1,8 +1,8 @@
-from scrapy.http import FormRequest
-import scrapy
-
-from urllib.parse import urlparse, parse_qs
 import json
+from urllib.parse import parse_qs, urlparse
+
+import scrapy
+from scrapy.http import FormRequest
 
 from feeds.loaders import FeedEntryItemLoader
 from feeds.spiders import FeedsXMLFeedSpider

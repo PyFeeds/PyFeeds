@@ -1,24 +1,19 @@
-from datetime import datetime
 import html
 import os
 import re
+from datetime import datetime
 
+import dateparser
+import delorean
+import lxml
 from lxml import etree
 from lxml.cssselect import CSSSelector
 from lxml.html import HtmlComment
 from scrapy.loader import ItemLoader
-from scrapy.loader.processors import Compose
-from scrapy.loader.processors import Identity
-from scrapy.loader.processors import Join
-from scrapy.loader.processors import MapCompose
-from scrapy.loader.processors import TakeFirst
+from scrapy.loader.processors import Compose, Identity, Join, MapCompose, TakeFirst
 from w3lib.html import remove_tags
-import delorean
-import dateparser
-import lxml
 
-from feeds.items import FeedItem
-from feeds.items import FeedEntryItem
+from feeds.items import FeedEntryItem, FeedItem
 
 
 def parse_datetime(text, loader_context):

@@ -1,15 +1,13 @@
-from datetime import datetime
-from datetime import timedelta
 import configparser
 import logging
 import os
+from datetime import datetime, timedelta
 
+import click
 from scrapy.crawler import CrawlerProcess
 from scrapy.utils.log import configure_logging
-from scrapy.utils.project import get_project_settings
-from scrapy.utils.project import data_path
+from scrapy.utils.project import data_path, get_project_settings
 from twisted.python import failure
-import click
 
 from feeds.cache import cleanup_cache
 

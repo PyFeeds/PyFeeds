@@ -1,8 +1,8 @@
-from scrapy.http import HtmlResponse
 import scrapy
+from scrapy.http import HtmlResponse
 
-from feeds.spiders import FeedsSpider
 from feeds.loaders import FeedEntryItemLoader
+from feeds.spiders import FeedsSpider
 
 
 class WienerLinienAtSpider(FeedsSpider):

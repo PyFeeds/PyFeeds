@@ -1,12 +1,11 @@
-from urllib.parse import urljoin
 import logging
 import os
+from urllib.parse import urljoin
 
 from lxml import etree
 from scrapy.exporters import BaseItemExporter
 
-from feeds.items import FeedEntryItem
-from feeds.items import FeedItem
+from feeds.items import FeedEntryItem, FeedItem
 
 
 class AtomExporter(BaseItemExporter):

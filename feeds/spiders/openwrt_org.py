@@ -1,6 +1,6 @@
+import scrapy
 from scrapy.linkextractors import LinkExtractor
 from scrapy.spiders import Rule
-import scrapy
 
 from feeds.loaders import FeedEntryItemLoader
 from feeds.spiders import FeedsCrawlSpider

@@ -19,7 +19,7 @@ setup(
     ],
     extras_require={
         "doc": ["doc8", "restructuredtext_lint", "sphinx", "sphinx_rtd_theme"],
-        "test": ["flake8"],
+        "test": ["flake8", "black"],
     },
     entry_points="""
         [console_scripts]

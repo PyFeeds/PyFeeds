@@ -6,7 +6,6 @@ logger = logging.getLogger(__name__)
 
 
 class FeedsHttpErrorMiddleware:
-
     @classmethod
     def from_crawler(cls, crawler):
         return cls()

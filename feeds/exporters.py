@@ -9,9 +9,7 @@ from feeds.items import FeedEntryItem, FeedItem
 
 
 class AtomExporter(BaseItemExporter):
-
     class AtomFeed(object):
-
         def __init__(self, exporter, link_self=None):
             self._exporter = exporter
             self._link_self = link_self

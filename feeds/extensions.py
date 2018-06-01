@@ -2,7 +2,6 @@ from scrapy import signals
 
 
 class SpiderSettings:
-
     @classmethod
     def from_crawler(cls, crawler):
         ext = cls()

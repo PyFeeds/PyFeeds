@@ -79,3 +79,23 @@ useragent = feeds (+https://github.com/nblock/feeds)
 ## and password.
 # username =
 # password =
+
+#[orf.at]
+#channels =
+#    news
+#    fm4
+#    science
+#    help
+#    sport
+#    oe3
+#    oesterreich
+#    burgenland
+#    wien
+#    noe
+#    ooe
+#    salzburg
+#    steiermark
+#    kaernten
+#    vorarlberg
+#    tirol
+#    religion

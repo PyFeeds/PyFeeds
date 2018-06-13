@@ -18,7 +18,9 @@ from feeds.items import FeedEntryItem, FeedItem
 
 def parse_datetime(text, loader_context):
     if isinstance(text, datetime):
-        return delorean.Delorean(text, timezone=loader_context.get("timezone", "UTC"))
+        return (
+            delorean.Delorean(text, timezone=loader_context.get("timezone", "UTC"))
+        ).shift("UTC")
     elif isinstance(text, str):
         try:
             return delorean.parse(
@@ -30,7 +32,7 @@ def parse_datetime(text, loader_context):
         except ValueError:
             return delorean.Delorean(
                 dateparser.parse(text), timezone=loader_context.get("timezone", "UTC")
-            )
+            ).shift("UTC")
     else:
         return text
 

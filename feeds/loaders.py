@@ -1,6 +1,7 @@
 import html
 import os
 import re
+from copy import deepcopy
 from datetime import datetime
 
 import dateparser
@@ -70,6 +71,14 @@ def make_links_absolute(tree):
 
 
 def cleanup_html(tree, loader_context):
+    for elem_sel, elem_new in loader_context.get("replace_elems", {}).items():
+        elem_new = lxml.html.fragment_fromstring(elem_new)
+        selector = CSSSelector(elem_sel)
+        for elem in selector(tree):
+            # New element could be replaced more than once but every node must be a
+            # different element.
+            elem.getparent().replace(elem, deepcopy(elem_new))
+
     # Remove tags.
     for elem_sel in loader_context.get("remove_elems", []):
         selector = CSSSelector(elem_sel)

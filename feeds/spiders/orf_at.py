@@ -202,8 +202,8 @@ class OrfAtSpider(FeedsXMLFeedSpider):
                     .extract()[-1]
                     .strip()
                 )
-                # Possible author string must be in [2, 30].
-                if 2 <= len(author) <= 30:
+                # Possible author string must be in [2, 50].
+                if 2 <= len(author) <= 50:
                     # Only take the author name before ",".
                     author = re.split(r"[/,]", author)[0]
                     return author

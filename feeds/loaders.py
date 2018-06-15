@@ -1,6 +1,7 @@
 import html
 import os
 import re
+from copy import deepcopy
 from datetime import datetime
 
 import dateparser
@@ -18,7 +19,9 @@ from feeds.items import FeedEntryItem, FeedItem
 
 def parse_datetime(text, loader_context):
     if isinstance(text, datetime):
-        return delorean.Delorean(text, timezone=loader_context.get("timezone", "UTC"))
+        return (
+            delorean.Delorean(text, timezone=loader_context.get("timezone", "UTC"))
+        ).shift("UTC")
     elif isinstance(text, str):
         try:
             return delorean.parse(
@@ -30,7 +33,7 @@ def parse_datetime(text, loader_context):
         except ValueError:
             return delorean.Delorean(
                 dateparser.parse(text), timezone=loader_context.get("timezone", "UTC")
-            )
+            ).shift("UTC")
     else:
         return text
 
@@ -68,6 +71,22 @@ def make_links_absolute(tree):
 
 
 def cleanup_html(tree, loader_context):
+    for elem_child, elem_parent in loader_context.get("child_to_parent", {}).items():
+        sel_child = CSSSelector(elem_child)
+        sel_parent = CSSSelector(elem_parent)
+        for e_parent in sel_parent(tree):
+            e_children = sel_child(e_parent)
+            if e_children:
+                e_parent.getparent().replace(e_parent, e_children[0])
+
+    for elem_sel, elem_new in loader_context.get("replace_elems", {}).items():
+        elem_new = lxml.html.fragment_fromstring(elem_new)
+        selector = CSSSelector(elem_sel)
+        for elem in selector(tree):
+            # New element could be replaced more than once but every node must be a
+            # different element.
+            elem.getparent().replace(elem, deepcopy(elem_new))
+
     # Remove tags.
     for elem_sel in loader_context.get("remove_elems", []):
         selector = CSSSelector(elem_sel)

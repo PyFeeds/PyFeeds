@@ -5,7 +5,6 @@ from feeds.loaders import FeedItemLoader
 
 
 class FeedsSpider(Spider):
-
     def generate_feed_header(
         self,
         title=None,

@@ -32,7 +32,6 @@ class AtomCheckRequiredFieldsPipeline(object):
     """Check presence of required fields."""
 
     def process_item(self, item, spider):
-
         def raise_if_missing(name, item):
             if name not in item:
                 raise DropItem(

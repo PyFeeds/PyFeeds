@@ -16,7 +16,7 @@ def cleanup_cache(cache_dir, max_age):
 
     logger.debug("Cleaning cache entries from {} ...".format(cache_dir))
 
-    for root, dirs, files in os.walk(cache_dir, topdown=False):
+    for root, _dirs, files in os.walk(cache_dir, topdown=False):
         if "pickled_meta" in files:
             meta = _read_meta(root)
             timestamp = datetime.fromtimestamp(meta["timestamp"])

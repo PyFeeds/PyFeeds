@@ -40,6 +40,8 @@ Feeds is currently able to create Atom feeds for the following sites:
   of Weekly Editions
 * `Oberösterreichische Nachrichten <https://www.nachrichten.at>`_:
   Newest articles
+* `ORF ON <http://orf.at>`_: Newest articles of various ORF ON (news, FM4, science,
+  etc.) platforms.
 * `ORF Ö1 <http://oe1.orf.at>`_: Newest episodes of radio shows
 * `ORF TVthek <http://tvthek.orf.at>`_: Newest episodes of TV shows
 * `profil <http://www.profil.at>`_: Newest articles

@@ -180,9 +180,11 @@ class OrfAtSpider(FeedsXMLFeedSpider):
         # author and if they do it's pretty hard to extract reliably.
 
         if response.url.startswith("http://fm4.orf.at"):
-            author = response.css(
-                "#ss-storyText .socialButtons + p:contains('Von') > a::text, "
-                + "#ss-storyText .socialButtons + p:contains('von') > a::text"
+            author = response.css("#ss-storyText > .socialButtons").xpath(
+                "following-sibling::p[("
+                + "starts-with(., 'Von') or starts-with(., 'von') "
+                + "or starts-with(., 'By') or starts-with(., 'by')"
+                + ") and position() = 1]/a/text()"
             ).extract_first()
             if author:
                 return author
@@ -196,7 +198,6 @@ class OrfAtSpider(FeedsXMLFeedSpider):
             or response.url.startswith("http://religion.orf.at")
         ):
             try:
-                # science.ORF.at, help.ORF.at
                 author = (
                     response.css("#ss-storyText > p:not(.date):not(.toplink)::text")
                     .extract()[-1]

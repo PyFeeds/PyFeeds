@@ -1,5 +1,6 @@
 import json
 import re
+from urllib.parse import urlparse
 
 import scrapy
 
@@ -179,24 +180,22 @@ class OrfAtSpider(FeedsXMLFeedSpider):
         # Does nothing for Ö3 and Bundesländer. Bundesländer quite seldomly have an
         # author and if they do it's pretty hard to extract reliably.
 
-        if response.url.startswith("http://fm4.orf.at"):
-            author = response.css(
-                "#ss-storyText .socialButtons + p:contains('Von') > a::text, "
-                + "#ss-storyText .socialButtons + p:contains('von') > a::text"
+        domain = urlparse(response.url).netloc
+        if domain == "fm4.orf.at":
+            author = response.css("#ss-storyText > .socialButtons").xpath(
+                "following-sibling::p[("
+                + "starts-with(., 'Von') or starts-with(., 'von') "
+                + "or starts-with(., 'By') or starts-with(., 'by')"
+                + ") and position() = 1]/a/text()"
             ).extract_first()
             if author:
                 return author
-        elif response.url.startswith("http://orf.at"):
+        elif domain == "orf.at":
             author = response.css(".byline ::text").extract_first()
             if author:
                 return re.split(r"[/,]", author)[0]
-        elif (
-            response.url.startswith("http://science.orf.at")
-            or response.url.startswith("http://help.orf.at")
-            or response.url.startswith("http://religion.orf.at")
-        ):
+        elif domain in ["science.orf.at", "help.orf.at", "religion.orf.at"]:
             try:
-                # science.ORF.at, help.ORF.at
                 author = (
                     response.css("#ss-storyText > p:not(.date):not(.toplink)::text")
                     .extract()[-1]

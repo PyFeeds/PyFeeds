@@ -101,7 +101,8 @@ class OrfAtSpider(FeedsXMLFeedSpider):
             ):
                 self.logger.debug("Ignoring link to '{}'".format(link))
             else:
-                yield scrapy.Request(link, self._parse_article, meta=meta)
+                # Sometimes there is a space at the end of a link ...
+                yield scrapy.Request(link.strip(), self._parse_article, meta=meta)
 
     def _parse_article(self, response):
         try:

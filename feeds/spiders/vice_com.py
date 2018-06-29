@@ -41,8 +41,15 @@ class ViceComSpider(FeedsSpider):
 
     def parse(self, response):
         articles = json.loads(response.text)
+        remove_elems = [
+            "hr + p:contains('Auch bei Vice')",
+            "hr",
+            "iframe",
+        ]
         for article in articles:
-            il = FeedEntryItemLoader()
+            il = FeedEntryItemLoader(
+                remove_elems=remove_elems,
+            )
             il.add_value("title", article["title"])
             il.add_value("link", article["url"])
             if "thumbnail_url_1_1" in article:

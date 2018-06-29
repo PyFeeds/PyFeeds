@@ -3,8 +3,8 @@ import re
 from collections import OrderedDict
 from datetime import timedelta
 
-import delorean
 import scrapy
+from dateutil.parser import parse as dateutil_parse
 
 from feeds.loaders import FeedEntryItemLoader
 from feeds.spiders import FeedsSpider
@@ -87,26 +87,23 @@ class FalterAtSpider(FeedsSpider):
     def parse_archive(self, response):
         # The perks of having a JavaScript frontend ...
         revisions = json.loads(
-            response.xpath('//div[@class="content-main"]/script/text()').re_first(
-                "revisions\s*:\s*(.*)"
-            ),
+            response.css(".content-main script ::text").re_first("revisions: (.*)"),
             object_pairs_hook=OrderedDict,
         )
-        latest_issue_date = revisions.popitem(last=False)[1][-1]
-        issuenr = delorean.parse(latest_issue_date, dayfirst=False).format_datetime(
-            "Yww"
+        latest_issue_date = dateutil_parse(
+            revisions.popitem(last=False)[1][-1], ignoretz=True
         )
+        issuenr = latest_issue_date.strftime("%Y%W")
         yield scrapy.Request(
             response.urljoin(
                 "/archiv/ajax/search?count=1000&issuenr={}".format(issuenr)
             ),
             self.parse_archive_search,
+            meta={"issue_date": latest_issue_date},
         )
 
     def parse_archive_search(self, response):
-        for i, item in enumerate(
-            json.loads(response.body_as_unicode())["result"]["hits"]
-        ):
+        for i, item in enumerate(json.loads(response.text)["result"]["hits"]):
             il = FeedEntryItemLoader(
                 response=response,
                 base_url="http://{}".format(self.name),
@@ -125,10 +122,7 @@ class FalterAtSpider(FeedsSpider):
             il.add_value("title", item["title"])
             # All articles have the same date.
             # We add an offset so they are sorted in the right order.
-            date = (
-                delorean.parse(item["date"], dayfirst=False, timezone=self._timezone)
-                + timedelta(hours=17, seconds=i)
-            ).format_datetime("y-MM-dd HH:mm:ss")
+            date = response.meta["issue_date"] + timedelta(seconds=i)
             il.add_value("updated", date)
             yield scrapy.Request(link, self.parse_item_text, meta={"il": il})
 

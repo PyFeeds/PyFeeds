@@ -1,7 +1,6 @@
-import datetime
 import json
+from datetime import datetime, timedelta, timezone
 
-import delorean
 import scrapy
 
 from feeds.loaders import FeedEntryItemLoader
@@ -20,7 +19,7 @@ class AtvAtSpider(FeedsSpider):
     _title = "ATV.at"
     _subtitle = "Mediathek"
     _timezone = "Europe/Vienna"
-    _timerange = datetime.timedelta(days=7)
+    _timerange = timedelta(days=7)
 
     def parse(self, response):
         for link in response.css(".program_link::attr(href)").extract():
@@ -52,8 +51,5 @@ class AtvAtSpider(FeedsSpider):
         il.add_xpath("content_html", '//p[@class="plot_summary"]')
         item = il.load_item()
         # Only include videos posted in the last 7 days.
-        if item["updated"] + self._timerange > delorean.utcnow().shift(self._timezone):
+        if item["updated"] + self._timerange > datetime.now(timezone.utc):
             yield item
-
-
-# vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4 smartindent autoindent

@@ -1,10 +1,16 @@
+from datetime import timezone
+
 import scrapy
 
 
-class BaseItem(scrapy.Item):
-    # Required date format: RFC 3339 (ISO 8601 extended format)
-    UPDATED_FMT = "Y-MM-ddTHH:mm:ssZZZZZ"
+def to_rfc3339(date_time):
+    """Return RFC 3339 representation of date_time with timezone UTC."""
+    # Shifting to UTC and hardcoding "Z" for the timezone is a cheap way to get a
+    # RFC 3339 compliant timestamp.
+    return date_time.astimezone(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
 
+
+class BaseItem(scrapy.Item):
     # Required
     # The feed/entry id. It may be auto generated in case a link is present.
     id = scrapy.Field()
@@ -12,8 +18,9 @@ class BaseItem(scrapy.Item):
     # The feed/entry title.
     title = scrapy.Field()
 
-    # The last updated date of the feed as Delorean object.
-    updated = scrapy.Field(serializer=lambda x: x.format_datetime(BaseItem.UPDATED_FMT))
+    # The last updated date of the feed.
+    # Required date format: RFC 3339 (ISO 8601 extended format)
+    updated = scrapy.Field(serializer=to_rfc3339)
 
     # Recommended
     author_name = scrapy.Field()

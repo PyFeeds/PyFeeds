@@ -183,12 +183,16 @@ class OrfAtSpider(FeedsXMLFeedSpider):
 
         domain = urlparse(response.url).netloc
         if domain == "fm4.orf.at":
-            author = response.css("#ss-storyText > .socialButtons").xpath(
-                "following-sibling::p[("
-                + "starts-with(., 'Von') or starts-with(., 'von') "
-                + "or starts-with(., 'By') or starts-with(., 'by')"
-                + ") and position() = 1]/a/text()"
-            ).extract_first()
+            author = (
+                response.css("#ss-storyText > .socialButtons")
+                .xpath(
+                    "following-sibling::p[("
+                    + "starts-with(., 'Von') or starts-with(., 'von') "
+                    + "or starts-with(., 'By') or starts-with(., 'by')"
+                    + ") and position() = 1]/a/text()"
+                )
+                .extract_first()
+            )
             if author:
                 return author
         elif domain == "orf.at":

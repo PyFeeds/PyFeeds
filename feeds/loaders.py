@@ -27,6 +27,7 @@ def parse_datetime(date_time, loader_context):
                 date_time.strip(),
                 dayfirst=loader_context.get("dayfirst", False),
                 yearfirst=loader_context.get("yearfirst", True),
+                ignoretz=loader_context.get("ignoretz", False),
             )
         except ValueError:
             # If dateutil can't parse it, it might be a human-readable date.

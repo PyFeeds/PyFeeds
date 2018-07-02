@@ -1,4 +1,5 @@
 import html
+import logging
 import os
 import re
 from copy import deepcopy
@@ -16,6 +17,8 @@ from scrapy.loader.processors import Compose, Identity, Join, MapCompose, TakeFi
 from w3lib.html import remove_tags
 
 from feeds.items import FeedEntryItem, FeedItem
+
+logger = logging.getLogger(__name__)
 
 
 def parse_datetime(date_time, loader_context):
@@ -79,13 +82,20 @@ def make_links_absolute(tree):
 
 
 def cleanup_html(tree, loader_context):
-    for elem_child, elem_parent in loader_context.get("child_to_parent", {}).items():
-        sel_child = CSSSelector(elem_child)
-        sel_parent = CSSSelector(elem_parent)
-        for e_parent in sel_parent(tree):
-            e_children = sel_child(e_parent)
-            if e_children:
-                e_parent.getparent().replace(e_parent, e_children[0])
+    for elem_child, parent_dist in loader_context.get("pullup_elems", {}).items():
+        selector = CSSSelector(elem_child)
+        for elem in selector(tree):
+            parent = elem
+            for _ in range(parent_dist):
+                parent = parent.getparent()
+            if parent is not None and parent.getparent() is not None:
+                parent.getparent().replace(parent, elem)
+            else:
+                logger.error(
+                    'Could not find parent with distance {} for selector "{}".'.format(
+                        parent_dist, elem_child
+                    )
+                )
 
     for elem_sel, elem_new in loader_context.get("replace_elems", {}).items():
         elem_new = lxml.html.fragment_fromstring(elem_new)

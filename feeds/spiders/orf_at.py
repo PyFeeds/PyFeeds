@@ -132,12 +132,12 @@ class OrfAtSpider(FeedsXMLFeedSpider):
             ".slideshow",
             "script",
         ]
-        child_to_parent = {
-            ".remote .instagram": ".remote",
-            ".remote .facebook": ".remote",
-            ".remote .twitter": ".remote",
-            ".remote .youtube": ".remote",
-            ".remote table": ".remote",
+        pullup_elems = {
+            ".remote .instagram": 1,
+            ".remote .facebook": 1,
+            ".remote .twitter": 1,
+            ".remote .youtube": 1,
+            ".remote table": 1,
         }
         replace_elems = {
             ".remote": "<p><em>Hinweis: Der eingebettete Inhalt ist nur im Artikel "
@@ -154,7 +154,7 @@ class OrfAtSpider(FeedsXMLFeedSpider):
         il = FeedEntryItemLoader(
             response=response,
             remove_elems=remove_elems,
-            child_to_parent=child_to_parent,
+            pullup_elems=pullup_elems,
             replace_elems=replace_elems,
             timezone=None,  # timezone is part of date string
         )

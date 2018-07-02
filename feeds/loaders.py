@@ -99,11 +99,11 @@ def cleanup_html(tree, loader_context):
     for elem_sel in loader_context.get("remove_elems", []):
         selector = CSSSelector(elem_sel)
         for elem in selector(tree):
-            elem.getparent().remove(elem)
+            elem.drop_tree()
 
     for elem_sel in loader_context.get("remove_elems_xpath", []):
         for elem in tree.xpath(elem_sel):
-            elem.getparent().remove(elem)
+            elem.drop_tree()
 
     # Change tag names.
     for elem_sel, elem_tag in loader_context.get("change_tags", {}).items():
@@ -115,7 +115,7 @@ def cleanup_html(tree, loader_context):
     for elem in tree.iter():
         # Remove HTML comments.
         if isinstance(elem, HtmlComment):
-            elem.getparent().remove(elem)
+            elem.drop_tree()
         # Remove class and id attribute from all elements which are not needed
         # in the feed.
         elem.attrib.pop("class", None)

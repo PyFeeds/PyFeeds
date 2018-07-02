@@ -10,7 +10,7 @@ from dateutil.parser import parse as dateutil_parse
 from dateutil.tz import gettz
 from lxml import etree
 from lxml.cssselect import CSSSelector
-from lxml.html import HtmlComment
+from lxml.html.clean import Cleaner
 from scrapy.loader import ItemLoader
 from scrapy.loader.processors import Compose, Identity, Join, MapCompose, TakeFirst
 from w3lib.html import remove_tags
@@ -113,9 +113,6 @@ def cleanup_html(tree, loader_context):
 
     # tree.iter() iterates over the tree including the root node.
     for elem in tree.iter():
-        # Remove HTML comments.
-        if isinstance(elem, HtmlComment):
-            elem.drop_tree()
         # Remove class and id attribute from all elements which are not needed
         # in the feed.
         elem.attrib.pop("class", None)
@@ -125,6 +122,14 @@ def cleanup_html(tree, loader_context):
             if attrib.startswith("data-"):
                 elem.attrib.pop(attrib)
 
+    return [tree]
+
+
+def lxml_cleaner(tree):
+    cleaner = Cleaner(
+        scripts=True, javascript=True, comments=True, style=True, inline_style=True
+    )
+    cleaner(tree)
     return [tree]
 
 
@@ -215,6 +220,7 @@ class FeedEntryItemLoader(BaseItemLoader):
         build_tree,
         convert_footnotes,
         cleanup_html,
+        lxml_cleaner,
         skip_empty_tree,
         make_links_absolute,
         serialize_tree,

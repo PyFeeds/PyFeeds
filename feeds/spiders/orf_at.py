@@ -131,6 +131,7 @@ class OrfAtSpider(FeedsXMLFeedSpider):
             ".storyMeta",
             ".slideshow",
             "script",
+            ".oon-youtube-logo",
         ]
         pullup_elems = {
             ".remote .instagram": 1,
@@ -156,7 +157,6 @@ class OrfAtSpider(FeedsXMLFeedSpider):
             remove_elems=remove_elems,
             pullup_elems=pullup_elems,
             replace_elems=replace_elems,
-            timezone=None,  # timezone is part of date string
         )
         # news.ORF.at
         data = response.css('script[type="application/ld+json"]::text').extract_first()

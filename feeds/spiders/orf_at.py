@@ -213,9 +213,10 @@ class OrfAtSpider(FeedsXMLFeedSpider):
                     author = re.split(r"[/,]", author)[0]
                     return (
                         author,
-                        "#ss-storyText > p:not(.date):not(.toplink):contains('{}')".format(
-                            author
-                        ),
+                        (
+                            "#ss-storyText > p:not(.date):not(.toplink):"
+                            + "contains('{}')"
+                        ).format(author),
                     )
             except IndexError:
                 pass

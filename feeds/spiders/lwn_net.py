@@ -1,8 +1,8 @@
 import re
-from datetime import timedelta
+from datetime import datetime, timedelta, timezone
 
-import delorean
 import scrapy
+from dateutil.parser import parse as dateutil_parse
 from scrapy.loader.processors import TakeFirst
 
 from feeds.loaders import FeedEntryItemLoader
@@ -123,7 +123,9 @@ class LwnNetSpider(FeedsXMLFeedSpider):
             response=response, base_url="https://{}".format(self.name), dayfirst=False
         )
         updated = node.xpath("dc:date/text()").extract_first()
-        if delorean.parse(updated) + timedelta(days=self._num_days) < delorean.utcnow():
+        if dateutil_parse(updated) + timedelta(days=self._num_days) < datetime.now(
+            timezone.utc
+        ):
             self.logger.debug(
                 ("Skipping item from {} since older than {} " "days").format(
                     updated, self._num_days

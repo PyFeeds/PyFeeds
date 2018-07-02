@@ -1,6 +1,6 @@
 import json
+from datetime import datetime
 
-import delorean
 import scrapy
 
 from feeds.loaders import FeedEntryItemLoader
@@ -15,6 +15,7 @@ class ViceComSpider(FeedsSpider):
     _link = "https://www.{}".format(name)
     _logo = "https://www.{}/favicons/apple-touch-icon-60x60.png".format(name)
     _icon = _logo
+    _timezone = "Europe/Vienna"
 
     def feed_headers(self):
         if not self._locales:
@@ -41,8 +42,9 @@ class ViceComSpider(FeedsSpider):
 
     def parse(self, response):
         articles = json.loads(response.text)
+        remove_elems = ["hr + p:contains('Auch bei Vice')", "hr", "iframe"]
         for article in articles:
-            il = FeedEntryItemLoader()
+            il = FeedEntryItemLoader(timezone=self._timezone, remove_elems=remove_elems)
             il.add_value("title", article["title"])
             il.add_value("link", article["url"])
             if "thumbnail_url_1_1" in article:
@@ -51,7 +53,9 @@ class ViceComSpider(FeedsSpider):
                     '<img src="{}">'.format(article["thumbnail_url_1_1"]),
                 )
             il.add_value("content_html", article["body"])
-            il.add_value("updated", delorean.epoch(article["publish_date"] / 1000))
+            il.add_value(
+                "updated", datetime.fromtimestamp(article["publish_date"] / 1000)
+            )
             il.add_value(
                 "author_name",
                 [

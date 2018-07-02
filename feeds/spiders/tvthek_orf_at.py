@@ -1,7 +1,7 @@
 import json
-from datetime import timedelta
+from datetime import datetime, timedelta
 
-import delorean
+from dateutil.tz import gettz
 from scrapy import Request
 
 from feeds.loaders import FeedEntryItemLoader
@@ -26,11 +26,11 @@ class TvthekOrfAtSpider(FeedsSpider):
         # It's not enough to parse only today because we might miss shows that
         # aired just before midnight but were streamed after midnight
         # (see also https://github.com/nblock/feeds/issues/27)
-        today = delorean.utcnow().shift(self._timezone)
+        today = datetime.now(gettz(self._timezone))
         for day in [today, today - timedelta(days=1)]:
             yield Request(
                 "https://api-tvthek.orf.at/api/v3/schedule/{}?limit=1000".format(
-                    day.format_datetime("Y-MM-dd")
+                    day.strftime("%Y-%m-%d")
                 ),
                 meta={"dont_cache": True},
             )

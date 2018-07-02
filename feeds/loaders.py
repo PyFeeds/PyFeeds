@@ -5,8 +5,9 @@ from copy import deepcopy
 from datetime import datetime
 
 import dateparser
-import delorean
 import lxml
+from dateutil.parser import parse as dateutil_parse
+from dateutil.tz import gettz
 from lxml import etree
 from lxml.cssselect import CSSSelector
 from lxml.html import HtmlComment
@@ -17,25 +18,32 @@ from w3lib.html import remove_tags
 from feeds.items import FeedEntryItem, FeedItem
 
 
-def parse_datetime(text, loader_context):
-    if isinstance(text, datetime):
-        return (
-            delorean.Delorean(text, timezone=loader_context.get("timezone", "UTC"))
-        ).shift("UTC")
-    elif isinstance(text, str):
+def parse_datetime(date_time, loader_context):
+    if isinstance(date_time, datetime):
+        return date_time
+    elif isinstance(date_time, str):
         try:
-            return delorean.parse(
-                text.strip(),
-                timezone=loader_context.get("timezone", "UTC"),
+            return dateutil_parse(
+                date_time.strip(),
                 dayfirst=loader_context.get("dayfirst", False),
                 yearfirst=loader_context.get("yearfirst", True),
-            ).shift("UTC")
+                ignoretz=loader_context.get("ignoretz", False),
+            )
         except ValueError:
-            return delorean.Delorean(
-                dateparser.parse(text), timezone=loader_context.get("timezone", "UTC")
-            ).shift("UTC")
+            # If dateutil can't parse it, it might be a human-readable date.
+            return dateparser.parse(date_time)
     else:
-        return text
+        raise ValueError("date_time must be datetime or a str.")
+
+
+def apply_timezone(date_time, loader_context):
+    if not date_time.tzinfo:
+        # If date_time object is not aware, apply timezone from loader_context.
+        # In case a timezone is not supplied, just assume UTC.
+        date_time = date_time.replace(
+            tzinfo=gettz(loader_context.get("timezone", "UTC"))
+        )
+    return date_time
 
 
 def replace_regex(text, loader_context):
@@ -182,7 +190,7 @@ class BaseItemLoader(ItemLoader):
     # Join first two elements on ": " and the rest on " - ".
     title_out = Compose(lambda t: [": ".join(t[:2])] + t[2:], Join(" - "))
 
-    updated_in = MapCompose(skip_false, parse_datetime)
+    updated_in = MapCompose(skip_false, parse_datetime, apply_timezone)
 
     author_name_out = Join(", ")
 

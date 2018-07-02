@@ -32,6 +32,7 @@ class WienerLinienAtSpider(FeedsSpider):
             il = FeedEntryItemLoader(
                 response=response,
                 timezone=self._timezone,
+                ignoretz=True,
                 base_url="http://{}".format(self.name),
             )
             link = response.urljoin(item.css("a::attr(href)").extract_first())

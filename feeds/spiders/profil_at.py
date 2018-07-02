@@ -1,7 +1,7 @@
-from datetime import timedelta
+from datetime import datetime, timedelta
 
-import delorean
 import scrapy
+from dateutil.tz import gettz
 
 from feeds.loaders import FeedEntryItemLoader
 from feeds.spiders import FeedsSpider
@@ -21,9 +21,7 @@ class ProfilAtSpider(FeedsSpider):
 
     def build_request(self, day, max_days, max_days_limit):
         return scrapy.Request(
-            "https://www.{}/archiv/{}".format(
-                self.name, day.shift(self._timezone).format_datetime("Y/M/d")
-            ),
+            "https://www.{}/archiv/{}".format(self.name, day.strftime("%Y/%m/%d")),
             self.parse_archive_page,
             meta={
                 "handle_httpstatus_list": [404],
@@ -36,7 +34,7 @@ class ProfilAtSpider(FeedsSpider):
 
     def start_requests(self):
         yield self.build_request(
-            delorean.utcnow(), self._max_days, self._max_days_limit
+            datetime.now(gettz(self._timezone)), self._max_days, self._max_days_limit
         )
 
     def parse_archive_page(self, response):
@@ -79,13 +77,6 @@ class ProfilAtSpider(FeedsSpider):
         )
         il.add_value("author_name", author_name)
         il.add_css("title", 'h1[itemprop="headline"]::text')
-        il.add_css(
-            "updated",
-            'meta[property="article:published_time"]::attr(content)',
-            re="([^+]*)",
-        )
+        il.add_css("updated", 'meta[property="article:published_time"]::attr(content)')
         il.add_css("content_html", "article")
         yield il.load_item()
-
-
-# vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4 smartindent autoindent

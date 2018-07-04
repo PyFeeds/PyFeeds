@@ -53,6 +53,9 @@ class AddendumOrgSpider(FeedsXMLFeedSpider):
             ".addCommunity",
             ".download",
             ".BCaudioPlayer",
+            "style",
+            ".icon-date",
+            ".callToAction__button",
         ]
         change_tags = {
             "div.heroStage__introText": "strong",
@@ -62,21 +65,24 @@ class AddendumOrgSpider(FeedsXMLFeedSpider):
         replace_regex = {
             r'<span data-src="([^"]+)"></span>.*?<span data-src="([^"]+)" '
             + r'data-min-width="1000">': r'<a href="\2"><img src="\1"></a>',
-            r'<div style=".*?"><video.*?></video>.*?</div></div>': (
-                "<em>Das eingebettete Video ist nur im Artikel verfügbar.</em>"
-            ),
+            r'<video.*?data-placeholder="([^"]+)".*?</video>': r'<img src="\1">',
+        }
+        replace_elems = {
+            "video": "<p><em>Hinweis: Das eingebettete Video ist nur im Artikel "
+            + "verfügbar.</em></p>"
         }
         il = FeedEntryItemLoader(
             response=response,
             timezone=self._timezone,
-            base_url="https://www.{}".format(self.name),
+            base_url=response.url,
             remove_elems=remove_elems,
             change_tags=change_tags,
             replace_regex=replace_regex,
+            replace_elems=replace_elems,
         )
         il.add_value("link", response.url)
-        il.add_value("author_name", "Addendum")
-        il.add_css("title", 'meta[property="og:title"]::attr(content)')
+        il.add_css("author_name", ".sidebar .authors__name::text")
+        il.add_css("title", "title::text", re="(.*) - Addendum")
         il.add_css("updated", 'meta[property="article:modified_time"]::attr(content)')
         # If not yet modified:
         il.add_css("updated", 'meta[property="article:published_time"]::attr(content)')

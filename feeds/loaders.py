@@ -1,4 +1,5 @@
 import html
+import logging
 import os
 import re
 from copy import deepcopy
@@ -10,12 +11,14 @@ from dateutil.parser import parse as dateutil_parse
 from dateutil.tz import gettz
 from lxml import etree
 from lxml.cssselect import CSSSelector
-from lxml.html import HtmlComment
+from lxml.html.clean import Cleaner
 from scrapy.loader import ItemLoader
 from scrapy.loader.processors import Compose, Identity, Join, MapCompose, TakeFirst
 from w3lib.html import remove_tags
 
 from feeds.items import FeedEntryItem, FeedItem
+
+logger = logging.getLogger(__name__)
 
 
 def parse_datetime(date_time, loader_context):
@@ -79,13 +82,20 @@ def make_links_absolute(tree):
 
 
 def cleanup_html(tree, loader_context):
-    for elem_child, elem_parent in loader_context.get("child_to_parent", {}).items():
-        sel_child = CSSSelector(elem_child)
-        sel_parent = CSSSelector(elem_parent)
-        for e_parent in sel_parent(tree):
-            e_children = sel_child(e_parent)
-            if e_children:
-                e_parent.getparent().replace(e_parent, e_children[0])
+    for elem_child, parent_dist in loader_context.get("pullup_elems", {}).items():
+        selector = CSSSelector(elem_child)
+        for elem in selector(tree):
+            parent = elem
+            for _ in range(parent_dist):
+                parent = parent.getparent()
+            if parent is not None and parent.getparent() is not None:
+                parent.getparent().replace(parent, elem)
+            else:
+                logger.error(
+                    'Could not find parent with distance {} for selector "{}".'.format(
+                        parent_dist, elem_child
+                    )
+                )
 
     for elem_sel, elem_new in loader_context.get("replace_elems", {}).items():
         elem_new = lxml.html.fragment_fromstring(elem_new)
@@ -99,11 +109,11 @@ def cleanup_html(tree, loader_context):
     for elem_sel in loader_context.get("remove_elems", []):
         selector = CSSSelector(elem_sel)
         for elem in selector(tree):
-            elem.getparent().remove(elem)
+            elem.drop_tree()
 
     for elem_sel in loader_context.get("remove_elems_xpath", []):
         for elem in tree.xpath(elem_sel):
-            elem.getparent().remove(elem)
+            elem.drop_tree()
 
     # Change tag names.
     for elem_sel, elem_tag in loader_context.get("change_tags", {}).items():
@@ -113,9 +123,6 @@ def cleanup_html(tree, loader_context):
 
     # tree.iter() iterates over the tree including the root node.
     for elem in tree.iter():
-        # Remove HTML comments.
-        if isinstance(elem, HtmlComment):
-            elem.getparent().remove(elem)
         # Remove class and id attribute from all elements which are not needed
         # in the feed.
         elem.attrib.pop("class", None)
@@ -125,6 +132,14 @@ def cleanup_html(tree, loader_context):
             if attrib.startswith("data-"):
                 elem.attrib.pop(attrib)
 
+    return [tree]
+
+
+def lxml_cleaner(tree):
+    cleaner = Cleaner(
+        scripts=True, javascript=True, comments=True, style=True, inline_style=True
+    )
+    cleaner(tree)
     return [tree]
 
 
@@ -215,6 +230,7 @@ class FeedEntryItemLoader(BaseItemLoader):
         build_tree,
         convert_footnotes,
         cleanup_html,
+        lxml_cleaner,
         skip_empty_tree,
         make_links_absolute,
         serialize_tree,

@@ -131,32 +131,32 @@ class OrfAtSpider(FeedsXMLFeedSpider):
             ".storyMeta",
             ".slideshow",
             "script",
+            ".oon-youtube-logo",
         ]
-        child_to_parent = {
-            ".remote .instagram": ".remote",
-            ".remote .facebook": ".remote",
-            ".remote .twitter": ".remote",
-            ".remote .youtube": ".remote",
-            ".remote table": ".remote",
+        pullup_elems = {
+            ".remote .instagram": 1,
+            ".remote .facebook": 1,
+            ".remote .twitter": 1,
+            ".remote .youtube": 1,
+            ".remote table": 1,
         }
         replace_elems = {
             ".remote": "<p><em>Hinweis: Der eingebettete Inhalt ist nur im Artikel "
             + "verfügbar.</em></p>"
         }
-        author = self._extract_author(response)
+        author, author_selector = self._extract_author(response)
         if author:
             self.logger.debug("Extracted possible author '{}'".format(author))
             # Remove the paragraph that contains the author.
-            remove_elems.append("p:contains('{}')".format(author))
+            remove_elems.insert(0, author_selector)
         else:
             self.logger.debug("Could not extract author name")
             author = "{}.ORF.at".format(response.meta["path"])
         il = FeedEntryItemLoader(
             response=response,
             remove_elems=remove_elems,
-            child_to_parent=child_to_parent,
+            pullup_elems=pullup_elems,
             replace_elems=replace_elems,
-            timezone=None,  # timezone is part of date string
         )
         # news.ORF.at
         data = response.css('script[type="application/ld+json"]::text').extract_first()
@@ -193,12 +193,13 @@ class OrfAtSpider(FeedsXMLFeedSpider):
                 )
                 .extract_first()
             )
+            author_selector = "#ss-storyText > .socialButtons + p"
             if author:
-                return author
+                return (author, author_selector)
         elif domain == "orf.at":
             author = response.css(".byline ::text").extract_first()
             if author:
-                return re.split(r"[/,]", author)[0]
+                return (re.split(r"[/,]", author)[0], ".byline")
         elif domain in ["science.orf.at", "help.orf.at", "religion.orf.at"]:
             try:
                 author = (
@@ -210,9 +211,17 @@ class OrfAtSpider(FeedsXMLFeedSpider):
                 if 2 <= len(author) <= 50:
                     # Only take the author name before ",".
                     author = re.split(r"[/,]", author)[0]
-                    return author
+                    return (
+                        author,
+                        (
+                            "#ss-storyText > p:not(.date):not(.toplink):"
+                            + "contains('{}')"
+                        ).format(author),
+                    )
             except IndexError:
                 pass
+
+        return (None, None)
 
     @staticmethod
     def _get_logo(channel):

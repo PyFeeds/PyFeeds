@@ -18,8 +18,8 @@ setup(
         "lxml>=3.5.0",
     ],
     extras_require={
-        "doc": ["doc8", "restructuredtext_lint", "sphinx", "sphinx_rtd_theme"],
-        "test": ["flake8", "black", "isort"],
+        "docs": ["doc8", "restructuredtext_lint", "sphinx", "sphinx_rtd_theme"],
+        "style": ["black", "flake8", "isort"],
     },
     entry_points="""
         [console_scripts]

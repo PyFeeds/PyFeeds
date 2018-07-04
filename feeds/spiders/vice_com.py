@@ -42,7 +42,12 @@ class ViceComSpider(FeedsSpider):
 
     def parse(self, response):
         articles = json.loads(response.text)
-        remove_elems = ["hr + p:contains('Auch bei Vice')", "hr", "iframe"]
+        remove_elems = [
+            "hr + p",
+            "hr",
+            "iframe",
+            "p i:last-of-type:contains('Facebook'):contains('Twitter')",
+        ]
         for article in articles:
             il = FeedEntryItemLoader(timezone=self._timezone, remove_elems=remove_elems)
             il.add_value("title", article["title"])

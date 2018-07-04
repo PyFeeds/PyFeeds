@@ -14,8 +14,8 @@ Add ``orf.at`` to the list of spiders:
    spiders =
      orf.at
 
-orf.at supports different channels via the ``channels`` parameter (one per line). If no
-channel is given, ``news`` is used.
+orf.at supports different channels via the ``channels`` parameter (one per
+line). If no channel is given, ``news`` is used.
 
 .. code-block:: ini
 

@@ -30,6 +30,11 @@ Related work
 * `python-ftr <https://github.com/1flow/python-ftr>`_ is a library to extract
   content from pages. A partial reimplementation of Full-Text RSS.
 
+Documentation
+-------------
+Feeds comes with extensive documentation. It is available at
+`https://pyfeeds.readthedocs.io <https://pyfeeds.readthedocs.io/en/latest/>`_.
+
 Authors
 -------
 Feeds is written and maintained by `Florian Preinstorfer <https://nblock.org>`_

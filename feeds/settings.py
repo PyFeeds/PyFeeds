@@ -26,13 +26,18 @@ ITEM_PIPELINES = {
 
 EXTENSIONS = {"feeds.extensions.SpiderSettings": 500}
 
-SPIDER_MIDDLEWARES = {"feeds.middlewares.FeedsHttpErrorMiddleware": 51}
+SPIDER_MIDDLEWARES = {
+    "feeds.spidermiddlewares.FeedsHttpErrorMiddleware": 51,
+    "feeds.spidermiddlewares.FeedsHttpCacheMiddleware": 1000,
+}
 
 HTTPCACHE_ENABLED = False
-HTTPCACHE_STORAGE = "scrapy.extensions.httpcache.FilesystemCacheStorage"
+HTTPCACHE_STORAGE = "feeds.extensions.FeedsCacheStorage"
 HTTPCACHE_POLICY = "scrapy.extensions.httpcache.DummyPolicy"
 HTTPCACHE_DIR = "cache"
-HTTPCACHE_IGNORE_HTTP_CODES = [404, 500, 502, 503, 504]
+# Cache regardless of the HTTP status by default, deal with purging unwanted status
+# codes in feeds.cache.
+HTTPCACHE_IGNORE_HTTP_CODES = []
 
 # Default user agent. Can be overriden in feeds.cfg.
 USER_AGENT = "feeds (+https://github.com/nblock/feeds)"

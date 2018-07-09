@@ -43,7 +43,8 @@ class FeedsHttpCacheMiddleware:
                 except KeyError:
                     r.meta["fingerprints"] = []
                 if not response.request.meta.get("dont_cache", False):
-                    r.meta["fingerprints"].append(request_fingerprint(response.request))
+                    fingerprint = request_fingerprint(response.request)
+                    r.meta["fingerprints"].append(fingerprint)
                     logger.debug("Request fingerprints for request {}: {}".format(
                         r, r.meta["fingerprints"]))
                 else:

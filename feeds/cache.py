@@ -51,5 +51,9 @@ def cleanup_cache(cache_dir, max_age):
 
 
 def remove_cache_entry(cache_entry_path, url):
-    logger.debug("Removing cache entry for URL {}".format(url))
-    shutil.rmtree(cache_entry_path)
+    if os.path.exists(cache_entry_path):
+        logger.debug("Removing cache entry for URL {}".format(url))
+        shutil.rmtree(cache_entry_path)
+    else:
+        logger.error("Cannot remove cache entry {} for URL {}".format(
+            cache_entry_path, url))

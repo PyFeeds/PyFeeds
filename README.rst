@@ -18,6 +18,11 @@ Feeds is based on Scrapy_, a framework for extracting data from websites, and
 it's easy to add support for new websites. Just take a look at the existing
 spiders in ``feeds/spiders`` and feel free to open a pull request!
 
+Documentation
+-------------
+Feeds comes with extensive documentation. It is available at
+`https://pyfeeds.readthedocs.io <https://pyfeeds.readthedocs.io/en/latest/>`_.
+
 Supported Websites
 ------------------
 

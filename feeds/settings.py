@@ -10,6 +10,10 @@ BOT_NAME = "feeds"
 SPIDER_MODULES = ["feeds.spiders"]
 NEWSPIDER_MODULE = "feeds.spiders"
 
+# Don't overwhelm sites with requests.
+CONCURRENT_REQUESTS_PER_DOMAIN = 2
+DOWNLOAD_DELAY = 0.25
+
 # Disable telnet
 TELNETCONSOLE_ENABLED = False
 

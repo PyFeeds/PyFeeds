@@ -64,7 +64,7 @@ class UsenixOrgSpider(FeedsSpider):
             r"(?P<season>Spring|Summer|Fall|Winter) (?P<year>\d{4})", issue
         )
         if match:
-            seasons = {"Spring": "3", "Summer": "6", "Fall": "9", "Winter": "12"}
+            seasons = {"Winter": "1", "Spring": "4", "Summer": "7", "Fall": "10"}
             month = int(seasons[match.group("season")])
             year = int(match.group("year"))
             date = datetime(day=1, month=month, year=year)

@@ -120,12 +120,10 @@ class LwnNetSpider(FeedsXMLFeedSpider):
 
     def parse_node(self, response, node):
         il = FeedEntryItemLoader(
-            response=response, base_url="https://{}".format(self.name), dayfirst=False
+            response=response, base_url="https://{}".format(self.name)
         )
-        updated = node.xpath("dc:date/text()").extract_first()
-        if dateutil_parse(updated) + timedelta(days=self._num_days) < datetime.now(
-            timezone.utc
-        ):
+        updated = dateutil_parse(node.xpath("dc:date/text()").extract_first())
+        if updated + timedelta(days=self._num_days) < datetime.now(timezone.utc):
             self.logger.debug(
                 ("Skipping item from {} since older than {} " "days").format(
                     updated, self._num_days
@@ -176,7 +174,6 @@ class LwnNetSpider(FeedsXMLFeedSpider):
             parent=response.meta["il"],
             remove_elems=remove_elems,
             base_url="https://{}".format(self.name),
-            dayfirst=True,
         )
         text = response.css(".ArticleText").extract_first()
         # Remove 'Log in to post comments'.

@@ -113,7 +113,7 @@ class LwnNetSpider(FeedsXMLFeedSpider):
 
     def _start_requests(self):
         return scrapy.Request(
-            "https://{}/headlines/Features".format(self.name),
+            "https://{}/headlines/rss".format(self.name),
             self.parse,
             meta={"dont_cache": True},
         )

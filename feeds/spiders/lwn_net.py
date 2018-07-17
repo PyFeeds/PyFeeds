@@ -73,9 +73,9 @@ class LwnNetSpider(FeedsXMLFeedSpider):
     custom_settings = {"DOWNLOAD_DELAY": 1.0}
 
     _subscribed = False
-    # Only scrape articles from the last 2 days.
+    # Only scrape articles from the last 7 days.
     # This should be enough since articles are cached by a feed reader anyway.
-    _num_days = 2
+    _num_days = 7
 
     def start_requests(self):
         username = self.spider_settings.get("username")

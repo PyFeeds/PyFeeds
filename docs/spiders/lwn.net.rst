@@ -2,7 +2,11 @@
 
 lwn.net
 -------
-Newest articles from LWN_ with special treatment of LWN_ Weekly Editions.
+Newest articles from LWN_ with special treatment of LWN_ Weekly Editions. Please note
+that LWN_ requires the cache to be enabled to minimize useless requests. In case you
+provide username and password, the session (cookie) is also cached until the cache entry
+expires. The session cookie is valid for a month so to avoid disruptions, set the cache
+expiry time to less than that.
 
 Configuration
 ~~~~~~~~~~~~~
@@ -14,8 +18,8 @@ Add ``lwn.net`` to the list of spiders:
    spiders =
      lwn.net
 
-LWN_ has paywalled articles. If you want to crawl them, please provide
-``username`` and ``password``.
+LWN_ has paywalled articles. If you want to crawl them, please provide ``username`` and
+``password``.
 
 .. code-block:: ini
 

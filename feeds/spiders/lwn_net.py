@@ -74,6 +74,10 @@ class LwnNetSpider(FeedsXMLFeedSpider):
     _subscribed = False
 
     def start_requests(self):
+        if not self.settings.get("HTTPCACHE_ENABLED"):
+            self.logger.error("LWN.net spider requires caching to be enabled.")
+            return
+
         username = self.spider_settings.get("username")
         password = self.spider_settings.get("password")
         if username and password:
@@ -86,7 +90,6 @@ class LwnNetSpider(FeedsXMLFeedSpider):
                     "submit": "Log+in",
                 },
                 callback=self._after_login,
-                meta={"dont_cache": True},
             )
         else:
             # Username, password or section not found in feeds.cfg.

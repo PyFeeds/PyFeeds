@@ -1,5 +1,4 @@
 import re
-from datetime import datetime, timedelta, timezone
 
 import scrapy
 from dateutil.parser import parse as dateutil_parse
@@ -73,9 +72,6 @@ class LwnNetSpider(FeedsXMLFeedSpider):
     custom_settings = {"DOWNLOAD_DELAY": 1.0}
 
     _subscribed = False
-    # Only scrape articles from the last 7 days.
-    # This should be enough since articles are cached by a feed reader anyway.
-    _num_days = 7
 
     def start_requests(self):
         username = self.spider_settings.get("username")
@@ -123,13 +119,6 @@ class LwnNetSpider(FeedsXMLFeedSpider):
             response=response, base_url="https://{}".format(self.name)
         )
         updated = dateutil_parse(node.xpath("dc:date/text()").extract_first())
-        if updated + timedelta(days=self._num_days) < datetime.now(timezone.utc):
-            self.logger.debug(
-                ("Skipping item from {} since older than {} " "days").format(
-                    updated, self._num_days
-                )
-            )
-            return
         il.add_value("updated", updated)
         title = node.xpath("rss:title/text()").extract_first()
         paywalled = title.startswith("[$]")

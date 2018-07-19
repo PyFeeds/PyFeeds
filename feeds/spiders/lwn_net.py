@@ -183,6 +183,11 @@ class LwnNetSpider(FeedsXMLFeedSpider):
         il.add_css("title", "h1::text")
         il.add_value("content_html", text)
         il.add_css("author_name", ".FeatureByline b ::text")
+        il.add_css(
+            "author_name",
+            ".GAByline p ::text",
+            re="This article was contributed by (.*)",
+        )
         il.add_xpath(
             "updated",
             '//div[@class="FeatureByline"]/text()[preceding-sibling::br]',

@@ -47,9 +47,10 @@ class FeedsCacheStorage(FilesystemCacheStorage):
         # Read the new metadata.
         metadata = self._read_meta(spider, request)
         # Add the parents' fingerprints to the metadata and merge the parents from the
-        # old metadata.
+        # old metadata. The last fingerprint is not included since it's the fingerprint
+        # of this request.
         metadata["parents"] = list(
-            set(request.meta["fingerprints"]).union(
+            set(request.meta["fingerprints"][:-1]).union(
                 old_metadata["parents"] if old_metadata else []
             )
         )

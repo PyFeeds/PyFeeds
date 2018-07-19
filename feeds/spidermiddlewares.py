@@ -1,7 +1,7 @@
-from copy import copy
 import logging
+from copy import copy
 
-from scrapy import Request
+from scrapy import Request, signals
 from scrapy.spidermiddlewares.httperror import HttpError
 from scrapy.utils.request import request_fingerprint
 
@@ -33,22 +33,36 @@ class FeedsHttpErrorMiddleware:
 class FeedsHttpCacheMiddleware:
     @classmethod
     def from_crawler(cls, crawler):
-        return cls()
+        mw = cls()
+
+        # Note: this hook is a bit of a hack to intercept redirections
+        crawler.signals.connect(mw.request_scheduled, signal=signals.request_scheduled)
+        return mw
 
     def process_spider_output(self, response, result, spider):
         def _set_fingerprint(response, r):
             if isinstance(r, Request):
+                # Chain fingerprints of response.request and new requests together.
                 try:
                     r.meta["fingerprints"] = copy(response.request.meta["fingerprints"])
                 except KeyError:
                     r.meta["fingerprints"] = []
-                if not response.request.meta.get("dont_cache", False):
-                    fingerprint = request_fingerprint(response.request)
-                    r.meta["fingerprints"].append(fingerprint)
-                    logger.debug("Request fingerprints for request {}: {}".format(
-                        r, r.meta["fingerprints"]))
-                else:
-                    logger.debug("Skipping fingerprinting uncached request {}".format(
-                        response.request))
             return r
+
         return (_set_fingerprint(response, r) for r in result or ())
+
+    def request_scheduled(self, request, spider):
+        try:
+            request.meta["fingerprints"] = copy(request.meta["fingerprints"])
+        except KeyError:
+            request.meta["fingerprints"] = []
+        logger.debug(
+            "Parent fingerprints for request {}: {}".format(
+                request, request.meta["fingerprints"]
+            )
+        )
+        if not request.meta.get("dont_cache", False):
+            fingerprint = request_fingerprint(request)
+            request.meta["fingerprints"].append(fingerprint)
+        else:
+            logger.debug("Skipping fingerprinting uncached request {}".format(request))

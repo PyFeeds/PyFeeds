@@ -7,7 +7,7 @@ from datetime import datetime
 logger = logging.getLogger(__name__)
 
 
-IGNORE_HTTP_CODES = [404, 500, 502, 503, 504]
+IGNORE_HTTP_CODES = [403, 404, 500, 502, 503, 504]
 
 
 def read_meta(root):
@@ -55,5 +55,6 @@ def remove_cache_entry(cache_entry_path, url):
         logger.debug("Removing cache entry for URL {}".format(url))
         shutil.rmtree(cache_entry_path)
     else:
-        logger.error("Cannot remove cache entry {} for URL {}".format(
-            cache_entry_path, url))
+        logger.error(
+            "Cannot remove cache entry {} for URL {}".format(cache_entry_path, url)
+        )

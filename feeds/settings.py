@@ -35,8 +35,9 @@ HTTPCACHE_ENABLED = False
 HTTPCACHE_STORAGE = "feeds.extensions.FeedsCacheStorage"
 HTTPCACHE_POLICY = "scrapy.extensions.httpcache.DummyPolicy"
 HTTPCACHE_DIR = "cache"
-# Never cache redirects since they are not processed by the FeedsHttpCacheMiddleware.
-HTTPCACHE_IGNORE_HTTP_CODES = [301, 302, 303, 307, 308]
+# We cache everything and delete cache entries (and every parent request) during
+# cleanup.
+HTTPCACHE_IGNORE_HTTP_CODES = []
 
 # Default user agent. Can be overriden in feeds.cfg.
 USER_AGENT = "feeds (+https://github.com/nblock/feeds)"

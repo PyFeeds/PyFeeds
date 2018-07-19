@@ -13,13 +13,6 @@ from feeds.cache import cleanup_cache
 
 logger = logging.getLogger(__name__)
 
-FEEDS_CFGFILE_MAPPING = {
-    "USER_AGENT": "useragent",
-    "LOG_LEVEL": "loglevel",
-    "HTTPCACHE_ENABLED": "cache_enabled",
-    "HTTPCACHE_DIR": "cache_dir",
-}
-
 
 def run_cleanup_cache(settings):
     days = int(
@@ -33,22 +26,27 @@ def run_cleanup_cache(settings):
 def get_feeds_settings(file_=None):
     if file_:
         logger.debug("Parsing configuration file {} ...".format(file_.name))
-        # Parse configuration file and store result under FEEDS_CONFIG of
-        # scrapy's settings API.
-        parser = configparser.ConfigParser()
-        parser.read_file(file_)
-        config = {s: dict(parser.items(s)) for s in parser.sections()}
+        # Parse configuration file and store result under FEEDS_CONFIG of scrapy's
+        # settings API.
+        config = configparser.ConfigParser()
+        config.read_file(file_)
+        feeds_config = {s: dict(config.items(s)) for s in config.sections()}
     else:
-        config = {}
+        feeds_config = {}
 
     settings = get_project_settings()
-    settings.set("FEEDS_CONFIG", config)
+    settings.set("FEEDS_CONFIG", feeds_config)
 
     # Mapping of feeds config section to setting names.
-    for settings_key, config_key in FEEDS_CFGFILE_MAPPING.items():
-        config_value = config.get("feeds", {}).get(config_key)
-        if config_value:
-            settings.set(settings_key, config_value)
+    FEEDS_CFGFILE_MAPPING = {
+        "USER_AGENT": config.get("feeds", "useragent", fallback=None),
+        "LOG_LEVEL": config.get("feeds", "loglevel", fallback=None),
+        "HTTPCACHE_ENABLED": config.getboolean("feeds", "cache_enabled", fallback=None),
+        "HTTPCACHE_DIR": config.get("feeds", "cache_dir", fallback=None),
+    }
+    for key, value in FEEDS_CFGFILE_MAPPING.items():
+        if value:
+            settings.set(key, value)
 
     return settings
 

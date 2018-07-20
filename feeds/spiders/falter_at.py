@@ -12,48 +12,64 @@ from feeds.spiders import FeedsSpider
 
 class FalterAtSpider(FeedsSpider):
     name = "falter.at"
+    # Don't overwhelm the poor Wordpress with too many requests at once.
+    custom_settings = {"DOWNLOAD_DELAY": 1.0}
 
     _subtitle = "Wir holen dich da raus."
     _link = "https://www.falter.at"
     _timezone = "Europe/Vienna"
 
     def start_requests(self):
-        abonr = self.spider_settings.get("abonr")
-        password = self.spider_settings.get("password")
-        if abonr and password:
-            yield scrapy.FormRequest(
-                url="https://www.{}/falter/e-paper/login".format(self.name),
-                formdata={
-                    "login[abonr]": abonr,
-                    "login[password]": password,
-                    "redirect_url": "/archiv/",
-                },
-                callback=self.parse_archive,
+        pages = self.spider_settings.get("pages")
+        if pages:
+            self.pages = pages.split()
+        else:
+            self.pages = ["wwei", "magazine"]
+
+        if "magazine" in self.pages:
+            abonr = self.spider_settings.get("abonr")
+            password = self.spider_settings.get("password")
+            if abonr and password:
+                yield scrapy.FormRequest(
+                    url="https://www.{}/falter/e-paper/login".format(self.name),
+                    formdata={
+                        "login[abonr]": abonr,
+                        "login[password]": password,
+                        "redirect_url": "/archiv/",
+                    },
+                    meta={"dont_redirect": True, "handle_httpstatus_list": [302]},
+                    callback=self.request_archive,
+                )
+            else:
+                # Username, password or section falter.at not found in feeds.cfg.
+                self.logger.info(
+                    "Login failed: No username or password given. "
+                    + "Only free articles are available in full text."
+                )
+                yield self.request_archive()
+
+        if "wwei" in self.pages:
+            yield scrapy.Request(
+                (
+                    "https://wwei-api.{}/api/v1/simple_search?v=true&"
+                    + "sort_pos=front&sort=review.post_date:desc&c=10"
+                ).format(self.name),
+                self.parse_wwei,
                 meta={"dont_cache": True},
             )
+
+    def request_archive(self, response=None):
+        if response and response.status != 302:
+            self.logger.error("Login failed: Username or password wrong!")
         else:
-            # Username, password or section falter.at not found in feeds.cfg.
-            self.logger.info(
-                "Login failed: No username or password given. "
-                "Only free articles are available in full text."
-            )
-            yield scrapy.Request(
+            return scrapy.Request(
                 "https://www.{}/archiv/".format(self.name),
                 self.parse_archive,
                 meta={"dont_cache": True},
             )
 
-        yield scrapy.Request(
-            (
-                "https://wwei-api.{}/api/v1/simple_search?v=true&"
-                + "sort_pos=front&sort=review.post_date:desc&c=10"
-            ).format(self.name),
-            self.parse_wwei,
-            meta={"dont_cache": True},
-        )
-
     def feed_headers(self):
-        for path in ["magazine", "wwei"]:
+        for path in self.pages:
             yield self.generate_feed_header(path=path)
 
     def parse_wwei(self, response):

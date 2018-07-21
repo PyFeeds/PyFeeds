@@ -30,10 +30,10 @@ class NachrichtenAtSpider(FeedsXMLFeedSpider):
                 "https://www.{}/login/".format(self.name),
                 formdata={
                     "user[control][login]": "true",
+                    "permanent": "checked",
                     "username": username,
                     "password": password,
                 },
-                meta={"dont_cache": True},
                 callback=self._after_login,
             )
         else:

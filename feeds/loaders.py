@@ -243,6 +243,3 @@ class FeedEntryItemLoader(BaseItemLoader):
 # Site specific loaders
 class CbirdFeedEntryItemLoader(FeedEntryItemLoader):
     content_html_out = Join()
-
-
-# vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4 smartindent autoindent

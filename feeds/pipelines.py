@@ -89,6 +89,3 @@ class AtomExportPipeline(object):
     def process_item(self, item, spider):
         self._exporters[spider].export_item(item)
         return item
-
-
-# vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4 smartindent autoindent

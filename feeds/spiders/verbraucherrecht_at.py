@@ -63,6 +63,3 @@ class VerbraucherrechtAtSpider(FeedsSpider):
         il.add_css("content_html", ".news-single-item")
 
         yield il.load_item()
-
-
-# vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4 smartindent autoindent

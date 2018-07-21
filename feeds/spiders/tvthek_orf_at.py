@@ -100,6 +100,3 @@ class TvthekOrfAtSpider(FeedsSpider):
         for old, new in old_new.items():
             oewa_base_path = oewa_base_path.replace(old, new)
         return filter(lambda x: x != "", oewa_base_path.split("/"))
-
-
-# vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4 smartindent autoindent

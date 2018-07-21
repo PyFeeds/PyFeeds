@@ -83,6 +83,3 @@ class BibliowebAtSpider(FeedsSpider):
     def _extract_parts(self, response):
         parts = [p.strip() for p in response.xpath("//td/span/text()").extract()]
         return [p for p in parts if p not in ("", ", ,")]
-
-
-# vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4 smartindent autoindent

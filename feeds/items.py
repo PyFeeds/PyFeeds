@@ -59,6 +59,3 @@ class FeedEntryItem(BaseItem):
     enclosure_iri = scrapy.Field()
     # Optional
     enclosure_type = scrapy.Field()
-
-
-# vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4 smartindent autoindent

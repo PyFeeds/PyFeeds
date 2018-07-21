@@ -51,6 +51,3 @@ class OpenwrtOrgSpider(FeedsCrawlSpider):
         il.add_value("content_html", "<h1>Detailed Changelog</h1>")
         il.add_xpath("content_html", "//h1/following-sibling::*")
         yield il.load_item()
-
-
-# vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4 smartindent autoindent

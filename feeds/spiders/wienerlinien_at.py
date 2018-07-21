@@ -53,6 +53,3 @@ class WienerLinienAtSpider(FeedsSpider):
         )
         il.add_xpath("content_html", '//div[@id="main-inner"]')
         yield il.load_item()
-
-
-# vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4 smartindent autoindent

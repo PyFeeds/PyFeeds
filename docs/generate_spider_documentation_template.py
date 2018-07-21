@@ -36,5 +36,3 @@ def main(spider_name):
 
 if __name__ == "__main__":
     main()
-
-# vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4 smartindent autoindent

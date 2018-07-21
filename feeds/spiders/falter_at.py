@@ -155,6 +155,3 @@ class FalterAtSpider(FeedsSpider):
             il.add_value("category", "paywalled")
         il.add_value("content_html", content)
         yield il.load_item()
-
-
-# vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4 smartindent autoindent

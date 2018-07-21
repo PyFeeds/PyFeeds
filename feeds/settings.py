@@ -31,6 +31,11 @@ SPIDER_MIDDLEWARES = {
     "feeds.spidermiddlewares.FeedsHttpCacheMiddleware": 1000,
 }
 
+DOWNLOADER_MIDDLEWARES = {
+    "feeds.downloadermiddlewares.FeedsHttpCacheMiddleware": 900,
+    "scrapy.downloadermiddlewares.httpcache.HttpCacheMiddleware": None,
+}
+
 HTTPCACHE_ENABLED = False
 HTTPCACHE_STORAGE = "feeds.extensions.FeedsCacheStorage"
 HTTPCACHE_POLICY = "scrapy.extensions.httpcache.DummyPolicy"

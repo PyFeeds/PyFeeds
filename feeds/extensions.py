@@ -6,7 +6,7 @@ from scrapy.extensions.httpcache import FilesystemCacheStorage
 from scrapy.utils.request import request_fingerprint
 from scrapy.utils.python import to_bytes
 
-from feeds.cache import IGNORE_HTTP_CODES
+from feeds.cache import IGNORE_HTTP_CODES, remove_cache_entry
 
 
 class SpiderSettings:
@@ -65,3 +65,8 @@ class FeedsCacheStorage(FilesystemCacheStorage):
     def _get_request_path(self, spider, request):
         key = request_fingerprint(request, include_headers=["Cookie"])
         return os.path.join(self.cachedir, spider.name, key[0:2], key)
+
+    def item_dropped(self, item, response, exception, spider):
+        remove_cache_entry(
+            self._get_request_path(spider, response.request), remove_parents=True
+        )

@@ -23,11 +23,10 @@ class UebermedienDeSpider(FeedsXMLFeedSpider):
         password = self.spider_settings.get("password")
         if username and password:
             yield scrapy.Request(
-                "https://steadyhq.com/oauth/authorize?"
+                "https://steadyhq.com/en/oauth/authorize?"
                 + "client_id=0c29f006-1a98-48f1-8a63-2c0652c59f28&"
                 + "redirect_uri=https://uebermedien.de&scope=read&"
                 + "response_type=code&refresh_only=false",
-                meta={"dont_cache": True},
                 callback=self._steady_login,
             )
         else:
@@ -43,7 +42,7 @@ class UebermedienDeSpider(FeedsXMLFeedSpider):
             formdata={"user[email]": username, "user[password]": password},
             callback=self._request_steady_token,
             dont_filter=True,
-            meta={"dont_cache": True, "handle_httpstatus_list": [301]},
+            meta={"handle_httpstatus_list": [301]},
         )
 
     def _request_steady_token(self, response):
@@ -64,7 +63,6 @@ class UebermedienDeSpider(FeedsXMLFeedSpider):
             method="POST",
             body=json.dumps(body),
             headers={"Accept": "application/json", "Content-Type": "application/json"},
-            meta={"dont_cache": True},
             callback=self._set_steady_token,
         )
 

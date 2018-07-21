@@ -3,6 +3,7 @@ import os
 import pickle
 from scrapy import signals
 from scrapy.extensions.httpcache import FilesystemCacheStorage
+from scrapy.utils.request import request_fingerprint
 from scrapy.utils.python import to_bytes
 
 from feeds.cache import IGNORE_HTTP_CODES
@@ -60,3 +61,7 @@ class FeedsCacheStorage(FilesystemCacheStorage):
             f.write(to_bytes(repr(metadata)))
         with self._open(os.path.join(rpath, "pickled_meta"), "wb") as f:
             pickle.dump(metadata, f, protocol=2)
+
+    def _get_request_path(self, spider, request):
+        key = request_fingerprint(request, include_headers=["Cookie"])
+        return os.path.join(self.cachedir, spider.name, key[0:2], key)

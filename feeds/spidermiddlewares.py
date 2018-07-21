@@ -62,7 +62,7 @@ class FeedsHttpCacheMiddleware:
             )
         )
         if not request.meta.get("dont_cache", False):
-            fingerprint = request_fingerprint(request)
+            fingerprint = request_fingerprint(request, include_headers=["Cookie"])
             request.meta["fingerprints"].append(fingerprint)
         else:
             logger.debug("Skipping fingerprinting uncached request {}".format(request))

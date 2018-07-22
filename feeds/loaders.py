@@ -2,6 +2,7 @@ import html
 import logging
 import os
 import re
+from textwrap import TextWrapper
 from copy import deepcopy
 from datetime import datetime
 
@@ -17,6 +18,7 @@ from scrapy.loader.processors import Compose, Identity, Join, MapCompose, TakeFi
 from w3lib.html import remove_tags
 
 from feeds.items import FeedEntryItem, FeedItem
+from feeds.settings import get_feeds_settings
 
 logger = logging.getLogger(__name__)
 
@@ -56,13 +58,14 @@ def replace_regex(text, loader_context):
     return text
 
 
-def build_tree(text, loader_context):
-    base_url = loader_context.get("base_url", None)
+def build_tree(text, loader_context=None):
+    base_url = loader_context.get("base_url", None) if loader_context else None
     tree = lxml.html.fragment_fromstring(text, create_parent="div", base_url=base_url)
 
-    # Workaround for https://bugs.launchpad.net/lxml/+bug/1576598.
-    # FIXME: Remove this when a workaround is released.
-    tree.getroottree().docinfo.URL = base_url
+    if base_url:
+        # Workaround for https://bugs.launchpad.net/lxml/+bug/1576598.
+        # FIXME: Remove this when a workaround is released.
+        tree.getroottree().docinfo.URL = base_url
 
     # Scrapy expects an iterator which it unpacks and feeds to the next
     # function in the pipeline. trees are iterators but we don't want to them
@@ -194,6 +197,63 @@ def skip_false(value):
     return None
 
 
+def truncate_tree(tree, limit, drop=False):
+    """Truncates the tree in-place so that its text will not exceed limit characters.
+
+    If the limit is exceeded, words are dropped and "..." is added to the end. The
+    difference between the actual length of the text and the limit is returned.
+    If drop is True, the tree itself will be removed from its parent.
+    """
+
+    def _truncate(text, width):
+        shorten = len(text) > width
+        if shorten:
+            # shorten() removes trailing spaces, so we use TextWrapper directly.
+            text = TextWrapper(
+                width=width, max_lines=1, placeholder="...", drop_whitespace=False
+            ).fill(text)
+        return (text, width - len(text), shorten)
+
+    remaining = limit
+
+    if remaining < 10 or drop:
+        # This will effectively remove all children and the tail as well.
+        tree.getparent().remove(tree)
+        truncated = True
+    else:
+        truncated = False
+
+        # Try to truncate the text of the tree.
+        if tree.text:
+            tree.text, remaining, truncated = _truncate(tree.text, remaining)
+
+        # If there was not enough text but there are children, try to truncate the
+        # children.
+        for child in tree:
+            # drop children if truncation was already done.
+            remaining, truncated = truncate_tree(child, remaining, drop=truncated)
+
+        # If there is a tail either truncate it or remove it.
+        if tree.tail:
+            if remaining >= 10:
+                tree.tail, remaining, truncated = _truncate(tree.tail, remaining)
+            else:
+                tree.tail = None
+
+    return remaining, truncated
+
+
+def truncate_text(text):
+    settings = get_feeds_settings()
+    truncate_words = settings.getint("FEEDS_CONFIG_TRUNCATE_WORDS")
+    if truncate_words and truncate_words > 0:
+        tree = build_tree(text)[0]
+        # Assume that a word has 5 characters on average.
+        truncate_tree(tree, truncate_words * 5)
+        text = serialize_tree(tree)
+    return text
+
+
 class BaseItemLoader(ItemLoader):
     # Defaults
     # Unescape twice to get rid of &amp;&xxx; encoding errors.
@@ -235,7 +295,7 @@ class FeedEntryItemLoader(BaseItemLoader):
         make_links_absolute,
         serialize_tree,
     )
-    content_html_out = Join()
+    content_html_out = Compose(Join(), truncate_text)
 
     category_out = Identity()
 

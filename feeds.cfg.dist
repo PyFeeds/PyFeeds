@@ -17,6 +17,10 @@ useragent = feeds (+https://github.com/nblock/feeds)
 ## See also: https://validator.w3.org/feed/docs/warning/MissingSelf.html
 # output_url = https://example.com/feeds
 
+## Truncate content to 10 words instead of including the full text.
+## This can be useful if generated feeds should be made publicly available.
+# truncate_words = 10
+
 ## Enable caching of responses
 # cache_enabled = 0
 ## Path to the cache.

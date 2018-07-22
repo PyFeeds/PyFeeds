@@ -108,8 +108,15 @@ def cleanup_html(tree, loader_context):
             # different element.
             elem.getparent().replace(elem, deepcopy(elem_new))
 
+    remove_elems = []
+
+    settings = get_feeds_settings()
+    remove_images = settings.getbool("FEEDS_CONFIG_REMOVE_IMAGES")
+    if remove_images:
+        remove_elems += ["img"]
+
     # Remove tags.
-    for elem_sel in loader_context.get("remove_elems", []):
+    for elem_sel in loader_context.get("remove_elems", []) + remove_elems:
         selector = CSSSelector(elem_sel)
         for elem in selector(tree):
             elem.drop_tree()

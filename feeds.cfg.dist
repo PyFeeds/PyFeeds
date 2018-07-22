@@ -20,6 +20,8 @@ useragent = feeds (+https://github.com/nblock/feeds)
 ## Truncate content to 10 words instead of including the full text.
 ## This can be useful if generated feeds should be made publicly available.
 # truncate_words = 10
+## Remove images from output.
+# remove_images = 1
 
 ## Enable caching of responses
 # cache_enabled = 0

@@ -1,4 +1,5 @@
 import json
+from collections import OrderedDict
 from urllib.parse import parse_qs, urlparse
 
 import scrapy
@@ -52,12 +53,12 @@ class UebermedienDeSpider(FeedsXMLFeedSpider):
             self.logger.error("Login failed: Wrong username and password")
             return
 
-        body = {
-            "client_id": "0c29f006-1a98-48f1-8a63-2c0652c59f28",
-            "grant_type": "authorization_code",
-            "code": code,
-            "redirect_uri": "https://uebermedien.de",
-        }
+        body = OrderedDict([
+            ("client_id", "0c29f006-1a98-48f1-8a63-2c0652c59f28"),
+            ("grant_type", "authorization_code"),
+            ("code", code),
+            ("redirect_uri", "https://uebermedien.de"),
+        ])
         yield scrapy.Request(
             "https://steadyhq.com/api/v1/oauth/token",
             method="POST",

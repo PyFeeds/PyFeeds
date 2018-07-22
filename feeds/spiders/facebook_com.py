@@ -16,8 +16,8 @@ class FacebookComSpider(FeedsSpider):
         return []
 
     def start_requests(self):
-        app_id = self.spider_settings.get("app_id")
-        app_secret = self.spider_settings.get("app_secret")
+        app_id = self.settings.get("FEEDS_SPIDER_FACEBOOK_COM_APP_ID")
+        app_secret = self.settings.get("FEEDS_SPIDER_FACEBOOK_COM_APP_SECRET")
         if not (app_id and app_secret):
             self.logger.error("app_id and app_secret not found.")
             return
@@ -25,7 +25,7 @@ class FacebookComSpider(FeedsSpider):
             app_id=app_id, app_secret=app_secret
         )
 
-        for page_id in self.spider_settings.get("pages").split():
+        for page_id in self.settings.get("FEEDS_SPIDER_FACEBOOK_COM_PAGES").split():
             url = "https://graph.{name}/v2.10/{page_id}".format(
                 name=self.name, page_id=page_id
             )

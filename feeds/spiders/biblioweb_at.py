@@ -11,7 +11,9 @@ class BibliowebAtSpider(FeedsSpider):
     _days = 60
 
     def start_requests(self):
-        self._library = self.spider_settings.get("location", "").lower()
+        self._library = self.settings.get(
+            "FEEDS_SPIDER_BIBLIOWEB_AT_LOCATION", ""
+        ).lower()
         if self._library:
             self._path = self._library
             self._title = "Bibliothek {}".format(self._library.title())

@@ -78,8 +78,8 @@ class LwnNetSpider(FeedsXMLFeedSpider):
             self.logger.error("LWN.net spider requires caching to be enabled.")
             return
 
-        username = self.spider_settings.get("username")
-        password = self.spider_settings.get("password")
+        username = self.settings.get("FEEDS_SPIDER_LWN_NET_USERNAME")
+        password = self.settings.get("FEEDS_SPIDER_LWN_NET_PASSWORD")
         if username and password:
             yield scrapy.FormRequest(
                 url="https://{}/login".format(self.name),

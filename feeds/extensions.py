@@ -1,27 +1,11 @@
 import os
 
 import pickle
-from scrapy import signals
 from scrapy.extensions.httpcache import FilesystemCacheStorage
 from scrapy.utils.request import request_fingerprint
 from scrapy.utils.python import to_bytes
 
 from feeds.cache import IGNORE_HTTP_CODES, remove_cache_entry
-
-
-class SpiderSettings:
-    @classmethod
-    def from_crawler(cls, crawler):
-        ext = cls()
-        crawler.signals.connect(ext.spider_opened, signal=signals.spider_opened)
-        return ext
-
-    def spider_opened(self, spider):
-        spider.spider_settings = self.spider_settings(spider)
-
-    @classmethod
-    def spider_settings(cls, spider):
-        return spider.settings.get("FEEDS_CONFIG").get(spider.name, {})
 
 
 class FeedsCacheStorage(FilesystemCacheStorage):

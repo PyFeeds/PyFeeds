@@ -20,9 +20,9 @@ class UebermedienDeSpider(FeedsXMLFeedSpider):
     _steady_token = None
 
     def start_requests(self):
-        username = self.spider_settings.get("username")
-        password = self.spider_settings.get("password")
-        if username and password:
+        self._username = self.settings.get("FEEDS_SPIDER_UEBERMEDIEN_DE_USERNAME")
+        self._password = self.settings.get("FEEDS_SPIDER_UEBERMEDIEN_DE_PASSWORD")
+        if self._username and self._password:
             yield scrapy.Request(
                 "https://steadyhq.com/en/oauth/authorize?"
                 + "client_id=0c29f006-1a98-48f1-8a63-2c0652c59f28&"
@@ -36,11 +36,9 @@ class UebermedienDeSpider(FeedsXMLFeedSpider):
             yield from super().start_requests()
 
     def _steady_login(self, response):
-        username = self.spider_settings.get("username")
-        password = self.spider_settings.get("password")
         yield FormRequest.from_response(
             response,
-            formdata={"user[email]": username, "user[password]": password},
+            formdata={"user[email]": self._username, "user[password]": self._password},
             callback=self._request_steady_token,
             dont_filter=True,
             meta={"handle_httpstatus_list": [301]},

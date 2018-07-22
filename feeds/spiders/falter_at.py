@@ -20,15 +20,15 @@ class FalterAtSpider(FeedsSpider):
     _timezone = "Europe/Vienna"
 
     def start_requests(self):
-        pages = self.spider_settings.get("pages")
+        pages = self.settings.get("FEEDS_SPIDER_FALTER_AT_PAGES")
         if pages:
             self.pages = pages.split()
         else:
             self.pages = ["wwei", "magazine"]
 
         if "magazine" in self.pages:
-            abonr = self.spider_settings.get("abonr")
-            password = self.spider_settings.get("password")
+            abonr = self.settings.get("FEEDS_SPIDER_FALTER_AT_ABONR")
+            password = self.settings.get("FEEDS_SPIDER_FALTER_AT_PASSWORD")
             if abonr and password:
                 yield scrapy.FormRequest(
                     url="https://www.{}/falter/e-paper/login".format(self.name),

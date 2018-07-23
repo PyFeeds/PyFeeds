@@ -27,7 +27,7 @@ class ViceComSpider(FeedsSpider):
             )
 
     def start_requests(self):
-        self._locales = self.spider_settings.get("locales")
+        self._locales = self.settings.get("FEEDS_SPIDER_VICE_COM_LOCALES")
         if not self._locales:
             self.logger.error("Please specify locale(s) for vice.com in config file!")
             return

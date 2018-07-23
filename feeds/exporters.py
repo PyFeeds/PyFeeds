@@ -198,6 +198,3 @@ class AtomExporter(BaseItemExporter):
                 link_self = None
             self._feeds[path] = self.AtomFeed(exporter=self, link_self=link_self)
         self._feeds[path].add_item(item)
-
-
-# vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4 smartindent autoindent

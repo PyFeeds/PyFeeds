@@ -14,8 +14,8 @@ class KonsumentAtSpider(FeedsSpider):
     _timezone = "Europe/Vienna"
 
     def parse(self, response):
-        user = self.spider_settings.get("username")
-        pwd = self.spider_settings.get("password")
+        user = self.settings.get("FEEDS_SPIDER_KONSUMENT_AT_USERNAME")
+        pwd = self.settings.get("FEEDS_SPIDER_KONSUMENT_AT_PASSWORD")
         if user and pwd:
             yield scrapy.FormRequest.from_response(
                 response,
@@ -83,6 +83,3 @@ class KonsumentAtSpider(FeedsSpider):
         )
         il.add_css("content_html", "#page")
         yield il.load_item()
-
-
-# vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4 smartindent autoindent

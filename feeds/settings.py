@@ -1,52 +1,54 @@
+import configparser
 import logging
 
-# Feeds configuration populated by an optional feeds configuration file.
-FEEDS_CONFIG = {}
+from scrapy.utils.project import get_project_settings
 
-# Low level settings intended for scrapy.
-# Please use feeds.cfg to configure feeds.
+logger = logging.getLogger(__name__)
 
-BOT_NAME = "feeds"
-SPIDER_MODULES = ["feeds.spiders"]
-NEWSPIDER_MODULE = "feeds.spiders"
+_SETTINGS = None
 
-# Don't overwhelm sites with requests.
-CONCURRENT_REQUESTS_PER_DOMAIN = 2
-DOWNLOAD_DELAY = 0.25
 
-# Disable telnet
-TELNETCONSOLE_ENABLED = False
+def load_feeds_settings(file_=None):
+    settings = get_project_settings()
+    set_feeds_settings(settings)
+    if not file_:
+        return settings
 
-# Custom item pipeline
-ITEM_PIPELINES = {
-    "feeds.pipelines.AtomAutogenerateFieldsPipeline": 100,
-    "feeds.pipelines.AtomCheckRequiredFieldsPipeline": 110,
-    "feeds.pipelines.AtomExportPipeline": 400,
-}
+    logger.debug("Parsing configuration file {} ...".format(file_.name))
+    # Parse configuration file and store result under FEEDS_CONFIG of scrapy's
+    # settings API.
+    config = configparser.ConfigParser()
+    config.read_file(file_)
+    feeds_config = {s: dict(config.items(s)) for s in config.sections()}
 
-EXTENSIONS = {"feeds.extensions.SpiderSettings": 500}
+    for key, value in feeds_config["feeds"].items():
+        settings.set("FEEDS_CONFIG_{}".format(key.upper()), value)
 
-SPIDER_MIDDLEWARES = {
-    "feeds.spidermiddlewares.FeedsHttpErrorMiddleware": 51,
-    "feeds.spidermiddlewares.FeedsHttpCacheMiddleware": 1000,
-}
+    del feeds_config["feeds"]
 
-HTTPCACHE_ENABLED = False
-HTTPCACHE_STORAGE = "feeds.extensions.FeedsCacheStorage"
-HTTPCACHE_POLICY = "scrapy.extensions.httpcache.DummyPolicy"
-HTTPCACHE_DIR = "cache"
-# Never cache redirects since they are not processed by the FeedsHttpCacheMiddleware.
-HTTPCACHE_IGNORE_HTTP_CODES = [301, 302, 303, 307, 308]
+    for spider in feeds_config.keys():
+        spider_key = spider.replace(".", "_").upper()
+        for key, value in feeds_config[spider].items():
+            settings.set("FEEDS_SPIDER_{}_{}".format(spider_key, key.upper()), value)
 
-# Default user agent. Can be overriden in feeds.cfg.
-USER_AGENT = "feeds (+https://github.com/nblock/feeds)"
+    # Mapping of feeds config section to setting names.
+    feeds_cfgfile_mapping = {
+        "USER_AGENT": config.get("feeds", "useragent", fallback=None),
+        "LOG_LEVEL": config.get("feeds", "loglevel", fallback=None),
+        "HTTPCACHE_ENABLED": config.getboolean("feeds", "cache_enabled", fallback=None),
+        "HTTPCACHE_DIR": config.get("feeds", "cache_dir", fallback=None),
+    }
+    for key, value in feeds_cfgfile_mapping.items():
+        if value:
+            settings.set(key, value)
 
-# Set default level to info.
-# Can be overriden with --loglevel parameter.
-LOG_LEVEL = logging.INFO
+    return settings
 
-# Stats collection is disabled by default.
-# Can be overriden with --stats parameter.
-STATS_CLASS = "scrapy.statscollectors.DummyStatsCollector"
 
-# vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4 smartindent autoindent
+def get_feeds_settings():
+    return _SETTINGS
+
+
+def set_feeds_settings(settings):
+    global _SETTINGS
+    _SETTINGS = settings

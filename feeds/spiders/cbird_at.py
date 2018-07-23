@@ -31,6 +31,3 @@ class CbirdAtSpider(FeedsCrawlSpider):
             response.xpath('//div[@class="main"]/p/text()').re_first("Firma (.*)")
             or self.name
         )
-
-
-# vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4 smartindent autoindent

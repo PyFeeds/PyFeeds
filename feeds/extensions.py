@@ -1,26 +1,11 @@
 import os
 
 import pickle
-from scrapy import signals
 from scrapy.extensions.httpcache import FilesystemCacheStorage
+from scrapy.utils.request import request_fingerprint
 from scrapy.utils.python import to_bytes
 
-from feeds.cache import IGNORE_HTTP_CODES
-
-
-class SpiderSettings:
-    @classmethod
-    def from_crawler(cls, crawler):
-        ext = cls()
-        crawler.signals.connect(ext.spider_opened, signal=signals.spider_opened)
-        return ext
-
-    def spider_opened(self, spider):
-        spider.spider_settings = self.spider_settings(spider)
-
-    @classmethod
-    def spider_settings(cls, spider):
-        return spider.settings.get("FEEDS_CONFIG").get(spider.name, {})
+from feeds.cache import IGNORE_HTTP_CODES, remove_cache_entry
 
 
 class FeedsCacheStorage(FilesystemCacheStorage):
@@ -47,9 +32,10 @@ class FeedsCacheStorage(FilesystemCacheStorage):
         # Read the new metadata.
         metadata = self._read_meta(spider, request)
         # Add the parents' fingerprints to the metadata and merge the parents from the
-        # old metadata.
+        # old metadata. The last fingerprint is not included since it's the fingerprint
+        # of this request.
         metadata["parents"] = list(
-            set(request.meta["fingerprints"]).union(
+            set(request.meta["fingerprints"][:-1]).union(
                 old_metadata["parents"] if old_metadata else []
             )
         )
@@ -59,3 +45,12 @@ class FeedsCacheStorage(FilesystemCacheStorage):
             f.write(to_bytes(repr(metadata)))
         with self._open(os.path.join(rpath, "pickled_meta"), "wb") as f:
             pickle.dump(metadata, f, protocol=2)
+
+    def _get_request_path(self, spider, request):
+        key = request_fingerprint(request, include_headers=["Cookie"])
+        return os.path.join(self.cachedir, spider.name, key[0:2], key)
+
+    def item_dropped(self, item, response, exception, spider):
+        remove_cache_entry(
+            self._get_request_path(spider, response.request), remove_parents=True
+        )

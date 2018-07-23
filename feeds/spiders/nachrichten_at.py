@@ -16,24 +16,24 @@ class NachrichtenAtSpider(FeedsXMLFeedSpider):
     _timezone = "Europe/Vienna"
 
     def start_requests(self):
-        self._ressorts = self.spider_settings.get("ressorts")
+        self._ressorts = self.settings.get("FEEDS_SPIDER_NACHRICHTEN_AT_RESSORTS")
         if self._ressorts:
             self._ressorts = self._ressorts.split()
         else:
             self.logger.info("No ressorts given, falling back to general ressort!")
             self._ressorts = ["nachrichten"]
 
-        username = self.spider_settings.get("username")
-        password = self.spider_settings.get("password")
+        username = self.settings.get("FEEDS_SPIDER_NACHRICHTEN_AT_USERNAME")
+        password = self.settings.get("FEEDS_SPIDER_NACHRICHTEN_AT_PASSWORD")
         if username and password:
             yield scrapy.FormRequest(
                 "https://www.{}/login/".format(self.name),
                 formdata={
                     "user[control][login]": "true",
+                    "permanent": "checked",
                     "username": username,
                     "password": password,
                 },
-                meta={"dont_cache": True},
                 callback=self._after_login,
             )
         else:

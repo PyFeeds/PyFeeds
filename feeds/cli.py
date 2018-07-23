@@ -1,4 +1,3 @@
-import configparser
 import logging
 import os
 from datetime import datetime, timedelta
@@ -10,47 +9,16 @@ from scrapy.utils.project import data_path, get_project_settings
 from twisted.python import failure
 
 from feeds.cache import cleanup_cache
+from feeds.settings import load_feeds_settings
 
 logger = logging.getLogger(__name__)
 
-FEEDS_CFGFILE_MAPPING = {
-    "USER_AGENT": "useragent",
-    "LOG_LEVEL": "loglevel",
-    "HTTPCACHE_ENABLED": "cache_enabled",
-    "HTTPCACHE_DIR": "cache_dir",
-}
-
 
 def run_cleanup_cache(settings):
-    days = int(
-        settings.get("FEEDS_CONFIG", {}).get("feeds", {}).get("cache_expires", 14)
-    )
+    days = settings.getint("FEEDS_CONFIG_CACHE_EXPIRES")
     cleanup_cache(
-        data_path(settings["HTTPCACHE_DIR"]), datetime.now() - timedelta(days=days)
+        data_path(settings.get("HTTPCACHE_DIR")), datetime.now() - timedelta(days=days)
     )
-
-
-def get_feeds_settings(file_=None):
-    if file_:
-        logger.debug("Parsing configuration file {} ...".format(file_.name))
-        # Parse configuration file and store result under FEEDS_CONFIG of
-        # scrapy's settings API.
-        parser = configparser.ConfigParser()
-        parser.read_file(file_)
-        config = {s: dict(parser.items(s)) for s in parser.sections()}
-    else:
-        config = {}
-
-    settings = get_project_settings()
-    settings.set("FEEDS_CONFIG", config)
-
-    # Mapping of feeds config section to setting names.
-    for settings_key, config_key in FEEDS_CFGFILE_MAPPING.items():
-        config_value = config.get("feeds", {}).get(config_key)
-        if config_value:
-            settings.set(settings_key, config_value)
-
-    return settings
 
 
 def spiders_to_crawl(process, argument_spiders):
@@ -61,7 +29,7 @@ def spiders_to_crawl(process, argument_spiders):
 
     try:
         # Spider(s) given in configuration file.
-        spiders = process.settings.get("FEEDS_CONFIG")["feeds"]["spiders"]
+        spiders = process.settings.get("FEEDS_CONFIG_SPIDERS")
         logger.debug("Using configuration file to decide what spiders to run.")
         return spiders.split()
     except KeyError:
@@ -90,7 +58,7 @@ def cli(ctx, loglevel, config, pdb):
         failure.startDebugMode()
     os.chdir(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
 
-    settings = get_feeds_settings(config)
+    settings = load_feeds_settings(config)
     settings.set("LOG_LEVEL", loglevel.upper())
     ctx.obj["settings"] = settings
 

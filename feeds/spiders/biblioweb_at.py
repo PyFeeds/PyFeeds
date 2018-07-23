@@ -11,7 +11,9 @@ class BibliowebAtSpider(FeedsSpider):
     _days = 60
 
     def start_requests(self):
-        self._library = self.spider_settings.get("location", "").lower()
+        self._library = self.settings.get(
+            "FEEDS_SPIDER_BIBLIOWEB_AT_LOCATION", ""
+        ).lower()
         if self._library:
             self._path = self._library
             self._title = "Bibliothek {}".format(self._library.title())
@@ -83,6 +85,3 @@ class BibliowebAtSpider(FeedsSpider):
     def _extract_parts(self, response):
         parts = [p.strip() for p in response.xpath("//td/span/text()").extract()]
         return [p for p in parts if p not in ("", ", ,")]
-
-
-# vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4 smartindent autoindent

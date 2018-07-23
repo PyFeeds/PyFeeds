@@ -26,7 +26,7 @@ class OrfAtSpider(FeedsXMLFeedSpider):
     custom_settings = {"DUPEFILTER_CLASS": "scrapy.dupefilters.BaseDupeFilter"}
 
     def start_requests(self):
-        channels = self.spider_settings.get("channels")
+        channels = self.settings.get("FEEDS_SPIDER_ORF_AT_CHANNELS")
         if channels:
             channels = set(channels.split())
         else:

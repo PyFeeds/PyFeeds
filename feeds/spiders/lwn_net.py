@@ -1,5 +1,4 @@
 import re
-from datetime import datetime, timedelta, timezone
 
 import scrapy
 from dateutil.parser import parse as dateutil_parse
@@ -73,13 +72,14 @@ class LwnNetSpider(FeedsXMLFeedSpider):
     custom_settings = {"DOWNLOAD_DELAY": 1.0}
 
     _subscribed = False
-    # Only scrape articles from the last 7 days.
-    # This should be enough since articles are cached by a feed reader anyway.
-    _num_days = 7
 
     def start_requests(self):
-        username = self.spider_settings.get("username")
-        password = self.spider_settings.get("password")
+        if not self.settings.get("HTTPCACHE_ENABLED"):
+            self.logger.error("LWN.net spider requires caching to be enabled.")
+            return
+
+        username = self.settings.get("FEEDS_SPIDER_LWN_NET_USERNAME")
+        password = self.settings.get("FEEDS_SPIDER_LWN_NET_PASSWORD")
         if username and password:
             yield scrapy.FormRequest(
                 url="https://{}/login".format(self.name),
@@ -90,7 +90,6 @@ class LwnNetSpider(FeedsXMLFeedSpider):
                     "submit": "Log+in",
                 },
                 callback=self._after_login,
-                meta={"dont_cache": True},
             )
         else:
             # Username, password or section not found in feeds.cfg.
@@ -123,13 +122,6 @@ class LwnNetSpider(FeedsXMLFeedSpider):
             response=response, base_url="https://{}".format(self.name)
         )
         updated = dateutil_parse(node.xpath("dc:date/text()").extract_first())
-        if updated + timedelta(days=self._num_days) < datetime.now(timezone.utc):
-            self.logger.debug(
-                ("Skipping item from {} since older than {} " "days").format(
-                    updated, self._num_days
-                )
-            )
-            return
         il.add_value("updated", updated)
         title = node.xpath("rss:title/text()").extract_first()
         paywalled = title.startswith("[$]")
@@ -183,6 +175,11 @@ class LwnNetSpider(FeedsXMLFeedSpider):
         il.add_css("title", "h1::text")
         il.add_value("content_html", text)
         il.add_css("author_name", ".FeatureByline b ::text")
+        il.add_css(
+            "author_name",
+            ".GAByline p ::text",
+            re="This article was contributed by (.*)",
+        )
         il.add_xpath(
             "updated",
             '//div[@class="FeatureByline"]/text()[preceding-sibling::br]',

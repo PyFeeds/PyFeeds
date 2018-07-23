@@ -1,4 +1,5 @@
 import json
+from collections import OrderedDict
 from urllib.parse import parse_qs, urlparse
 
 import scrapy
@@ -19,15 +20,14 @@ class UebermedienDeSpider(FeedsXMLFeedSpider):
     _steady_token = None
 
     def start_requests(self):
-        username = self.spider_settings.get("username")
-        password = self.spider_settings.get("password")
-        if username and password:
+        self._username = self.settings.get("FEEDS_SPIDER_UEBERMEDIEN_DE_USERNAME")
+        self._password = self.settings.get("FEEDS_SPIDER_UEBERMEDIEN_DE_PASSWORD")
+        if self._username and self._password:
             yield scrapy.Request(
-                "https://steadyhq.com/oauth/authorize?"
+                "https://steadyhq.com/en/oauth/authorize?"
                 + "client_id=0c29f006-1a98-48f1-8a63-2c0652c59f28&"
                 + "redirect_uri=https://uebermedien.de&scope=read&"
                 + "response_type=code&refresh_only=false",
-                meta={"dont_cache": True},
                 callback=self._steady_login,
             )
         else:
@@ -36,14 +36,12 @@ class UebermedienDeSpider(FeedsXMLFeedSpider):
             yield from super().start_requests()
 
     def _steady_login(self, response):
-        username = self.spider_settings.get("username")
-        password = self.spider_settings.get("password")
         yield FormRequest.from_response(
             response,
-            formdata={"user[email]": username, "user[password]": password},
+            formdata={"user[email]": self._username, "user[password]": self._password},
             callback=self._request_steady_token,
             dont_filter=True,
-            meta={"dont_cache": True, "handle_httpstatus_list": [301]},
+            meta={"handle_httpstatus_list": [301]},
         )
 
     def _request_steady_token(self, response):
@@ -53,18 +51,19 @@ class UebermedienDeSpider(FeedsXMLFeedSpider):
             self.logger.error("Login failed: Wrong username and password")
             return
 
-        body = {
-            "client_id": "0c29f006-1a98-48f1-8a63-2c0652c59f28",
-            "grant_type": "authorization_code",
-            "code": code,
-            "redirect_uri": "https://uebermedien.de",
-        }
+        body = OrderedDict(
+            [
+                ("client_id", "0c29f006-1a98-48f1-8a63-2c0652c59f28"),
+                ("grant_type", "authorization_code"),
+                ("code", code),
+                ("redirect_uri", "https://uebermedien.de"),
+            ]
+        )
         yield scrapy.Request(
             "https://steadyhq.com/api/v1/oauth/token",
             method="POST",
             body=json.dumps(body),
             headers={"Accept": "application/json", "Content-Type": "application/json"},
-            meta={"dont_cache": True},
             callback=self._set_steady_token,
         )
 

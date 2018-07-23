@@ -1,6 +1,9 @@
 # Default Atom output path
 output
 
+# Default cache location
+.cache
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

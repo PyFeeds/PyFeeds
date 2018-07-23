@@ -2,9 +2,9 @@ import html
 import logging
 import os
 import re
-from textwrap import TextWrapper
 from copy import deepcopy
 from datetime import datetime
+from textwrap import TextWrapper
 
 import dateparser
 import lxml

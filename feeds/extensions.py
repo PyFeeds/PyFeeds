@@ -1,9 +1,9 @@
 import os
-
 import pickle
+
 from scrapy.extensions.httpcache import FilesystemCacheStorage
-from scrapy.utils.request import request_fingerprint
 from scrapy.utils.python import to_bytes
+from scrapy.utils.request import request_fingerprint
 
 from feeds.cache import IGNORE_HTTP_CODES, remove_cache_entry
 

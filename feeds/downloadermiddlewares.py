@@ -1,5 +1,5 @@
-from scrapy.downloadermiddlewares.httpcache import HttpCacheMiddleware
 from scrapy import signals
+from scrapy.downloadermiddlewares.httpcache import HttpCacheMiddleware
 
 
 class FeedsHttpCacheMiddleware(HttpCacheMiddleware):

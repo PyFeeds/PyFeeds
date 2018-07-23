@@ -26,42 +26,14 @@ Feeds comes with extensive documentation. It is available at
 Supported Websites
 ------------------
 
-Feeds is currently able to create Atom feeds for the following sites:
+Feeds is currently able to create Atom feeds for various sites. The complete
+list of `supported websites is available in the documentation
+<https://pyfeeds.readthedocs.io/en/latest/spiders.html>`_.
 
-* `addendum <https://www.addendum.org>`_: Newest articles
-* `ATV.at <http://www.atv.at>`_: Newest episodes of TV shows
-* `Bibliothek der Arbeiterkammer <http://ak.ciando.com>`_: Most recently added
-  books to the e-library
-* `Libraries based on biblioweb <http://biblioweb.at>`_: Most recently added
-  media to libraries based on the biblioweb software
-* `cbird.at <http://www.cbird.at>`_: Newest releases of the cbird software
-* `Facebook.com <https://www.facebook.com>`_: Newest entries of selected page
-  feeds (crawling user feeds is **not** supported)
-* `falter.at <http://www.falter.at>`_: Newest articles and restaurant reviews
-* `HELP.gv.at <https://help.gv.at>`_: News and changes in Austrian law
-* `KONSUMENT.AT <http://www.konsument.at>`_: Newest articles
-* `openwrt.org <https://openwrt.org>`_: Newest OpenWRT releases
-* `LWN.net <https://lwn.net>`_: Newest articles; special treatment
-  of Weekly Editions
-* `Oberösterreichische Nachrichten <https://www.nachrichten.at>`_:
-  Newest articles
-* `ORF ON <http://orf.at>`_: Newest articles of various ORF ON (news, FM4, science,
-  etc.) platforms.
-* `ORF Ö1 <http://oe1.orf.at>`_: Newest episodes of radio shows
-* `ORF TVthek <http://tvthek.orf.at>`_: Newest episodes of TV shows
-* `profil <http://www.profil.at>`_: Newest articles
-* `puls4.com <http://www.puls4.com>`_: Newest episodes of TV shows
-* `Übermedien <http://www.uebermedien.de>`_: Newest articles
-* `USENIX <https://www.usenix.org>`_: Newest ;login: issues
-* `Verbraucherrecht <https://verbraucherrecht.at>`_: Newest articles
-* `VICE <https://www.vice.com>`_: Newest articles
-* `Wiener Linien <http://www.wienerlinien.at>`_: Newest articles
-* `zeitdiebin <https://zeit.diebin.at/>`_: Newest events
-
-Some sites (Falter, Konsument, LWN, Oberösterreichische Nachrichten,
-Übermedien) offer articles only behind a paywall. If you have a paid
-subscription, you can configure your username and password in ``feeds.cfg``
-and also read paywalled articles from within your feed reader. For the less
+Some sites (Falter_, Konsument_, LWN_, `Oberösterreichische Nachrichten`_,
+Übermedien_) offer articles only behind a paywall. If you have a paid
+subscription, you can configure your username and password in ``feeds.cfg`` and
+also read paywalled articles from within your feed reader. For the less
 fortunate who don't have a subscription, paywalled articles are tagged with
 ``paywalled`` so they can be filtered, if desired.
 
@@ -168,7 +140,12 @@ AGPL3, see `LICENSE`_ for details.
 .. _LICENSE: LICENSE
 .. _issue tracker: https://github.com/nblock/feeds/issues
 .. _new issue: https://github.com/nblock/feeds/issues/new
-.. _Scrapy: http://www.scrapy.org
+.. _Scrapy: https://www.scrapy.org
+.. _Falter: https://pyfeeds.readthedocs.io/en/latest/spiders/falter.at.html
+.. _Konsument: https://pyfeeds.readthedocs.io/en/latest/spiders/konsument.at.html
+.. _LWN: https://pyfeeds.readthedocs.io/en/latest/spiders/lwn.net.html
+.. _Oberösterreichische Nachrichten: https://pyfeeds.readthedocs.io/en/latest/spiders/nachrichten.at.html
+.. _Übermedien: https://pyfeeds.readthedocs.io/en/latest/spiders/uebermedien.com.html
 
 .. |build-status| image:: https://travis-ci.org/nblock/feeds.svg?branch=master
     :alt: build status

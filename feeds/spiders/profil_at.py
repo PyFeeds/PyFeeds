@@ -31,7 +31,8 @@ class ProfilAtSpider(FeedsXMLFeedSpider):
             yield scrapy.Request(
                 "https://www.{}/sitemap-articles-{}.xml".format(
                     self.name, month.strftime("%Y-%m")
-                ), meta={"dont_cache": True, "handle_httpstatus_list": [404]},
+                ),
+                meta={"dont_cache": True, "handle_httpstatus_list": [404]},
             )
 
     def parse_node(self, response, node):

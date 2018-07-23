@@ -4,51 +4,42 @@ import scrapy
 from dateutil.tz import gettz
 
 from feeds.loaders import FeedEntryItemLoader
-from feeds.spiders import FeedsSpider
+from feeds.spiders import FeedsXMLFeedSpider
 
 
-class ProfilAtSpider(FeedsSpider):
+class ProfilAtSpider(FeedsXMLFeedSpider):
     name = "profil.at"
     allowed_domains = ["profil.at"]
+    namespaces = [
+        ("i", "http://www.google.com/schemas/sitemap-image/1.1"),
+        ("rss", "http://www.sitemaps.org/schemas/sitemap/0.9"),
+    ]
+    itertag = "rss:url"
+    iterator = "xml"
 
     _title = "PROFIL"
     _subtitle = "Österreichs unabhängiges Nachrichtenmagazin"
     _timezone = "Europe/Vienna"
-    # Parse articles from the last 3 days that have content.
-    _max_days = 3
-    # Don't try more than 14 days for content.
-    _max_days_limit = 14
-
-    def build_request(self, day, max_days, max_days_limit):
-        return scrapy.Request(
-            "https://www.{}/archiv/{}".format(self.name, day.strftime("%Y/%m/%d")),
-            self.parse_archive_page,
-            meta={
-                "handle_httpstatus_list": [404],
-                "day": day,
-                "max_days": max_days,
-                "max_days_limit": max_days_limit,
-                "dont_cache": True,
-            },
-        )
+    _max_articles = 20
 
     def start_requests(self):
-        yield self.build_request(
-            datetime.now(gettz(self._timezone)), self._max_days, self._max_days_limit
-        )
+        # Scrape this and last month so that the feed is not empty on the first day of a
+        # new month.
+        this_month = datetime.now(gettz(self._timezone)).date().replace(day=1)
+        last_month = (this_month - timedelta(days=1)).replace(day=1)
+        for month in [this_month, last_month]:
+            yield scrapy.Request(
+                "https://www.{}/sitemap-articles-{}.xml".format(
+                    self.name, month.strftime("%Y-%m")
+                ), meta={"dont_cache": True, "handle_httpstatus_list": [404]},
+            )
 
-    def parse_archive_page(self, response):
-        day = response.meta["day"] - timedelta(days=1)
-        max_days_limit = response.meta["max_days_limit"] - 1
-        max_days = response.meta["max_days"]
-
-        if response.status == 200:
-            for link in response.css("h1 a::attr(href)").extract():
-                yield scrapy.Request(response.urljoin(link), self.parse_item)
-            max_days -= 1
-
-        if max_days > 0 and max_days_limit > 0:
-            yield self.build_request(day, max_days, max_days_limit)
+    def parse_node(self, response, node):
+        if self._max_articles > 0:
+            self._max_articles -= 1
+            url = node.xpath("rss:loc/text()").extract_first()
+            updated = node.xpath("rss:lastmod/text()").extract_first()
+            return scrapy.Request(url, self.parse_item, meta={"updated": updated})
 
     def parse_item(self, response):
         remove_elems = [
@@ -68,7 +59,7 @@ class ProfilAtSpider(FeedsSpider):
         il = FeedEntryItemLoader(
             response=response,
             timezone=self._timezone,
-            base_url="http://{}".format(self.name),
+            base_url="https://{}".format(self.name),
             remove_elems=remove_elems,
         )
         il.add_value("link", response.url)
@@ -77,6 +68,6 @@ class ProfilAtSpider(FeedsSpider):
         )
         il.add_value("author_name", author_name)
         il.add_css("title", 'h1[itemprop="headline"]::text')
-        il.add_css("updated", 'meta[property="article:published_time"]::attr(content)')
+        il.add_value("updated", response.meta["updated"])
         il.add_css("content_html", "article")
         yield il.load_item()

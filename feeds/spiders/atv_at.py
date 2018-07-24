@@ -10,7 +10,7 @@ from feeds.spiders import FeedsSpider
 class AtvAtSpider(FeedsSpider):
     name = "atv.at"
     allowed_domains = ["atv.at"]
-    start_urls = ["http://atv.at/mediathek/neue-folgen/"]
+    start_urls = ["https://atv.at/mediathek/neue-folgen/"]
     custom_settings = {
         # The site is really shitty, don't overwhelm it with more requests.
         "CONCURRENT_REQUESTS": 1
@@ -41,7 +41,7 @@ class AtvAtSpider(FeedsSpider):
         data = data["config"]["initial_video"]["parts"][0]["tracking"]["nurago"]
         il = FeedEntryItemLoader(
             response=response,
-            base_url="http://{}".format(self.name),
+            base_url="https://{}".format(self.name),
             timezone=self._timezone,
             dayfirst=True,
         )

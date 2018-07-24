@@ -10,11 +10,11 @@ from feeds.spiders import FeedsSpider
 class Pusl4ComSpider(FeedsSpider):
     name = "puls4.com"
     allowed_domains = ["puls4.com"]
-    start_urls = ["http://www.puls4.com/api/json-fe/page/sendungen"]
+    start_urls = ["https://www.puls4.com/api/json-fe/page/sendungen"]
 
     _timezone = "Europe/Vienna"
     _icon = (
-        "http://www.puls4.com/bundles/wundermanpuls4/images/" + "favicon/favicon.png"
+        "https://www.puls4.com/bundles/wundermanpuls4/images/" + "favicon/favicon.png"
     )
 
     def parse(self, response):
@@ -55,7 +55,7 @@ class Pusl4ComSpider(FeedsSpider):
     def _parse_episode(self, response):
         il = FeedEntryItemLoader(
             response=response,
-            base_url="http://{}".format(self.name),
+            base_url="https://{}".format(self.name),
             timezone=self._timezone,
             dayfirst=True,
         )

@@ -21,7 +21,7 @@ class FeedsSpider(Spider):
         il.add_value("title", _title)
         il.add_value("subtitle", subtitle or getattr(self, "_subtitle", None))
         il.add_value(
-            "link", link or getattr(self, "_link", "http://www.{}".format(self.name))
+            "link", link or getattr(self, "_link", "https://www.{}".format(self.name))
         )
         il.add_value("path", path or getattr(self, "_path", None))
         il.add_value(

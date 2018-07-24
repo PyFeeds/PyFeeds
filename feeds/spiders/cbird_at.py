@@ -8,7 +8,7 @@ from feeds.spiders import FeedsCrawlSpider
 class CbirdAtSpider(FeedsCrawlSpider):
     name = "cbird.at"
     allowed_domains = ["cbird.at"]
-    start_urls = ["http://cbird.at/hilfe/neu/", "http://cbird.at/impressum"]
+    start_urls = ["https://cbird.at/hilfe/neu/", "https://cbird.at/impressum"]
     rules = (Rule(LinkExtractor(allow=("hilfe/neu/(\d+)",)), callback="parse_item"),)
 
     _title = "Neue cbird Versionen"

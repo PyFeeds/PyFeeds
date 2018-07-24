@@ -71,7 +71,7 @@ class OrfAtSpider(FeedsXMLFeedSpider):
             channel_url = "{}.ORF.at".format(channel)
             yield self.generate_feed_header(
                 title=channel_url,
-                link="http://{}".format(channel_url.lower()),
+                link="https://{}".format(channel_url.lower()),
                 path=channel,
                 logo=self._get_logo(channel),
             )
@@ -97,7 +97,7 @@ class OrfAtSpider(FeedsXMLFeedSpider):
         for link in links:
             if any(
                 link.startswith(url)
-                for url in ["https://debatte.orf.at", "http://iptv.orf.at"]
+                for url in ["https://debatte.orf.at", "https://iptv.orf.at"]
             ):
                 self.logger.debug("Ignoring link to '{}'".format(link))
             else:

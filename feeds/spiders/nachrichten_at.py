@@ -11,7 +11,7 @@ class NachrichtenAtSpider(FeedsXMLFeedSpider):
     _title = "Oberösterreichische Nachrichten"
     _subtitle = "OÖN"
     _link = "https://www.{}".format(name)
-    _icon = "http://static1.{}.at/oonup/images/apple-touch-icon.png".format(name)
+    _icon = "https://static1.{}.at/oonup/images/apple-touch-icon.png".format(name)
     _logo = "https://www.{}/pics/webapp/touchicon_180x180.png".format(name)
     _timezone = "Europe/Vienna"
 

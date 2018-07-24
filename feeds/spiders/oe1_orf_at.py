@@ -13,7 +13,7 @@ class Oe1OrfAtSpider(FeedsSpider):
 
     _title = "oe1.ORF.at"
     _subtitle = "Ö1 Webradio"
-    _link = "http://oe1.orf.at"
+    _link = "https://oe1.orf.at"
     _timezone = "Europe/Vienna"
 
     def parse(self, response):
@@ -39,7 +39,7 @@ class Oe1OrfAtSpider(FeedsSpider):
         il.add_value("title", broadcast["programTitle"])
         il.add_value("title", broadcast["title"])
         if broadcast.get("streams"):
-            stream = "http://loopstream01.apa.at/?channel=oe1&id={}".format(
+            stream = "https://loopstream01.apa.at/?channel=oe1&id={}".format(
                 broadcast["streams"][0]["loopStreamId"]
             )
             il.add_value("enclosure_iri", stream)

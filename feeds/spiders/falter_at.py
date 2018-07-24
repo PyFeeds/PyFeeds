@@ -78,7 +78,7 @@ class FalterAtSpider(FeedsSpider):
             review = entry["review"]
             il = FeedEntryItemLoader(
                 response=response,
-                base_url="http://{}".format(self.name),
+                base_url="https://{}".format(self.name),
                 timezone=self._timezone,
                 dayfirst=False,
             )
@@ -122,7 +122,7 @@ class FalterAtSpider(FeedsSpider):
         for i, item in enumerate(json.loads(response.text)["result"]["hits"]):
             il = FeedEntryItemLoader(
                 response=response,
-                base_url="http://{}".format(self.name),
+                base_url="https://{}".format(self.name),
                 timezone=self._timezone,
             )
             il.add_value("path", "magazine")
@@ -148,7 +148,7 @@ class FalterAtSpider(FeedsSpider):
             response=response,
             parent=response.meta["il"],
             remove_elems=remove_elems,
-            base_url="http://{}".format(self.name),
+            base_url="https://{}".format(self.name),
         )
         content = response.xpath("//article").extract_first()
         if "Lesen Sie diesen Artikel in voller Länge" in content:

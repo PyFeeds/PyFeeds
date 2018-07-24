@@ -7,7 +7,7 @@ from feeds.spiders import FeedsSpider
 class KonsumentAtSpider(FeedsSpider):
     name = "konsument.at"
     allowed_domains = ["konsument.at"]
-    start_urls = ["http://www.konsument.at/page/das-aktuelle-heft"]
+    start_urls = ["https://www.konsument.at/page/das-aktuelle-heft"]
 
     _title = "KONSUMENT.AT"
     _subtitle = "Objektiv, unbestechlich, keine Werbung"
@@ -49,7 +49,7 @@ class KonsumentAtSpider(FeedsSpider):
         il = FeedEntryItemLoader(
             response=response,
             timezone=self._timezone,
-            base_url="http://{}".format(self.name),
+            base_url="https://{}".format(self.name),
             dayfirst=True,
             remove_elems=remove_elems,
         )
@@ -78,7 +78,7 @@ class KonsumentAtSpider(FeedsSpider):
         il = FeedEntryItemLoader(
             response=response,
             parent=response.meta["il"],
-            base_url="http://{}".format(self.name),
+            base_url="https://{}".format(self.name),
             remove_elems=remove_elems,
         )
         il.add_css("content_html", "#page")

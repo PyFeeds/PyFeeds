@@ -16,7 +16,7 @@ class WienerLinienAtSpider(FeedsSpider):
         }
     }
     start_urls = [
-        "http://www.wienerlinien.at/eportal3/ep/scrollingListView.do?"
+        "https://www.wienerlinien.at/eportal3/ep/scrollingListView.do?"
         "scrolling=true&startIndex=0&channelId=-47186&programId=74577"
     ]
 
@@ -33,7 +33,7 @@ class WienerLinienAtSpider(FeedsSpider):
                 response=response,
                 timezone=self._timezone,
                 ignoretz=True,
-                base_url="http://{}".format(self.name),
+                base_url="https://{}".format(self.name),
             )
             link = response.urljoin(item.css("a::attr(href)").extract_first())
             il.add_value("link", link)
@@ -49,7 +49,7 @@ class WienerLinienAtSpider(FeedsSpider):
             parent=response.meta["il"],
             remove_elems=remove_elems,
             change_tags=change_tags,
-            base_url="http://{}".format(self.name),
+            base_url="https://{}".format(self.name),
         )
         il.add_xpath("content_html", '//div[@id="main-inner"]')
         yield il.load_item()

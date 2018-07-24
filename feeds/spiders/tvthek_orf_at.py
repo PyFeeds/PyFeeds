@@ -16,7 +16,7 @@ class TvthekOrfAtSpider(FeedsSpider):
 
     _title = "TVthek.ORF.at"
     _subtitle = "ORF TVTHEK"
-    _link = "http://tvthek.orf.at"
+    _link = "https://tvthek.orf.at"
     _timezone = "Europe/Vienna"
 
     def start_requests(self):

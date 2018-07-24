@@ -18,9 +18,9 @@ class BibliowebAtSpider(FeedsSpider):
             self._path = self._library
             self._title = "Bibliothek {}".format(self._library.title())
             self._subtitle = "Neue Titel in der {}".format(self._title)
-            self._link = "http://www.biblioweb.at/{}/".format(self._library)
+            self._link = "https://www.biblioweb.at/{}/".format(self._library)
             yield scrapy.Request(
-                "http://www.biblioweb.at/{}/start.asp".format(self._library),
+                "https://www.biblioweb.at/{}/start.asp".format(self._library),
                 callback=self.parse,
                 meta={"dont_cache": True},
             )
@@ -37,7 +37,7 @@ class BibliowebAtSpider(FeedsSpider):
         # ASP cookie. Without this cookie the requests to webopac123 (!) are
         # ignored and will be redirected to the "login" page.
         yield scrapy.Request(
-            "http://www.biblioweb.at/webopac123/webopac.asp"
+            "https://www.biblioweb.at/webopac123/webopac.asp"
             "?kat=1&content=show_new&seit={}&order_by=Sachtitel".format(self._days),
             callback=self.parse_overview_page,
             meta={"dont_cache": True},

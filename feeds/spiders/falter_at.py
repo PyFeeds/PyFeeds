@@ -37,7 +37,11 @@ class FalterAtSpider(FeedsSpider):
                         "login[password]": password,
                         "redirect_url": "/archiv/",
                     },
-                    meta={"dont_redirect": True, "handle_httpstatus_list": [302]},
+                    meta={
+                        "dont_redirect": True,
+                        "dont_cache": True,
+                        "handle_httpstatus_list": [302],
+                    },
                     callback=self.request_archive,
                 )
             else:

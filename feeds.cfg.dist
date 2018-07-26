@@ -109,3 +109,10 @@ useragent = feeds (+https://github.com/nblock/feeds)
 #    vorarlberg
 #    tirol
 #    religion
+
+#[derstandard.at]
+#ressorts =
+#    47
+#    4748
+#    etat
+#    immobilien

@@ -10,12 +10,14 @@ setup(
     packages=find_packages(),
     include_package_data=True,
     install_requires=[
-        "bleach>=1.4.3",
         "Click>=6.6",
-        "dateparser>=0.5.1",
-        "python-dateutil>=2.7.3",
         "Scrapy>=1.1",
+        "bleach>=1.4.3",
+        "dateparser>=0.5.1",
+        "feedparser",
         "lxml>=3.5.0",
+        "python-dateutil>=2.7.3",
+        "readability-lxml>=0.7",
     ],
     extras_require={
         "docs": ["doc8", "restructuredtext_lint", "sphinx", "sphinx_rtd_theme"],

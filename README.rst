@@ -14,6 +14,9 @@ of your favorite websites in your feed reader (e.g. `Tiny Tiny RSS
 <https://tt-rss.org>`_) even if this is not officially supported by the
 website.
 
+Furthermore it can also enhance existing feeds by inlining the actual content
+into the feed entry so it can be read without leaving the feed reader.
+
 Feeds is based on Scrapy_, a framework for extracting data from websites, and
 it's easy to add support for new websites. Just take a look at the existing
 spiders in ``feeds/spiders`` and feel free to open a pull request!

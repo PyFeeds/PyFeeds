@@ -39,7 +39,7 @@ def load_feeds_settings(file_=None):
         "HTTPCACHE_DIR": config.get("feeds", "cache_dir", fallback=None),
     }
     for key, value in feeds_cfgfile_mapping.items():
-        if value:
+        if value is not None:
             settings.set(key, value)
 
     return settings

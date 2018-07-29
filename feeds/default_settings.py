@@ -2,8 +2,8 @@ import logging
 
 from xdg.BaseDirectory import save_cache_path
 
-# Feeds configuration populated by an optional feeds configuration file.
-FEEDS_CONFIG = {}
+# Default settings for Feeds specific configurations.
+FEEDS_CONFIG_OUTPUT_PATH = "output"
 
 # Low level settings intended for scrapy.
 # Please use feeds.cfg to configure feeds.

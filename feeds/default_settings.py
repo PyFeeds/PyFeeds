@@ -34,7 +34,7 @@ DOWNLOADER_MIDDLEWARES = {
     "scrapy.downloadermiddlewares.httpcache.HttpCacheMiddleware": None,
 }
 
-HTTPCACHE_ENABLED = False
+HTTPCACHE_ENABLED = True
 HTTPCACHE_STORAGE = "feeds.extensions.FeedsCacheStorage"
 HTTPCACHE_POLICY = "scrapy.extensions.httpcache.DummyPolicy"
 HTTPCACHE_DIR = "cache"

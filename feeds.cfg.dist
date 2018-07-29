@@ -26,7 +26,7 @@ useragent = feeds (+https://github.com/nblock/feeds)
 ## Enable caching of responses
 # cache_enabled = 1
 ## Path to the cache.
-# cache_dir = .cache
+# cache_dir = ~/.cache/feeds
 ## Expire (remove) entries from cache after 14 days
 # cache_expires = 14
 

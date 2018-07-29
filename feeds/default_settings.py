@@ -1,5 +1,7 @@
 import logging
 
+from xdg.BaseDirectory import save_cache_path
+
 # Feeds configuration populated by an optional feeds configuration file.
 FEEDS_CONFIG = {}
 
@@ -37,7 +39,7 @@ DOWNLOADER_MIDDLEWARES = {
 HTTPCACHE_ENABLED = True
 HTTPCACHE_STORAGE = "feeds.extensions.FeedsCacheStorage"
 HTTPCACHE_POLICY = "scrapy.extensions.httpcache.DummyPolicy"
-HTTPCACHE_DIR = "cache"
+HTTPCACHE_DIR = save_cache_path("feeds")
 # We cache everything and delete cache entries (and every parent request) during
 # cleanup.
 HTTPCACHE_IGNORE_HTTP_CODES = []

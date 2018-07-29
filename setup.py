@@ -17,6 +17,7 @@ setup(
         "feedparser",
         "lxml>=3.5.0",
         "python-dateutil>=2.7.3",
+        "pyxdg>=0.26",
         "readability-lxml>=0.7",
     ],
     extras_require={

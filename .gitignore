@@ -32,3 +32,7 @@ feeds.cfg
 
 # vim tags
 tags
+
+# distribution
+build/
+dist/

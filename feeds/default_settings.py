@@ -6,6 +6,7 @@ from xdg.BaseDirectory import save_cache_path, xdg_config_home
 # Default settings for Feeds specific configurations.
 FEEDS_CONFIG_OUTPUT_PATH = "output"
 FEEDS_CONFIG_FILE = os.path.join(xdg_config_home, "feeds.cfg")
+FEEDS_CONFIG_CACHE_EXPIRES = 14
 
 # Low level settings intended for scrapy.
 # Please use feeds.cfg to configure feeds.

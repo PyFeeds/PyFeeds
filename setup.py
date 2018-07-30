@@ -1,7 +1,7 @@
 from setuptools import find_packages, setup
 
 setup(
-    name="feeds",
+    name="pyfeeds",
     version="2018.7.30",
     # Author details
     author="Florian Preinstorfer, Lukas Anzinger",

@@ -1,7 +1,12 @@
 import logging
+import os
 
-# Feeds configuration populated by an optional feeds configuration file.
-FEEDS_CONFIG = {}
+from xdg.BaseDirectory import save_cache_path, xdg_config_home
+
+# Default settings for Feeds specific configurations.
+FEEDS_CONFIG_OUTPUT_PATH = "output"
+FEEDS_CONFIG_FILE = os.path.join(xdg_config_home, "feeds.cfg")
+FEEDS_CONFIG_CACHE_EXPIRES = 14
 
 # Low level settings intended for scrapy.
 # Please use feeds.cfg to configure feeds.
@@ -34,10 +39,10 @@ DOWNLOADER_MIDDLEWARES = {
     "scrapy.downloadermiddlewares.httpcache.HttpCacheMiddleware": None,
 }
 
-HTTPCACHE_ENABLED = False
+HTTPCACHE_ENABLED = True
 HTTPCACHE_STORAGE = "feeds.extensions.FeedsCacheStorage"
 HTTPCACHE_POLICY = "scrapy.extensions.httpcache.DummyPolicy"
-HTTPCACHE_DIR = "cache"
+HTTPCACHE_DIR = save_cache_path("feeds")
 # We cache everything and delete cache entries (and every parent request) during
 # cleanup.
 HTTPCACHE_IGNORE_HTTP_CODES = []

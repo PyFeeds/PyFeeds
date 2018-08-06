@@ -15,6 +15,7 @@ class Oe1OrfAtSpider(FeedsSpider):
     _subtitle = "Ö1 Webradio"
     _link = "https://oe1.orf.at"
     _timezone = "Europe/Vienna"
+    _logo = "https://{}/static/img/logo_oe1.png".format(name)
 
     def parse(self, response):
         for day in json.loads(response.text)[-2:]:

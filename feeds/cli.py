@@ -1,6 +1,6 @@
 import logging
 import os
-from datetime import datetime, timedelta
+from datetime import timedelta
 
 import click
 from scrapy.crawler import CrawlerProcess
@@ -16,9 +16,9 @@ logger = logging.getLogger(__name__)
 
 def run_cleanup_cache(settings):
     days = settings.getint("FEEDS_CONFIG_CACHE_EXPIRES")
-    cleanup_cache(
-        data_path(settings.get("HTTPCACHE_DIR")), datetime.now() - timedelta(days=days)
-    )
+    if days <= 0:
+        raise ValueError("cache_expires must be >= 0.")
+    cleanup_cache(data_path(settings.get("HTTPCACHE_DIR")), timedelta(days=days))
 
 
 def spiders_to_crawl(process, argument_spiders):

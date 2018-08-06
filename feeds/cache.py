@@ -2,7 +2,7 @@ import logging
 import os
 import pickle
 import shutil
-from datetime import datetime
+from datetime import datetime, timedelta, timezone
 
 logger = logging.getLogger(__name__)
 
@@ -15,16 +15,38 @@ def read_meta(root):
         return pickle.load(f)
 
 
-def cleanup_cache(cache_dir, max_age):
-    """ Removes cache entries in path that are older than max_age. """
+def cleanup_cache(cache_dir, expires):
+    """Removes cache entries in path.
+
+    Entries are removed if one of the conditions is true:
+      - Response has a certain status code (e.g. 404).
+      - Individual expiration date is reached (compared to now).
+      - Timestamp of entry and expires exceeds now.
+    """
+
+    if expires < timedelta(0):
+        raise ValueError("expires must be a positive timedelta.")
 
     logger.debug("Cleaning cache entries from {} ...".format(cache_dir))
 
+    now = datetime.now(timezone.utc)
     for cache_entry_path, _dirs, files in os.walk(cache_dir, topdown=False):
         if "pickled_meta" in files:
             meta = read_meta(cache_entry_path)
-            timestamp = datetime.fromtimestamp(meta["timestamp"])
-            if timestamp < max_age:
+            logger.debug("Checking cache entry for URL {}".format(meta["response_url"]))
+            try:
+                entry_expires = timedelta(seconds=meta["cache_expires"])
+            except KeyError:
+                entry_expires = expires
+            entry_expires = min(entry_expires, expires)
+            threshold = (
+                datetime.fromtimestamp(meta["timestamp"], tz=timezone.utc)
+                + entry_expires
+            )
+            logger.debug(
+                "Entry expires after {} at {}".format(entry_expires, threshold)
+            )
+            if now > threshold:
                 remove_cache_entry(cache_entry_path)
             elif meta["status"] in IGNORE_HTTP_CODES:
                 remove_cache_entry(cache_entry_path, remove_parents=True)

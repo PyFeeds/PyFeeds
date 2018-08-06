@@ -39,6 +39,11 @@ class FeedsCacheStorage(FilesystemCacheStorage):
                 old_metadata["parents"] if old_metadata else []
             )
         )
+        if (
+            "cache_expires" in request.meta
+            and request.meta["cache_expires"] is not None
+        ):
+            metadata["cache_expires"] = request.meta["cache_expires"].total_seconds()
         # Write it back.
         rpath = self._get_request_path(spider, request)
         with self._open(os.path.join(rpath, "meta"), "wb") as f:

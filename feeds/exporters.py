@@ -10,6 +10,8 @@ from feeds.items import FeedEntryItem, FeedItem
 
 class AtomExporter(BaseItemExporter):
     class AtomFeed(object):
+        _psc_url = "http://podlove.org/simple-chapters"
+
         def __init__(self, exporter, link_self=None):
             self._exporter = exporter
             self._link_self = link_self
@@ -92,6 +94,11 @@ class AtomExporter(BaseItemExporter):
                     xml_items.append(category)
                 item.pop(key)
 
+            key = "chapter"
+            if key in item:
+                xml_items.append(self._convert_special_chapters(item, key))
+                item.pop(key)
+
             # Convert remaining fields.
             for name, value in self._exporter._get_serialized_fields(
                 item, default_value=""
@@ -150,6 +157,30 @@ class AtomExporter(BaseItemExporter):
                 xml_item = etree.Element("category")
                 xml_item.set("term", category)
                 yield xml_item
+
+        def _convert_special_chapters(self, item, key):
+            # See podlove-simple-chapters.md at
+            # https://github.com/podlove/podlove-specifications for the specification.
+            chapters = etree.Element(
+                etree.QName(self._psc_url, "chapters"),
+                version="1.2",
+                nsmap={"psc": self._psc_url},
+            )
+            for chapter in item[key]:
+                elem_chapter = etree.Element(
+                    etree.QName(self._psc_url, "chapter"),
+                    # Must confirm to normal play time.
+                    # See 3.6 Normal Play Time, RFC 2326.
+                    # https://www.ietf.org/rfc/rfc2326.txt
+                    start=str(chapter["start"]),
+                    title=chapter["title"],
+                )
+                if "image" in chapter:
+                    elem_chapter.set("image", chapter.get("image"))
+                if "href" in chapter:
+                    elem_chapter.set("href", chapter.get("href"))
+                chapters.append(elem_chapter)
+            return chapters
 
         def _update_updated(self, raw_updated):
             if raw_updated is None:

@@ -57,3 +57,6 @@ class FeedEntryItem(BaseItem):
 
     # Optional
     enclosure = scrapy.Field()
+
+    # Optional
+    chapter = scrapy.Field()

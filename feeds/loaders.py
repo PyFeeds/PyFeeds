@@ -309,6 +309,10 @@ class FeedEntryItemLoader(BaseItemLoader):
     enclosure_in = Identity()
     enclosure_out = Identity()
 
+    chapter_in = Identity()
+    chapter_out = Identity()
+
+
 # Site specific loaders
 class CbirdFeedEntryItemLoader(FeedEntryItemLoader):
     content_html_out = Join()

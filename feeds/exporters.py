@@ -71,21 +71,18 @@ class AtomExporter(BaseItemExporter):
                 xml_items.append(self._convert_special_link(item, key, "self"))
                 item.pop(key)
 
-            # Convert enclosure
-            key_iri = "enclosure_iri"
-            key_type = "enclosure_type"
-            if key_iri in item:
-                xml_items.append(
-                    self._convert_special_enclosure(item, key_iri, key_type)
-                )
-                item.pop(key_iri)
-                item.pop(key_type, None)
-
             # Convert content
             for key in ("content_text", "content_html"):
                 if key in item:
                     xml_items.append(self._convert_special_content(item, key))
                     item.pop(key)
+
+            # Convert enclosure
+            key = "enclosure"
+            if key in item:
+                for enclosure in self._convert_special_enclosure(item, key):
+                    xml_items.append(enclosure)
+                item.pop(key)
 
             key = "category"
             if key in item:
@@ -138,12 +135,13 @@ class AtomExporter(BaseItemExporter):
             xml_item.text = item[key]
             return xml_item
 
-        def _convert_special_enclosure(self, item, key_iri, key_type):
-            xml_item = etree.Element("link")
-            xml_item.set("rel", "enclosure")
-            xml_item.set("href", item[key_iri])
-            xml_item.set("type", item[key_type])
-            return xml_item
+        def _convert_special_enclosure(self, item, key):
+            for enclosure in item[key]:
+                xml_item = etree.Element("link")
+                xml_item.set("rel", "enclosure")
+                xml_item.set("href", enclosure["iri"])
+                xml_item.set("type", enclosure["type"])
+                yield xml_item
 
         def _convert_special_category(self, item, key):
             for category in item[key]:

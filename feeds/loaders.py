@@ -306,6 +306,8 @@ class FeedEntryItemLoader(BaseItemLoader):
 
     category_out = Identity()
 
+    enclosure_in = Identity()
+    enclosure_out = Identity()
 
 # Site specific loaders
 class CbirdFeedEntryItemLoader(FeedEntryItemLoader):

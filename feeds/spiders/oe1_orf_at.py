@@ -38,12 +38,11 @@ class Oe1OrfAtSpider(FeedsSpider):
         il.add_value("link", link)
         il.add_value("title", broadcast["programTitle"])
         il.add_value("title", broadcast["title"])
-        if broadcast.get("streams"):
+        for stream in broadcast["streams"]:
             stream = "https://loopstream01.apa.at/?channel=oe1&id={}".format(
-                broadcast["streams"][0]["loopStreamId"]
+                stream["loopStreamId"]
             )
-            il.add_value("enclosure_iri", stream)
-            il.add_value("enclosure_type", "audio/mpeg")
+            il.add_value("enclosure", {"iri": stream, "type": "audio/mpeg"})
         il.add_value("updated", broadcast["niceTimeISO"])
         if broadcast["subtitle"]:
             il.add_value(

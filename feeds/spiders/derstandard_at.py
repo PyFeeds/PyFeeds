@@ -7,6 +7,7 @@ from feeds.spiders import FeedsXMLFeedSpider
 class DerStandardAtSpider(FeedsXMLFeedSpider):
     name = "derstandard.at"
     allowed_domains = [name]
+    custom_settings = {"COOKIES_ENABLED": False}
 
     _title = "derStandard.at"
     _subtitle = "Nachrichten in Echtzeit"
@@ -66,7 +67,8 @@ class DerStandardAtSpider(FeedsXMLFeedSpider):
                 "ressort": response.meta["ressort"],
                 "dont_cache": dont_cache,
             },
-            cookies={"DSGVO_ZUSAGE_V1": "true"},
+            # Cookie handling is disabled, so we have to send this as a header.
+            headers={"Cookie": "DSGVO_ZUSAGE_V1=true"},
         )
 
     def _parse_article(self, response):

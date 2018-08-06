@@ -16,8 +16,9 @@ class AtomExporter(BaseItemExporter):
             self._link_self = link_self
             self._feed_updated = None
             self._feed_items = []
-            self._xml = etree.Element("feed")
-            self._xml.set("xmlns", "http://www.w3.org/2005/Atom")
+            self._xml = etree.Element(
+                "feed", nsmap={None: "http://www.w3.org/2005/Atom"}
+            )
 
         def add_item(self, item):
             if isinstance(item, FeedItem):

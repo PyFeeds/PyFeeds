@@ -1,5 +1,6 @@
 import json
 from collections import OrderedDict
+from datetime import timedelta
 from urllib.parse import parse_qs, urlparse
 
 import scrapy
@@ -29,6 +30,7 @@ class UebermedienDeSpider(FeedsXMLFeedSpider):
                 + "redirect_uri=https://uebermedien.de&scope=read&"
                 + "response_type=code&refresh_only=false",
                 callback=self._steady_login,
+                meta={"cache_expires": timedelta(days=1)},
             )
         else:
             self.logger.info("Login failed: No username or password given")
@@ -41,7 +43,7 @@ class UebermedienDeSpider(FeedsXMLFeedSpider):
             formdata={"user[email]": self._username, "user[password]": self._password},
             callback=self._request_steady_token,
             dont_filter=True,
-            meta={"handle_httpstatus_list": [301]},
+            meta={"handle_httpstatus_list": [301], "cache_expires": timedelta(days=1)},
         )
 
     def _request_steady_token(self, response):
@@ -65,6 +67,7 @@ class UebermedienDeSpider(FeedsXMLFeedSpider):
             body=json.dumps(body),
             headers={"Accept": "application/json", "Content-Type": "application/json"},
             callback=self._set_steady_token,
+            meta={"cache_expires": timedelta(days=1)},
         )
 
     def _set_steady_token(self, response):

@@ -11,6 +11,7 @@ from feeds.items import FeedEntryItem, FeedItem
 class AtomExporter(BaseItemExporter):
     class AtomFeed(object):
         _psc_url = "http://podlove.org/simple-chapters"
+        _itunes_url = "http://www.itunes.com/dtds/podcast-1.0.dtd"
 
         def __init__(self, exporter, link_self=None):
             self._exporter = exporter
@@ -19,7 +20,10 @@ class AtomExporter(BaseItemExporter):
             self._feed_items = []
             self._xml = etree.Element(
                 "feed",
-                nsmap={None: "http://www.w3.org/2005/Atom"}
+                nsmap={
+                    None: "http://www.w3.org/2005/Atom",
+                    "itunes": "http://www.itunes.com/dtds/podcast-1.0.dtd"
+                }
             )
 
         def add_item(self, item):
@@ -98,6 +102,11 @@ class AtomExporter(BaseItemExporter):
             if key in item:
                 xml_items.append(self._convert_special_chapters(item, key))
                 item.pop(key)
+
+            key = "logo"
+            if key in item:
+                xml_items.append(self._convert_special_itunes_image(item, key))
+                # Note: Don't pop, we need still need it.
 
             # Convert remaining fields.
             for name, value in self._exporter._get_serialized_fields(
@@ -181,6 +190,11 @@ class AtomExporter(BaseItemExporter):
                     elem_chapter.set("href", chapter.get("href"))
                 chapters.append(elem_chapter)
             return chapters
+
+        def _convert_special_itunes_image(self, item, key):
+            element = etree.Element(etree.QName(self._itunes_url, "image"))
+            element.set("href", item[key])
+            return element
 
         def _update_updated(self, raw_updated):
             if raw_updated is None:

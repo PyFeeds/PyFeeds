@@ -18,7 +18,8 @@ class Fm4OrfAtSpider(FeedsSpider):
     _link = "https://fm4.orf.at"
     _timezone = "Europe/Vienna"
     _logo = (
-        "https://tubestatic.orf.at/mojo/1_3/storyserver/tube/fm4/images/fm4.logo.svg"
+        "https://tubestatic.orf.at/mojo/1_3/storyserver/tube/fm4/images/"
+        + "touch-icon-android.png"
     )
 
     def parse(self, response):

@@ -33,7 +33,7 @@ class Oe1OrfAtSpider(FeedsSpider):
         il = FeedEntryItemLoader(
             response=response, timezone=self._timezone, dayfirst=False
         )
-        link = "https://{}/programm/{}/{}".format(
+        link = "https://{}/player/{}/{}".format(
             self.name, response.meta["oe1_day"], broadcast["programKey"]
         )
         il.add_value("link", link)

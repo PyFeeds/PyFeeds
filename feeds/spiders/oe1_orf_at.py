@@ -46,6 +46,11 @@ class Oe1OrfAtSpider(FeedsSpider):
             il.add_value(
                 "content_html", "<strong>{}</strong>".format(broadcast["subtitle"])
             )
+        image = broadcast["images"][0]["versions"][0]
+        il.add_value(
+            "content_html",
+            '<img src="{image[path]}" width="{image[width]}">'.format(image=image)
+        )
         for item in broadcast["items"]:
             if "title" in item:
                 il.add_value("content_html", "<h3>{}</h3>".format(item["title"]))

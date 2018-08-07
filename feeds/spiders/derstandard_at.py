@@ -1,3 +1,5 @@
+from datetime import timedelta
+
 import scrapy
 
 from feeds.loaders import FeedEntryItemLoader
@@ -16,7 +18,7 @@ class DerStandardAtSpider(FeedsXMLFeedSpider):
     _logo = "https://at.staticfiles.at/sites/mainweb/img/icons/dst/dst-228.png"
     _titles = {}
     # Some ressorts have articles that are regulary updated, e.g. cartoons.
-    _ressorts_uncached = ["47"]
+    _cache_expires = {"47": timedelta(minutes=60)}
     _max_articles = 10
     _ressorts_num_articles = {}
 
@@ -58,14 +60,14 @@ class DerStandardAtSpider(FeedsXMLFeedSpider):
         self._ressorts_num_articles[response.meta["ressort"]] = num_articles + 1
 
         updated = node.xpath("pubDate/text()").extract_first()
-        dont_cache = response.meta["ressort"] in self._ressorts_uncached
+        cache_expires = self._cache_expires.get(response.meta["ressort"])
         yield scrapy.Request(
             url,
             self._parse_article,
             meta={
                 "updated": updated,
                 "ressort": response.meta["ressort"],
-                "dont_cache": dont_cache,
+                "cache_expires": cache_expires,
             },
             # Cookie handling is disabled, so we have to send this as a header.
             headers={"Cookie": "DSGVO_ZUSAGE_V1=true"},

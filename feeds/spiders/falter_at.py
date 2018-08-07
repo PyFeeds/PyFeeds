@@ -39,7 +39,7 @@ class FalterAtSpider(FeedsSpider):
                     },
                     meta={
                         "dont_redirect": True,
-                        "dont_cache": True,
+                        "cache_expires": timedelta(days=1),
                         "handle_httpstatus_list": [302],
                     },
                     callback=self.request_archive,

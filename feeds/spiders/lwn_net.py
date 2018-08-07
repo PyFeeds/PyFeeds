@@ -1,4 +1,5 @@
 import re
+from datetime import timedelta
 
 import scrapy
 from dateutil.parser import parse as dateutil_parse
@@ -90,6 +91,8 @@ class LwnNetSpider(FeedsXMLFeedSpider):
                     "submit": "Log+in",
                 },
                 callback=self._after_login,
+                # Session cookie is valid for a month. 14 days is a good compromise.
+                meta={"cache_expires": timedelta(days=14)},
             )
         else:
             # Username, password or section not found in feeds.cfg.

@@ -22,19 +22,15 @@ class Oe1OrfAtSpider(FeedsSpider):
             for broadcast in day["broadcasts"]:
                 # Only parse if already recorded (i.e. not live/in the future).
                 if broadcast["state"] == "C":
-                    yield scrapy.Request(
-                        broadcast["href"],
-                        self.parse_broadcast,
-                        meta={"oe1_day": day["day"]},
-                    )
+                    yield scrapy.Request(broadcast["href"], self._parse_broadcast)
 
-    def parse_broadcast(self, response):
+    def _parse_broadcast(self, response):
         broadcast = json.loads(response.text)
         il = FeedEntryItemLoader(
             response=response, timezone=self._timezone, dayfirst=False
         )
         link = "https://{}/player/{}/{}".format(
-            self.name, response.meta["oe1_day"], broadcast["programKey"]
+            self.name, broadcast["broadcastDay"], broadcast["programKey"]
         )
         il.add_value("link", link)
         il.add_value("title", broadcast["programTitle"])

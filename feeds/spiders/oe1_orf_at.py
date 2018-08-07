@@ -8,7 +8,7 @@ from feeds.spiders import FeedsSpider
 
 class Oe1OrfAtSpider(FeedsSpider):
     name = "oe1.orf.at"
-    allowed_domains = ["audioapi.orf.at"]
+    allowed_domains = ["audioapi.orf.at", name]
     start_urls = ["https://audioapi.orf.at/oe1/api/json/current/broadcasts"]
 
     _title = "oe1.ORF.at"
@@ -51,4 +51,15 @@ class Oe1OrfAtSpider(FeedsSpider):
                 il.add_value("content_html", "<h3>{}</h3>".format(item["title"]))
             il.add_value("content_html", item.get("description"))
         il.add_value("content_html", broadcast["description"])
+        il.add_value("category", broadcast["tags"])
+        if "no_canonical_url" not in broadcast["url"]:
+            yield scrapy.Request(
+                broadcast["url"], self._parse_show, dont_filter=True, meta={"il": il},
+            )
+        else:
+            yield il.load_item()
+
+    def _parse_show(self, response):
+        il = FeedEntryItemLoader(response=response, parent=response.meta["il"])
+        il.add_css("category", ".asideBlock:first-child h2::text")
         yield il.load_item()

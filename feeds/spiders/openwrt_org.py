@@ -18,6 +18,8 @@ class OpenwrtOrgSpider(FeedsCrawlSpider):
     _subtitle = "Newest release builds from OpenWRT."
     _timezone = "Europe/Berlin"
     _base_url = "https://{}".format(name)
+    _icon = "https://{}/lib/tpl/openwrt/images/apple-touch-icon.png".format(name)
+    _logo = "https://{}/lib/tpl/openwrt/images/logo.png".format(name)
 
     def parse_release(self, response):
         for href in response.xpath(

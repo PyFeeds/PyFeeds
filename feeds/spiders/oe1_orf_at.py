@@ -56,6 +56,12 @@ class Oe1OrfAtSpider(FeedsSpider):
                 il.add_value("content_html", "<h3>{}</h3>".format(item["title"]))
             il.add_value("content_html", item.get("description"))
         il.add_value("content_html", broadcast["description"])
+        il.add_value(
+            "content_html",
+            '<a href="{broadcast[url]}">{broadcast[urlText]}</a>'.format(
+                broadcast=broadcast
+            ),
+        )
         il.add_value("category", broadcast["tags"])
         if "no_canonical_url" not in broadcast["url"]:
             yield scrapy.Request(

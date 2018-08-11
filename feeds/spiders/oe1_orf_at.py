@@ -49,7 +49,7 @@ class Oe1OrfAtSpider(FeedsSpider):
         image = broadcast["images"][0]["versions"][0]
         il.add_value(
             "content_html",
-            '<img src="{image[path]}" width="{image[width]}">'.format(image=image)
+            '<img src="{image[path]}" width="{image[width]}">'.format(image=image),
         )
         for item in broadcast["items"]:
             if "title" in item:
@@ -59,7 +59,7 @@ class Oe1OrfAtSpider(FeedsSpider):
         il.add_value("category", broadcast["tags"])
         if "no_canonical_url" not in broadcast["url"]:
             yield scrapy.Request(
-                broadcast["url"], self._parse_show, dont_filter=True, meta={"il": il},
+                broadcast["url"], self._parse_show, dont_filter=True, meta={"il": il}
             )
         else:
             yield il.load_item()

@@ -82,7 +82,11 @@ class DerStandardAtSpider(FeedsXMLFeedSpider):
             ".sequence-number",
         ]
         change_tags = {"#media-list li": "div", "#media-list": "div"}
-        replace_regex = {r'<img[^>]+data-zoom-src="([^"]+)"': r'<img src="\1"'}
+        replace_regex = {
+            # data-zoom-src is only valid if it starts with //images.derstandard.at.
+            r'<img[^>]+data-zoom-src="(//images.derstandard.at/[^"]+)"':
+            r'<img src="\1"'
+        }
         replace_elems = {
             ".embedded-posting": "<p><em>Hinweis: Das eingebettete Posting ist nur "
             + "im Artikel verfügbar.</em></p>"
@@ -106,6 +110,15 @@ class DerStandardAtSpider(FeedsXMLFeedSpider):
                 "https://{}/userprofil/bloggingdelivery/blogeintrag?godotid={}"
             ).format(self.name, blog_id)
             yield scrapy.Request(url, self._parse_blog_article, meta={"il": il})
+        elif response.css("#feature-content"):
+            cover_photo = (
+                response.css("#feature-cover-photo::attr(style)").
+                re_first('\((.*)\)')
+            )
+            il.add_value("content_html", '<img src="{}">'.format(cover_photo))
+            il.add_css("content_html", "#feature-cover-title h2")
+            il.add_css("content_html", "#feature-content > .copytext")
+            yield il.load_item()
         else:
             il.add_css("content_html", "#content-aside")
             il.add_css("content_html", "#objectContent > .copytext")

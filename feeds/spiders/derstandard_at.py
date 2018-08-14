@@ -104,6 +104,7 @@ class DerStandardAtSpider(FeedsXMLFeedSpider):
         il.add_css("author_name", "span.author::text")
         il.add_value("path", response.meta["ressort"])
         il.add_value("updated", response.meta["updated"])
+        il.add_css("category", "#breadcrumb .item a::text")
         blog_id = response.css("#userblogentry::attr(data-objectid)").extract_first()
         if blog_id:
             url = (

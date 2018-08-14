@@ -89,7 +89,9 @@ class DerStandardAtSpider(FeedsXMLFeedSpider):
         }
         replace_elems = {
             ".embedded-posting": "<p><em>Hinweis: Das eingebettete Posting ist nur "
-            + "im Artikel verfügbar.</em></p>"
+            + "im Artikel verfügbar.</em></p>",
+            ".js-embed-output": "<p><em>Hinweis: Der eingebettete Inhalt ist nur "
+            + "im Artikel verfügbar.</em></p>",
         }
         il = FeedEntryItemLoader(
             response=response,
@@ -104,6 +106,7 @@ class DerStandardAtSpider(FeedsXMLFeedSpider):
         il.add_css("author_name", "span.author::text")
         il.add_value("path", response.meta["ressort"])
         il.add_value("updated", response.meta["updated"])
+        il.add_css("category", "#breadcrumb .item a::text")
         blog_id = response.css("#userblogentry::attr(data-objectid)").extract_first()
         if blog_id:
             url = (

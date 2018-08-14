@@ -90,7 +90,7 @@ class DerStandardAtSpider(FeedsXMLFeedSpider):
         replace_elems = {
             ".embedded-posting": "<p><em>Hinweis: Das eingebettete Posting ist nur "
             + "im Artikel verfügbar.</em></p>",
-            ".js-embed-container": "<p><em>Hinweis: Der eingebettete Inhalt ist nur "
+            ".js-embed-output": "<p><em>Hinweis: Der eingebettete Inhalt ist nur "
             + "im Artikel verfügbar.</em></p>",
         }
         il = FeedEntryItemLoader(

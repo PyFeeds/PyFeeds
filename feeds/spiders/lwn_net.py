@@ -164,10 +164,14 @@ class LwnNetSpider(FeedsXMLFeedSpider):
             ".MakeALink",
             "br",
         ]
+        change_tags = {
+            "div.BigQuote": "blockquote",
+        }
         il = FeedEntryItemLoader(
             response=response,
             parent=response.meta["il"],
             remove_elems=remove_elems,
+            change_tags=change_tags,
             base_url="https://{}".format(self.name),
         )
         text = response.css(".ArticleText").extract_first()

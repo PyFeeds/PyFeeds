@@ -63,7 +63,7 @@ class Oe1OrfAtSpider(FeedsSpider):
             ),
         )
         il.add_value("category", broadcast["tags"])
-        if "no_canonical_url" not in broadcast["url"]:
+        if broadcast["url"] and "no_canonical_url" not in broadcast["url"]:
             yield scrapy.Request(
                 broadcast["url"], self._parse_show, dont_filter=True, meta={"il": il}
             )

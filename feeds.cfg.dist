@@ -116,3 +116,25 @@ useragent = feeds (+https://github.com/nblock/feeds)
 #    4748
 #    etat
 #    immobilien
+
+#[arstechnica.com]
+#channels =
+#  index
+#  features
+#  technology-lab
+#  gadgets
+#  business
+#  security
+#  tech-policy
+#  apple
+#  gaming
+#  science
+#  multiverse
+#  cars
+#  staff-blogs
+#  cardboard
+#  open-source
+#  microsoft
+#  software
+#  telecom
+#  web

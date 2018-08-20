@@ -50,7 +50,7 @@ Installation
 ------------
 
 Feeds is meant to be installed on your server and run periodically in a cron
-job.
+job or similar job scheduler.
 
 The easiest way to install Feeds is via ``pip`` in a virtual environment. Feeds
 does not provide any releases yet, so one might directly install the current
@@ -150,7 +150,7 @@ AGPL3, see `LICENSE`_ for details.
 .. _Konsument: https://pyfeeds.readthedocs.io/en/latest/spiders/konsument.at.html
 .. _LWN: https://pyfeeds.readthedocs.io/en/latest/spiders/lwn.net.html
 .. _Oberösterreichische Nachrichten: https://pyfeeds.readthedocs.io/en/latest/spiders/nachrichten.at.html
-.. _Übermedien: https://pyfeeds.readthedocs.io/en/latest/spiders/uebermedien.com.html
+.. _Übermedien: https://pyfeeds.readthedocs.io/en/latest/spiders/uebermedien.de.html
 
 .. |build-status| image:: https://travis-ci.org/nblock/feeds.svg?branch=master
     :alt: build status

@@ -9,9 +9,11 @@ master branch:
 
 .. code-block:: bash
 
-   $ git clone https://github.com/nblock/feeds.git
-   $ cd feeds
-   $ pip install .
+    $ git clone https://github.com/nblock/feeds.git
+    $ cd feeds
+    $ python3 -m venv venv
+    $ source bin/activate
+    $ pip install -e .
 
 After installation ``feeds`` is available in your virtual environment.
 

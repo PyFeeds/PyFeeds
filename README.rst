@@ -29,8 +29,8 @@ Feeds comes with extensive documentation. It is available at
 Supported Websites
 ------------------
 
-Feeds is currently able to create Atom feeds for various sites. The complete
-list of `supported websites is available in the documentation
+Feeds is currently able to create full text Atom feeds for various sites. The
+complete list of `supported websites is available in the documentation
 <https://pyfeeds.readthedocs.io/en/latest/spiders.html>`_.
 
 Content behind paywalls

@@ -34,7 +34,7 @@ complete list of `supported websites is available in the documentation
 <https://pyfeeds.readthedocs.io/en/latest/spiders.html>`_.
 
 Content behind paywalls
-```````````````````````
+~~~~~~~~~~~~~~~~~~~~~~~
 
 Some sites (Falter_, Konsument_, LWN_, `Oberösterreichische Nachrichten`_,
 Übermedien_) offer articles only behind a paywall. If you have a paid

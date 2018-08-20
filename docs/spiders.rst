@@ -4,6 +4,20 @@ Supported Websites
 ==================
 Feeds is currently able to create full text Atom feeds for the following websites:
 
+Most popular sites
+------------------
+
+.. toctree::
+   :maxdepth: 1
+
+   spiders/arstechnica.com
+   spiders/facebook.com
+   spiders/indiehackers.com
+   spiders/lwn.net
+   spiders/vice.com
+
+Complete list
+-------------
 .. toctree::
    :maxdepth: 1
    :glob:

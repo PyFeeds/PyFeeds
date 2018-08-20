@@ -117,7 +117,7 @@ def cleanup(ctx):
     """
     Cleanup old cache entries.
 
-    By default, entries older than 14 days will be removed. This value can be
+    By default, entries older than 90 days will be removed. This value can be
     overriden in the config file.
     """
     settings = ctx.obj["settings"]

@@ -27,8 +27,8 @@ useragent = feeds (+https://github.com/nblock/feeds)
 # cache_enabled = 1
 ## Path to the cache.
 # cache_dir = ~/.cache/feeds
-## Expire (remove) entries from cache after 14 days
-# cache_expires = 14
+## Expire (remove) entries from cache after 90 days
+# cache_expires = 90
 
 #[generic]
 ## A list of URLs to RSS/Atom feeds.

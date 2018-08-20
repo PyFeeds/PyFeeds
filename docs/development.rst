@@ -12,7 +12,7 @@ In such cases you usually only want to augment the original feed with the full
 article.
 
 Generic spider
-``````````````
+~~~~~~~~~~~~~~
 For a lot of feeds (especially those from blogs) it is actually sufficient to
 use the :ref:`spider_generic` spider which can extract content from any
 website using heuristics.
@@ -23,7 +23,7 @@ can also use the :ref:`spider_generic` spider and add your feed URL to the
 ``fulltext_urls`` key in the config.
 
 Custom extraction
-`````````````````
+~~~~~~~~~~~~~~~~~
 These spiders take an existing RSS feed and inline the article content while
 cleaning up the content (removing share buttons, etc.):
 
@@ -36,7 +36,7 @@ cleaning up the content (removing share buttons, etc.):
   * :ref:`spider_orf.at`
 
 Paywalled content
-`````````````````
+~~~~~~~~~~~~~~~~~
 If your website has a feed but some or all articles are behind a paywall or
 require to login to read, take a look at the following spiders:
 
@@ -50,7 +50,7 @@ Some websites don't offer any feed at all. In such cases we have to find an
 efficient way to detect new content and extract it.
 
 Utilizing an API
-````````````````
+~~~~~~~~~~~~~~~~
 Some use a REST API which we can use to fetch the content.
 
   * :ref:`spider_facebook.com`
@@ -60,13 +60,13 @@ Some use a REST API which we can use to fetch the content.
   * :ref:`spider_vice.com`
 
 Utilizing the sitemap
-`````````````````````
+~~~~~~~~~~~~~~~~~~~~~
 Others provide a sitemap_ which we can parse:
 
   * :ref:`spider_profil.at`
 
 Custom extraction
-`````````````````
+~~~~~~~~~~~~~~~~~
 The last resort is to find a page that lists the newest articles and start
 scraping from there.
 

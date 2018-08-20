@@ -1,4 +1,4 @@
-.. _zeit.diebin.at:
+.. _spider_zeit.diebin.at:
 
 zeit.diebin.at
 -------------------

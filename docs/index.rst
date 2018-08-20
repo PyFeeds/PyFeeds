@@ -48,7 +48,8 @@ Related work
 Authors
 -------
 Feeds is written and maintained by `Florian Preinstorfer <https://nblock.org>`_
-and `Lukas Anzinger <https://www.notinventedhere.org>`_.
+and `Lukas Anzinger <https://www.notinventedhere.org>`_ (`@LukasAnzinger`_).
 
 .. _Scrapy: https://www.scrapy.org
 .. _TinyTinyRSS: https://tt-rss.org
+.. _@LukasAnzinger: https://twitter.com/LukasAnzinger

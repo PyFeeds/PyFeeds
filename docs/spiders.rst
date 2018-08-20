@@ -3,8 +3,8 @@
 Supported Websites
 ==================
 Feeds is currently able to create full text Atom feeds for the websites listed
-below. All feeds contain the articles in full text so you never have to leave your
-feed reader while reading.
+below. All feeds contain the articles in full text so you never have to leave
+your feed reader while reading.
 
 A note on paywalls
 ------------------

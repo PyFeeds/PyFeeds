@@ -84,7 +84,9 @@ class DerStandardAtSpider(FeedsXMLFeedSpider):
         change_tags = {"#media-list li": "div", "#media-list": "div"}
         replace_regex = {
             # data-zoom-src is only valid if it starts with //images.derstandard.at.
-            r'<img[^>]+data-zoom-src="(//images.derstandard.at/[^"]+)"': r'<img src="\1"'
+            r'<img[^>]+data-zoom-src="(//images.derstandard.at/[^"]+)"': (
+                r'<img src="\1"'
+            )
         }
         replace_elems = {
             ".embedded-posting": "<p><em>Hinweis: Das eingebettete Posting ist nur "

@@ -7,8 +7,8 @@ adding support for a new website doesn't take too much time.
 
 A quick example
 ---------------
-Writing a spider is easy! Take the spider for :ref:`spider_indiehackers.com` for
-example:
+Writing a spider is easy! Consider the slightly simplified spider for
+:ref:`spider_indiehackers.com`:
 
 .. code-block:: python
 

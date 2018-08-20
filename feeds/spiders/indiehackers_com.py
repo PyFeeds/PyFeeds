@@ -16,12 +16,12 @@ class IndieHackersComSpider(FeedsSpider):
             ".interview__link::attr(href), .interview__date::text"
         ).extract()
         self._logo = response.urljoin(
-            response.css('link[rel="icon"][sizes="192x192"]::attr(href)').
-            extract_first()
+            response.css(
+                'link[rel="icon"][sizes="192x192"]::attr(href)'
+            ).extract_first()
         )
         self._icon = response.urljoin(
-            response.css('link[rel="icon"][sizes="16x16"]::attr(href)').
-            extract_first()
+            response.css('link[rel="icon"][sizes="16x16"]::attr(href)').extract_first()
         )
         for link, date in zip(interviews[::2], interviews[1::2]):
             yield scrapy.Request(

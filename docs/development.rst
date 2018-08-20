@@ -95,7 +95,6 @@ cleaning up the content (removing share buttons, etc.):
   * :ref:`spider_derstandard.at`
   * :ref:`spider_gnucash.org`
   * :ref:`spider_lwn.net`
-  * :ref:`spider_openwrt.org`
   * :ref:`spider_orf.at`
 
 Paywalled content
@@ -139,6 +138,7 @@ scraping from there.
   * :ref:`spider_cbird.at`
   * :ref:`spider_help.gv.at`
   * :ref:`spider_indiehackers.com`
+  * :ref:`spider_openwrt.org`
   * :ref:`spider_puls4.com`
   * :ref:`spider_usenix.org`
   * :ref:`spider_verbraucherrecht.at`

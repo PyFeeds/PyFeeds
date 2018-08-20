@@ -8,6 +8,12 @@ content feeds. It is similar to `Full-Text RSS`_ but uses a port of an older
 version of Readability_ under the hood and currently doesn't support
 site_config files. It works best for blog articles.
 
+Some feeds already provide the full content but in a tag that is not used by
+your feed reader. E.g. feeds created by Wordpress usually have the full
+content in the "encoded" tag. In such cases it's best to add the URL to the
+``fulltext_urls`` entry which extracts the content directly from the feed
+without Readability_.
+
 Configuration
 ~~~~~~~~~~~~~
 Add ``generic`` to the list of spiders:
@@ -27,6 +33,8 @@ Add the feed URLs (Atom or XML) to the config file.
    urls =
        https://www.example.com/feed.atom
        https://www.example.org/feed.xml
+   fulltext_urls =
+       https://myblog.example.com/feed/
 
 .. _Readability: https://github.com/mozilla/readability
 .. _`Full-Text RSS`: http://fivefilters.org/content-only/

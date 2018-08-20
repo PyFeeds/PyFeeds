@@ -33,6 +33,9 @@ useragent = feeds (+https://github.com/nblock/feeds)
 #[generic]
 ## A list of URLs to RSS/Atom feeds.
 # urls =
+## A list of URLs to RSS/Atom feeds that provide the full content in the "encoded" or
+## "content" tag.
+# fulltext_urls =
 
 #[falter.at]
 ## falter.at has a paywall for certain articles.

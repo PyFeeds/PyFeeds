@@ -1,4 +1,5 @@
 import io
+import itertools
 from urllib.parse import quote_plus as urlquote_plus, urlparse, urljoin
 
 import feedparser
@@ -13,13 +14,17 @@ class GenericSpider(FeedsSpider):
     name = "generic"
 
     def start_requests(self):
-        self._sites = self.settings.get("FEEDS_SPIDER_GENERIC_URLS")
-        if not self._sites:
+        urls = self.settings.get("FEEDS_SPIDER_GENERIC_URLS") or ""
+        fulltext_urls = self.settings.get("FEEDS_SPIDER_GENERIC_FULLTEXT_URLS") or ""
+        if not urls and not fulltext_urls:
             self.logger.error("Please specify url(s) in the config file!")
             return
 
-        for url in self._sites.split():
-            yield scrapy.Request(url, meta={"dont_cache": True})
+        for url, fulltext in itertools.chain(
+            zip(urls.split(), itertools.repeat(False)),
+            zip(fulltext_urls.split(), itertools.repeat(True)),
+        ):
+            yield scrapy.Request(url, meta={"dont_cache": True, "fulltext": fulltext})
 
     def feed_headers(self):
         return []
@@ -42,17 +47,28 @@ class GenericSpider(FeedsSpider):
         )
         base_url = "://".join(urlparse(response.url)[:2])
         for entry in feed_entries:
-            yield scrapy.Request(
-                # Deals with protocol-relative URLs.
-                urljoin(base_url, entry["link"]),
-                self._parse_article,
-                meta={"path": path, "feed_entry": entry, "base_url": base_url},
-            )
+            # Deals with protocol-relative URLs.
+            link = urljoin(base_url, entry["link"])
+            il = FeedEntryItemLoader(base_url=base_url)
+            il.add_value("path", path)
+            il.add_value("updated", entry.get("updated") or entry.get("published"))
+            il.add_value("author_name", entry.get("author_detail", {}).get("name"))
+            il.add_value("link", link)
+            il.add_value("category", [t["term"] for t in entry.get("tags", [])])
+            if response.meta["fulltext"]:
+                il.add_value("title", entry["title"])
+                il.add_value("content_html", entry["content"][0]["value"])
+                yield il.load_item()
+            else:
+                # Content is not part of the feed, scrape it.
+                yield scrapy.Request(
+                    link, self._parse_article, meta={"feed_entry": entry, "il": il}
+                )
 
     def _parse_article(self, response):
-        doc = Document(response.text, url=response.url)
         feed_entry = response.meta["feed_entry"]
-        il = FeedEntryItemLoader(base_url=response.meta["base_url"])
+        il = FeedEntryItemLoader(parent=response.meta["il"])
+        doc = Document(response.text, url=response.url)
         il.add_value("title", doc.short_title() or feed_entry.get("title"))
         summary = feed_entry.get("summary")
         try:
@@ -64,9 +80,4 @@ class GenericSpider(FeedsSpider):
         except Unparseable:
             content = summary
         il.add_value("content_html", content)
-        il.add_value("updated", feed_entry.get("updated", feed_entry.get("published")))
-        il.add_value("author_name", feed_entry.get("author_detail", {}).get("name"))
-        il.add_value("category", [t["term"] for t in feed_entry.get("tags", [])])
-        il.add_value("path", response.meta["path"])
-        il.add_value("link", response.url)
         yield il.load_item()

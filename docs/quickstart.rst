@@ -12,7 +12,7 @@ Feeds has a few commands that are described on this page.
 
   .. code-block:: bash
 
-     $ feeds crawl tvthek.orf.at
+     $ feeds crawl indiehackers.com
 
 * A :ref:`configuration file <Configure Feeds>` is supported too. Simply copy
   the :ref:`example configuration` and adjust it. Enable the spiders you are

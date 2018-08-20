@@ -1,18 +1,18 @@
-.. _spider_uebermedien.com:
+.. _spider_uebermedien.de:
 
-uebermedien.com
----------------
+uebermedien.de
+--------------
 Newest articles from Übermedien_.
 
 Configuration
 ~~~~~~~~~~~~~
-Add ``uebermedien.com`` to the list of spiders:
+Add ``uebermedien.de`` to the list of spiders:
 
 .. code-block:: ini
 
    # List of spiders to run by default, one per line.
    spiders =
-     uebermedien.com
+     uebermedien.de
 
 
 Übermedien_ has a paywall for certain articles. If you want to crawl paid

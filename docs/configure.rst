@@ -72,12 +72,12 @@ The path where cache data is stored.
 
 cache_expires
 ~~~~~~~~~~~~~
-Expire (remove) entries from cache after 14 days.
+Expire (remove) entries from cache after 90 days.
 
 .. code-block:: ini
 
    [feeds]
-   cache_expires = 14
+   cache_expires = 90
 
 Spider specific settings
 ------------------------

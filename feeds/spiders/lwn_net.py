@@ -164,9 +164,7 @@ class LwnNetSpider(FeedsXMLFeedSpider):
             ".MakeALink",
             "br",
         ]
-        change_tags = {
-            "div.BigQuote": "blockquote",
-        }
+        change_tags = {"div.BigQuote": "blockquote"}
         il = FeedEntryItemLoader(
             response=response,
             parent=response.meta["il"],

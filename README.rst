@@ -29,9 +29,12 @@ Feeds comes with extensive documentation. It is available at
 Supported Websites
 ------------------
 
-Feeds is currently able to create Atom feeds for various sites. The complete
-list of `supported websites is available in the documentation
+Feeds is currently able to create full text Atom feeds for various sites. The
+complete list of `supported websites is available in the documentation
 <https://pyfeeds.readthedocs.io/en/latest/spiders.html>`_.
+
+Content behind paywalls
+```````````````````````
 
 Some sites (Falter_, Konsument_, LWN_, `Oberösterreichische Nachrichten`_,
 Übermedien_) offer articles only behind a paywall. If you have a paid
@@ -47,7 +50,7 @@ Installation
 ------------
 
 Feeds is meant to be installed on your server and run periodically in a cron
-job.
+job or similar job scheduler.
 
 The easiest way to install Feeds is via ``pip`` in a virtual environment. Feeds
 does not provide any releases yet, so one might directly install the current
@@ -55,7 +58,9 @@ master branch::
 
     $ git clone https://github.com/nblock/feeds.git
     $ cd feeds
-    $ pip install .
+    $ python3 -m venv venv
+    $ source bin/activate
+    $ pip install -e .
 
 After installation ``feeds`` is available in your virtual environment.
 
@@ -88,13 +93,10 @@ Quickstart
 Caching
 -------
 
-Feeds can be configured to use a cache for HTTP responses which is highly
-recommended to save bandwidth. It can be enabled in the config file. See
-feeds.cfg.dist for an example on how to do that.
-
-Entries are cached for 14 days by default (this can be overwritten in the
-config file). Entries are purged from cache automatically after a crawl. It's
-also possible to explicitly invalidate the cache::
+Feeds caches HTTP responses by default to save bandwidth. Entries are cached
+for 90 days by default (this can be overwritten in the config file). Outdated
+entries are purged from cache automatically after a crawl. It's also possible
+to explicitly purge the cache from outdated entries::
 
   $ feeds --config feeds.cfg cleanup
 
@@ -148,7 +150,7 @@ AGPL3, see `LICENSE`_ for details.
 .. _Konsument: https://pyfeeds.readthedocs.io/en/latest/spiders/konsument.at.html
 .. _LWN: https://pyfeeds.readthedocs.io/en/latest/spiders/lwn.net.html
 .. _Oberösterreichische Nachrichten: https://pyfeeds.readthedocs.io/en/latest/spiders/nachrichten.at.html
-.. _Übermedien: https://pyfeeds.readthedocs.io/en/latest/spiders/uebermedien.com.html
+.. _Übermedien: https://pyfeeds.readthedocs.io/en/latest/spiders/uebermedien.de.html
 
 .. |build-status| image:: https://travis-ci.org/nblock/feeds.svg?branch=master
     :alt: build status

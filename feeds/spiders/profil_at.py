@@ -20,7 +20,6 @@ class ProfilAtSpider(FeedsXMLFeedSpider):
     _title = "PROFIL"
     _subtitle = "Österreichs unabhängiges Nachrichtenmagazin"
     _timezone = "Europe/Vienna"
-    _max_articles = 20
 
     def start_requests(self):
         # Scrape this and last month so that the feed is not empty on the first day of a
@@ -36,11 +35,9 @@ class ProfilAtSpider(FeedsXMLFeedSpider):
             )
 
     def parse_node(self, response, node):
-        if self._max_articles > 0:
-            self._max_articles -= 1
-            url = node.xpath("rss:loc/text()").extract_first()
-            updated = node.xpath("rss:lastmod/text()").extract_first()
-            return scrapy.Request(url, self.parse_item, meta={"updated": updated})
+        url = node.xpath("rss:loc/text()").extract_first()
+        updated = node.xpath("rss:lastmod/text()").extract_first()
+        return scrapy.Request(url, self.parse_item, meta={"updated": updated})
 
     def parse_item(self, response):
         remove_elems = [

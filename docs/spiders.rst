@@ -2,7 +2,7 @@
 
 Supported Websites
 ==================
-Feeds is currently able to create Atom feeds for the following websites:
+Feeds is currently able to create full text Atom feeds for the following websites:
 
 .. toctree::
    :maxdepth: 1

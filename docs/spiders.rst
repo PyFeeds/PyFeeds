@@ -29,6 +29,14 @@ Most popular sites
    spiders/lwn.net
    spiders/vice.com
 
+Support for generic sites
+-------------------------
+
+.. toctree::
+   :maxdepth: 1
+
+   spiders/generic
+
 All supported sites
 -------------------
 .. toctree::
@@ -36,4 +44,3 @@ All supported sites
    :glob:
 
    spiders/*
-

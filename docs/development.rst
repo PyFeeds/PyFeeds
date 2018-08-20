@@ -3,7 +3,7 @@
 Writing a custom spider
 =======================
 Feeds already supports a number of websites (see :ref:`Supported Websites`) but
-adding support for a new website is easy.
+adding support for a new website doesn't take too much time.
 
 A quick example
 ---------------
@@ -22,21 +22,12 @@ example:
         name = "indiehackers.com"
         allowed_domains = [name]
         start_urls = ["https://www.indiehackers.com/interviews/page/1"]
-
         _title = "Indie Hackers"
 
         def parse(self, response):
             interviews = response.css(
                 ".interview__link::attr(href), .interview__date::text"
             ).extract()
-            self._logo = response.urljoin(
-                response.css(
-                    'link[rel="icon"][sizes="192x192"]::attr(href)'
-                ).extract_first()
-            )
-            self._icon = response.urljoin(
-                response.css('link[rel="icon"][sizes="16x16"]::attr(href)').extract_first()
-            )
             for link, date in zip(interviews[::2], interviews[1::2]):
                 yield scrapy.Request(
                     response.urljoin(link),
@@ -69,10 +60,13 @@ example:
 
 First, the URL from the ``start_urls`` list is downloaded and the response is
 given to ``parse()``. From there we extract the article links that should be
-scraped and yield ``scrapy.Request`` objects in a for loop.  The callback method
-``_parse_interview()`` is executed once the download has finished, extracts
-the article from the response and returns an item that will be placed into the
-feed.
+scraped and yield ``scrapy.Request`` objects from the for loop.  The callback method
+``_parse_interview()`` is executed once the download has finished. It extracts
+the article from the response HTML document and returns an item that will be
+placed into the feed automatically.
+
+It's enough to place the spider in the ``spiders`` folder. It doesn't have to
+be registered somewhere for Feeds to pick it up.
 
 Reusing an existing feed
 ------------------------

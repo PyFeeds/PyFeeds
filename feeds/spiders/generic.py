@@ -6,12 +6,12 @@ import feedparser
 import scrapy
 from readability.readability import Document, Unparseable
 
+from feeds.loaders import FeedEntryItemLoader
+from feeds.spiders import FeedsSpider
+
 # Readability's output is not that interesting to justify log level "INFO".
 import readability.readability
 readability.readability.log.info = readability.readability.log.debug
-
-from feeds.loaders import FeedEntryItemLoader
-from feeds.spiders import FeedsSpider
 
 
 class GenericSpider(FeedsSpider):

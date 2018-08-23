@@ -7,7 +7,7 @@ from datetime import datetime, timedelta, timezone
 logger = logging.getLogger(__name__)
 
 
-IGNORE_HTTP_CODES = [403, 404, 500, 502, 503, 504]
+IGNORE_HTTP_CODES = [403, 404] + list(range(500, 600))
 
 
 def read_meta(root):

@@ -15,9 +15,9 @@ class FeedsHttpErrorMiddleware:
 
     def process_spider_exception(self, response, exception, spider):
         if isinstance(exception, HttpError):
-            if response.status in [500, 502, 503, 504]:
-                # These status codes are usually induced by overloaded sites,
-                # updates, short downtimes, etc. and are not that relevant.
+            if response.status >= 500:
+                # Transient errors usually caused by overloaded sites, updates, short
+                # downtimes, etc.
                 lgr = logger.info
             else:
                 lgr = logger.warning

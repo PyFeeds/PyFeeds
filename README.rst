@@ -152,10 +152,10 @@ AGPL3, see `LICENSE`_ for details.
 .. _Oberösterreichische Nachrichten: https://pyfeeds.readthedocs.io/en/latest/spiders/nachrichten.at.html
 .. _Übermedien: https://pyfeeds.readthedocs.io/en/latest/spiders/uebermedien.de.html
 
-.. |build-status| image:: https://travis-ci.org/nblock/feeds.svg?branch=master
+.. |build-status| image:: https://travis-ci.org/PyFeeds/PyFeeds.svg?branch=master
     :alt: build status
     :scale: 100%
-    :target: https://travis-ci.org/nblock/feeds
+    :target: https://travis-ci.org/PyFeeds/PyFeeds
 
 .. |docs| image:: https://readthedocs.org/projects/pyfeeds/badge/?version=latest
     :alt: documentation status

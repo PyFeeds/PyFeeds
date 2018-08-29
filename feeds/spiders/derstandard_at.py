@@ -108,7 +108,12 @@ class DerStandardAtSpider(FeedsXMLFeedSpider):
         )
         il.add_value("link", response.url)
         il.add_css("title", 'meta[property="og:title"]::attr(content)')
-        il.add_css("author_name", "span.author::text")
+        for author in response.css("span.author::text").extract():
+            # Sometimes the author name is messed up and written in upper case.
+            # This happens usually for articles written by Günter Traxler.
+            if author.upper() == author:
+                author = author.title()
+            il.add_value("author_name", author)
         il.add_value("path", response.meta["ressort"])
         il.add_value("updated", response.meta["updated"])
         il.add_css("category", "#breadcrumb .item a::text")

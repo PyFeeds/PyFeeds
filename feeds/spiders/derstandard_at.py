@@ -9,7 +9,11 @@ from feeds.spiders import FeedsXMLFeedSpider
 class DerStandardAtSpider(FeedsXMLFeedSpider):
     name = "derstandard.at"
     allowed_domains = [name]
-    custom_settings = {"COOKIES_ENABLED": False}
+    custom_settings = {
+        "COOKIES_ENABLED": False,
+        # Don't filter duplicates. This would impose a race condition.
+        "DUPEFILTER_CLASS": "scrapy.dupefilters.BaseDupeFilter",
+    }
 
     _title = "derStandard.at"
     _subtitle = "Nachrichten in Echtzeit"

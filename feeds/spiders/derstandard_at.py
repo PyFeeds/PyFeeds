@@ -85,7 +85,13 @@ class DerStandardAtSpider(FeedsXMLFeedSpider):
             ".continue",
             ".sequence-number",
         ]
-        change_tags = {"#media-list li": "div", "#media-list": "div"}
+        change_tags = {
+            "#media-list li .description": "figcaption",
+            "#media-list li": "figure",
+            "#media-list": "div",
+            ".photo": "figure",
+            ".caption": "figcaption",
+        }
         replace_regex = {
             # data-zoom-src is only valid if it starts with //images.derstandard.at.
             r'<img[^>]+data-zoom-src="(//images.derstandard.at/[^"]+)"': (

@@ -125,6 +125,14 @@ def cleanup_html(tree, loader_context):
         for elem in tree.xpath(elem_sel):
             elem.drop_tree()
 
+    # Change attrib names.
+    for elem_sel, attribs in loader_context.get("change_attribs", {}).items():
+        selector = CSSSelector(elem_sel)
+        for elem in selector(tree):
+            for attrib in elem.attrib.keys():
+                if attrib in attribs:
+                    elem.attrib[attribs[attrib]] = elem.attrib.pop(attrib)
+
     # Change tag names.
     for elem_sel, elem_tag in loader_context.get("change_tags", {}).items():
         selector = CSSSelector(elem_sel)

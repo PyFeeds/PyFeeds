@@ -108,7 +108,8 @@ class OrfAtSpider(FeedsXMLFeedSpider):
         try:
             # Heuristic for news.ORF.at to to detect teaser articles.
             more = response.css(
-                ".shortnews p > strong:contains('Mehr') + a::attr(href)"
+                ".story-story p > strong:contains('Mehr') + a::attr(href), "
+                + ".story-story p > a:contains('Lesen Sie mehr')::attr(href)"
             ).extract_first()
             if more:
                 self.logger.debug(
@@ -132,6 +133,11 @@ class OrfAtSpider(FeedsXMLFeedSpider):
             ".slideshow",
             "script",
             ".oon-youtube-logo",
+            # redesign
+            "#more-to-read-anchor",
+            ".social-buttons",
+            ".story-horizontal-ad",
+            ".linkcard",
         ]
         pullup_elems = {
             ".remote .instagram": 1,
@@ -144,6 +150,7 @@ class OrfAtSpider(FeedsXMLFeedSpider):
             ".remote": "<p><em>Hinweis: Der eingebettete Inhalt ist nur im Artikel "
             + "verfügbar.</em></p>"
         }
+        change_attribs = {"img": {"data-src": "src"}}
         author, author_selector = self._extract_author(response)
         if author:
             self.logger.debug("Extracted possible author '{}'".format(author))
@@ -157,6 +164,7 @@ class OrfAtSpider(FeedsXMLFeedSpider):
             remove_elems=remove_elems,
             pullup_elems=pullup_elems,
             replace_elems=replace_elems,
+            change_attribs=change_attribs,
         )
         # news.ORF.at
         data = response.css('script[type="application/ld+json"]::text').extract_first()
@@ -169,8 +177,10 @@ class OrfAtSpider(FeedsXMLFeedSpider):
         il.add_value("updated", updated)
         il.add_css("title", "title::text", re="(.*) - .*")
         il.add_value("link", response.url)
-        il.add_css("content_html", ".opener img")  # fm4.ORF.at
+        il.add_css("content_html", ".opener img")  # FM4, news
+        il.add_css("content_html", ".story-lead-text")  # news
         il.add_css("content_html", "#ss-storyText")
+        il.add_css("content_html", "#ss-storyContent")  # news
         il.add_value("author_name", author)
         il.add_value("path", response.meta["path"])
         il.add_value("category", response.meta["categories"])

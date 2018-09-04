@@ -33,7 +33,7 @@ class WienerLinienAtSpider(FeedsSpider):
                 response=response,
                 timezone=self._timezone,
                 ignoretz=True,
-                base_url="https://{}".format(self.name),
+                base_url="https://www.{}".format(self.name),
             )
             link = response.urljoin(item.css("a::attr(href)").extract_first())
             il.add_value("link", link)

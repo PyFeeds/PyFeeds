@@ -9,7 +9,11 @@ from feeds.spiders import FeedsXMLFeedSpider
 class DerStandardAtSpider(FeedsXMLFeedSpider):
     name = "derstandard.at"
     allowed_domains = [name]
-    custom_settings = {"COOKIES_ENABLED": False}
+    custom_settings = {
+        "COOKIES_ENABLED": False,
+        # Don't filter duplicates. This would impose a race condition.
+        "DUPEFILTER_CLASS": "scrapy.dupefilters.BaseDupeFilter",
+    }
 
     _title = "derStandard.at"
     _subtitle = "Nachrichten in Echtzeit"
@@ -81,7 +85,13 @@ class DerStandardAtSpider(FeedsXMLFeedSpider):
             ".continue",
             ".sequence-number",
         ]
-        change_tags = {"#media-list li": "div", "#media-list": "div"}
+        change_tags = {
+            "#media-list li .description": "figcaption",
+            "#media-list li": "figure",
+            "#media-list": "div",
+            ".photo": "figure",
+            ".caption": "figcaption",
+        }
         replace_regex = {
             # data-zoom-src is only valid if it starts with //images.derstandard.at.
             r'<img[^>]+data-zoom-src="(//images.derstandard.at/[^"]+)"': (
@@ -104,7 +114,12 @@ class DerStandardAtSpider(FeedsXMLFeedSpider):
         )
         il.add_value("link", response.url)
         il.add_css("title", 'meta[property="og:title"]::attr(content)')
-        il.add_css("author_name", "span.author::text")
+        for author in response.css("span.author::text").extract():
+            # Sometimes the author name is messed up and written in upper case.
+            # This happens usually for articles written by Günter Traxler.
+            if author.upper() == author:
+                author = author.title()
+            il.add_value("author_name", author)
         il.add_value("path", response.meta["ressort"])
         il.add_value("updated", response.meta["updated"])
         il.add_css("category", "#breadcrumb .item a::text")

@@ -111,7 +111,7 @@ class OrfAtSpider(FeedsXMLFeedSpider):
                 ".story-story p > strong:contains('Mehr') + a::attr(href), "
                 + ".story-story p > a:contains('Lesen Sie mehr')::attr(href)"
             ).extract_first()
-            if more:
+            if more and more != response.url:
                 self.logger.debug(
                     "Detected teaser article, redirecting to {}".format(more)
                 )

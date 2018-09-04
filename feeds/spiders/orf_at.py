@@ -1,4 +1,3 @@
-import json
 import re
 from urllib.parse import urlparse
 
@@ -166,11 +165,12 @@ class OrfAtSpider(FeedsXMLFeedSpider):
             replace_elems=replace_elems,
             change_attribs=change_attribs,
         )
-        # news.ORF.at
-        data = response.css('script[type="application/ld+json"]::text').extract_first()
-        if data:
-            data = json.loads(data)
-            updated = data["datePublished"]
+        # The field is part of a JSON that is sometimes not valid, so don't bother with
+        # parsing it properly.
+        match = re.search(r'"datePublished": "([^"]+)"', response.text)
+        if match:
+            # news.ORF.at
+            updated = match.group(1)
         else:
             # other
             updated = response.meta["updated"]

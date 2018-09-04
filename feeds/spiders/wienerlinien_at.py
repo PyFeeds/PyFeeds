@@ -49,7 +49,7 @@ class WienerLinienAtSpider(FeedsSpider):
             parent=response.meta["il"],
             remove_elems=remove_elems,
             change_tags=change_tags,
-            base_url="https://{}".format(self.name),
+            base_url="https://www.{}".format(self.name),
         )
         il.add_xpath("content_html", '//div[@id="main-inner"]')
         yield il.load_item()

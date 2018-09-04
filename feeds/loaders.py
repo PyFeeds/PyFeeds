@@ -92,6 +92,7 @@ def cleanup_html(tree, loader_context):
             for _ in range(parent_dist):
                 parent = parent.getparent()
             if parent is not None and parent.getparent() is not None:
+                elem.tail = parent.tail
                 parent.getparent().replace(parent, elem)
             else:
                 logger.error(

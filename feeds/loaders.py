@@ -106,7 +106,9 @@ def cleanup_html(tree, loader_context):
         for elem in selector(tree):
             # New element could be replaced more than once but every node must be a
             # different element.
-            elem.getparent().replace(elem, deepcopy(elem_new))
+            elem_new_copy = deepcopy(elem_new)
+            elem_new_copy.tail = elem.tail
+            elem.getparent().replace(elem, elem_new_copy)
 
     remove_elems = []
 

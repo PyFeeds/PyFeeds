@@ -10,7 +10,6 @@ import dateparser
 import lxml
 from dateutil.parser import parse as dateutil_parse
 from dateutil.tz import gettz
-from lxml import etree
 from lxml.cssselect import CSSSelector
 from lxml.html.clean import Cleaner
 from scrapy.loader import ItemLoader
@@ -163,26 +162,12 @@ def lxml_cleaner(tree):
 
 
 def convert_footnotes(tree, loader_context):
-    footnotes = []
-
     # Convert footnotes.
     for elem_sel in loader_context.get("convert_footnotes", []):
         selector = CSSSelector(elem_sel)
         for elem in selector(tree):
-            footnotes.append(elem.text_content())
-            ref = etree.Element("span")
-            ref.text = " [{}]".format(len(footnotes))
-            elem.getparent().replace(elem, ref)
-
-    # Add new <div> with all the footnotes, one per <p>
-    if footnotes:
-        footnotes_elem = etree.Element("div")
-        tree.append(footnotes_elem)
-
-    for i, footnote in enumerate(footnotes):
-        footnote_elem = etree.Element("p")
-        footnote_elem.text = "[{}] {}".format(i + 1, footnote)
-        footnotes_elem.append(footnote_elem)
+            elem.tag = "small"
+            elem.text = " ({})".format(elem.text)
 
     return [tree]
 

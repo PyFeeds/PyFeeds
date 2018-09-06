@@ -1,3 +1,4 @@
+import html
 from datetime import timedelta
 
 import scrapy
@@ -84,6 +85,8 @@ class DerStandardAtSpider(FeedsXMLFeedSpider):
             ".image-zoom",
             ".continue",
             ".sequence-number",
+            ".js-embed-output",
+            "#mycountrytalks-embed",
         ]
         change_tags = {
             "#media-list li .description": "figcaption",
@@ -93,16 +96,18 @@ class DerStandardAtSpider(FeedsXMLFeedSpider):
             ".caption": "figcaption",
         }
         replace_regex = {
+            # Replace every special script container with its unescaped content.
+            r'<script class="js-embed-template" type="text/html">([^<]+)</script>': (
+                lambda match: html.unescape(match.group(1))
+            ),
             # data-zoom-src is only valid if it starts with //images.derstandard.at.
             r'<img[^>]+data-zoom-src="(//images.derstandard.at/[^"]+)"': (
                 r'<img src="\1"'
-            )
+            ),
         }
         replace_elems = {
             ".embedded-posting": "<p><em>Hinweis: Das eingebettete Posting ist nur "
-            + "im Artikel verfügbar.</em></p>",
-            ".js-embed-output": "<p><em>Hinweis: Der eingebettete Inhalt ist nur "
-            + "im Artikel verfügbar.</em></p>",
+            + "im Artikel verfügbar.</em></p>"
         }
         il = FeedEntryItemLoader(
             response=response,

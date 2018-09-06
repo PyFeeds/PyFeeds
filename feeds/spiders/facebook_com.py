@@ -26,7 +26,7 @@ class FacebookComSpider(FeedsSpider):
         )
 
         for page_id in self.settings.get("FEEDS_SPIDER_FACEBOOK_COM_PAGES").split():
-            url = "https://graph.{name}/v2.10/{page_id}".format(
+            url = "https://graph.{name}/v3.1/{page_id}".format(
                 name=self.name, page_id=page_id
             )
             url = w3lib.url.add_or_replace_parameter(url, "access_token", access_token)

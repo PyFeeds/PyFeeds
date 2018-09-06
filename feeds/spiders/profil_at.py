@@ -44,6 +44,7 @@ class ProfilAtSpider(FeedsXMLFeedSpider):
             "aside",
             "script",
             "h1",
+            "source",
             ".breadcrumbs",
             ".author-date",
             ".artikel-social-kommentar",

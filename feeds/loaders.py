@@ -5,6 +5,7 @@ import re
 from copy import deepcopy
 from datetime import datetime
 from textwrap import TextWrapper
+from urllib.parse import urljoin
 
 import dateparser
 import lxml
@@ -174,6 +175,27 @@ def convert_footnotes(tree, loader_context):
     return [tree]
 
 
+def convert_iframes(tree, loader_context):
+    """Convert iframes to divs with links to its src.
+
+    convert_iframes() is called after cleanup_html() so that unwanted iframes can be
+    eliminated first.
+    """
+    base_url = loader_context.get("base_url", None) if loader_context else None
+    selector = CSSSelector("iframe")
+    for elem in selector(tree):
+        if "src" not in elem.attrib:
+            continue
+        url = urljoin(base_url, elem.attrib.pop("src"))
+        elem_new = lxml.html.fragment_fromstring(
+            '<div><a href="{url}">{url}</a></div>'.format(url=url)
+        )
+        elem_new.tail = elem.tail
+        elem.getparent().replace(elem, elem_new)
+
+    return [tree]
+
+
 def skip_empty_tree(tree):
     if tree.text:
         # Has a text.
@@ -293,6 +315,7 @@ class FeedEntryItemLoader(BaseItemLoader):
         build_tree,
         convert_footnotes,
         cleanup_html,
+        convert_iframes,
         lxml_cleaner,
         skip_empty_tree,
         make_links_absolute,

@@ -150,6 +150,7 @@ class OrfAtSpider(FeedsXMLFeedSpider):
             + "verfügbar.</em></p>"
         }
         change_attribs = {"img": {"data-src": "src"}}
+        change_tags = {".image": "figure", ".caption": "figcaption"}
         author, author_selector = self._extract_author(response)
         if author:
             self.logger.debug("Extracted possible author '{}'".format(author))
@@ -164,6 +165,7 @@ class OrfAtSpider(FeedsXMLFeedSpider):
             pullup_elems=pullup_elems,
             replace_elems=replace_elems,
             change_attribs=change_attribs,
+            change_tags=change_tags,
         )
         # The field is part of a JSON that is sometimes not valid, so don't bother with
         # parsing it properly.

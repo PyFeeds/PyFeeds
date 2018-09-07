@@ -98,7 +98,7 @@ class UebermedienDeSpider(FeedsXMLFeedSpider):
         )
 
     def _parse_article(self, response):
-        remove_elems = ["iframe", "script"]
+        remove_elems = ["script"]
         convert_footnotes = [".footnoteContent"]
         pullup_elems = {".footnoteContent": 1}
         il = FeedEntryItemLoader(

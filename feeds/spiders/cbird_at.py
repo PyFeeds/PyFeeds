@@ -14,6 +14,8 @@ class CbirdAtSpider(FeedsCrawlSpider):
     _title = "Neue cbird Versionen"
     _subtitle = "Die neuesten Versionen von cbird."
     _link = start_urls[0]
+    _icon = "https://{}/images/bird-1.png".format(name)
+    _logo = "https://{}/images/bird-1.png".format(name)
 
     def parse_item(self, response):
         il = FeedEntryItemLoader(

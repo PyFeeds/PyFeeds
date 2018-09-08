@@ -1,7 +1,7 @@
 from scrapy.linkextractors import LinkExtractor
 from scrapy.spiders import Rule
 
-from feeds.loaders import CbirdFeedEntryItemLoader
+from feeds.loaders import FeedEntryItemLoader
 from feeds.spiders import FeedsCrawlSpider
 
 
@@ -16,7 +16,7 @@ class CbirdAtSpider(FeedsCrawlSpider):
     _link = start_urls[0]
 
     def parse_item(self, response):
-        il = CbirdFeedEntryItemLoader(
+        il = FeedEntryItemLoader(
             selector=response.xpath('//div[@class="main"]'), timezone="Europe/Vienna"
         )
         il.add_xpath("title", "h1/text()")

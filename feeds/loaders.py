@@ -324,8 +324,3 @@ class FeedEntryItemLoader(BaseItemLoader):
     content_html_out = Compose(Join(), truncate_text)
 
     category_out = Identity()
-
-
-# Site specific loaders
-class CbirdFeedEntryItemLoader(FeedEntryItemLoader):
-    content_html_out = Join()

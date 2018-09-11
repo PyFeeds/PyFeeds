@@ -1,0 +1,53 @@
+from urllib.parse import urlsplit
+
+import scrapy
+
+from feeds.loaders import FeedEntryItemLoader
+from feeds.spiders import FeedsXMLFeedSpider
+
+
+class TheOatmealComSpider(FeedsXMLFeedSpider):
+    name = "theoatmeal.com"
+    allowed_domains = [name]
+    start_urls = ["http://theoatmeal.com/feed/rss"]
+
+    namespaces = [
+        ("dc", "http://purl.org/dc/elements/1.1/"),
+        ("def", "http://purl.org/rss/1.0/"),
+    ]
+    iterator = "xml"
+    itertag = "def:item"
+
+    _title = "The Oatmeal"
+    _subtitle = (
+        "The oatmeal tastes better than stale skittles found under the couch cushions"
+    )
+    _base_url = "https://{}".format(name)
+    _icon = "https://{}/favicon.ico".format(name)
+    _logo = "http://s3.amazonaws.com/theoatmeal-img/default/header2016/logo_rainbow.png"
+
+    def parse_node(self, response, node):
+        url = node.xpath("def:link/text()").extract_first()
+        author_name = node.xpath("dc:creator/text()").extract_first()
+        updated = node.xpath("dc:date/text()").extract_first()
+        yield scrapy.Request(
+            url, self.parse_item, meta={"updated": updated, "author_name": author_name}
+        )
+
+    def parse_item(self, response):
+        il = FeedEntryItemLoader(response=response, base_url=self._base_url)
+        il.add_value("updated", response.meta["updated"])
+        il.add_value("author_name", response.meta["author_name"])
+        il.add_value("link", response.url)
+        il.add_value(
+            "title", response.xpath("head/title/text()").re_first(r"(.*) - The Oatmeal")
+        )
+        il.add_value("category", urlsplit(response.url).path.strip("/").split("/")[0])
+
+        # comics
+        il.add_xpath("content_html", '//div[@id="comic"]/img')
+        il.add_xpath("content_html", '//div[@id="comic"]/p/img')
+
+        # blog
+        il.add_xpath("content_html", '//p[@class="center_text"]//img')
+        yield il.load_item()

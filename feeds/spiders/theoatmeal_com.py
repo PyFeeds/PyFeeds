@@ -39,15 +39,13 @@ class TheOatmealComSpider(FeedsXMLFeedSpider):
         il.add_value("updated", response.meta["updated"])
         il.add_value("author_name", response.meta["author_name"])
         il.add_value("link", response.url)
-        il.add_value(
-            "title", response.xpath("head/title/text()").re_first(r"(.*) - The Oatmeal")
-        )
+        il.add_css("title", "title::text", re="(.*) - The Oatmeal")
         il.add_value("category", urlsplit(response.url).path.strip("/").split("/")[0])
 
         # comics
-        il.add_xpath("content_html", '//div[@id="comic"]/img')
-        il.add_xpath("content_html", '//div[@id="comic"]/p/img')
+        il.add_css("content_html", "#comic > img")
+        il.add_css("content_html", "#comic > p > img")
 
         # blog
-        il.add_xpath("content_html", '//p[@class="center_text"]//img')
+        il.add_css("content_html", "#blog .center_text img")
         yield il.load_item()

@@ -72,7 +72,7 @@ class NachrichtenAtSpider(FeedsXMLFeedSpider):
             return
 
         remove_elems = [".bildtext .author", "iframe"]
-        change_tags = {"h1": "h2"}
+        change_tags = {"h1": "h2", ".bildbox": "figure", ".bildtext": "figcaption"}
         il = FeedEntryItemLoader(
             response=response,
             timezone=self._timezone,

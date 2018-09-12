@@ -1,7 +1,7 @@
 import json
 import re
 from collections import OrderedDict
-from datetime import timedelta
+from datetime import datetime, timedelta
 
 import scrapy
 from dateutil.parser import parse as dateutil_parse
@@ -24,7 +24,7 @@ class FalterAtSpider(FeedsSpider):
         if pages:
             self.pages = pages.split()
         else:
-            self.pages = ["wwei", "magazine"]
+            self.pages = ["lokalfuehrer_reviews", "lokalfuehrer_newest", "magazine"]
 
         if "magazine" in self.pages:
             abonr = self.settings.get("FEEDS_SPIDER_FALTER_AT_ABONR")
@@ -52,14 +52,24 @@ class FalterAtSpider(FeedsSpider):
                 )
                 yield self.request_archive()
 
-        if "wwei" in self.pages:
+        if "lokalfuehrer_reviews" in self.pages:
             yield scrapy.Request(
                 (
                     "https://wwei-api.{}/api/v1/simple_search?v=true&"
                     + "sort_pos=front&sort=review.post_date:desc&c=10"
                 ).format(self.name),
-                self.parse_wwei,
-                meta={"dont_cache": True},
+                self.parse_lokalfuehrer,
+                meta={"dont_cache": True, "lokalfuehrer": "reviews"},
+            )
+
+        if "lokalfuehrer_newest" in self.pages:
+            yield scrapy.Request(
+                (
+                    "https://wwei-api.{}/api/v1/simple_search?"
+                    + "sort_pos=front&sort=id:desc&c=20"
+                ).format(self.name),
+                self.parse_lokalfuehrer,
+                meta={"dont_cache": True, "lokalfuehrer": "newest"},
             )
 
     def request_archive(self, response=None):
@@ -76,32 +86,56 @@ class FalterAtSpider(FeedsSpider):
         for path in self.pages:
             yield self.generate_feed_header(path=path)
 
-    def parse_wwei(self, response):
+    def parse_lokalfuehrer(self, response):
         entries = json.loads(response.text)[0]["hits"]
         for entry in entries:
-            review = entry["review"]
             il = FeedEntryItemLoader(
                 response=response,
                 base_url="https://{}".format(self.name),
                 timezone=self._timezone,
                 dayfirst=False,
             )
-            il.add_value("path", "wwei")
-            il.add_value("title", review["post_title"])
-            il.add_value("title", review["post_subtitle"])
-            il.add_value("updated", review["post_date"])
+            il.add_value(
+                "path",
+                "lokalfuehrer_{}".format(response.meta["lokalfuehrer"])
+            )
             il.add_value(
                 "link", "https://www.{}/lokal/{}".format(self.name, entry["id"])
             )
-            il.add_value("author_name", review["meta"].split("|")[0].title())
+            il.add_value("category", entry["categories"])
+            il.add_value("category", entry["zip"])
+            il.add_value("category", entry["city"])
+            review = entry.get("review")
+            if review:
+                il.add_value("title", review["post_title"])
+                il.add_value("title", review["post_subtitle"])
+                il.add_value("author_name", review["meta"].split("|")[0].title())
+                il.add_value("category", "review")
+                updated = review["post_date"]
+            else:
+                il.add_value("title", entry["name"])
+                # Estimate that 7 restaurants are added every week.
+                updated = datetime(2018, 1, 1) + timedelta(days=entry["id"] - 10782)
+            il.add_value("updated", updated)
             if "pictures" in entry and entry["pictures"]:
                 il.add_value(
                     "content_html",
-                    '<img src="https://fcc.at/ef/tmb200/{}">'.format(
+                    '<img src="https://fcc.at/ef/img720/{}">'.format(
                         entry["pictures"][0]["filename"]
                     ),
                 )
-            il.add_value("content_html", review["post_content"])
+            if review:
+                il.add_value("content_html", review["post_content"])
+            il.add_value("content_html", entry["category_text"])
+            il.add_value(
+                "content_html",
+                "<p>{} {}, {}</p>".format(entry["zip"], entry["city"], entry["street"])
+            )
+            il.add_value(
+                "content_html",
+                ('<p><a href="https://www.google.com/maps?q={lat},{lon}">'
+                 + 'Google Maps</a></p>').format(**entry["location"])
+            )
             yield il.load_item()
 
     def parse_archive(self, response):

@@ -140,6 +140,7 @@ scraping from there.
   * :ref:`spider_indiehackers.com`
   * :ref:`spider_openwrt.org`
   * :ref:`spider_puls4.com`
+  * :ref:`spider_python-patterns.guide`
   * :ref:`spider_usenix.org`
   * :ref:`spider_verbraucherrecht.at`
   * :ref:`spider_wienerlinien.at`

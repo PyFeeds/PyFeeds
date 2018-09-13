@@ -40,6 +40,7 @@ class DieTiwagOrgSpider(FeedsXMLFeedSpider):
             "font[size='2'] > br:last-child",
             "font[size='2'] > br:last-child",
         ]
+        # A0 is a non-breaking space in latin1.
         replace_regex = {r"\[\d{2}\.\d{2}\.\d{4}\]": "", "\xA0": ""}
         il = FeedEntryItemLoader(
             response=response,

@@ -25,10 +25,9 @@ Writing a spider is easy! Consider the slightly simplified spider for
         _title = "Indie Hackers"
 
         def parse(self, response):
-            interviews = response.css(
-                ".interview__link::attr(href), .interview__date::text"
-            ).extract()
-            for link, date in zip(interviews[::2], interviews[1::2]):
+            interview_links = response.css(".interview__link::attr(href)").extract()
+            interview_dates = response.css(".interview__date::text").extract()
+            for link, date in zip(interview_links, interview_dates):
                 yield scrapy.Request(
                     response.urljoin(link),
                     self._parse_interview,
@@ -39,11 +38,6 @@ Writing a spider is easy! Consider the slightly simplified spider for
             remove_elems = [
                 ".shareable-quote",
                 ".share-bar",
-                # Remove the last two h2s and all paragraphs below.
-                ".interview-body > h2:last-of-type ~ p",
-                ".interview-body > h2:last-of-type",
-                ".interview-body > h2:last-of-type ~ p",
-                ".interview-body > h2:last-of-type",
             ]
             il = FeedEntryItemLoader(
                 response=response,

@@ -96,8 +96,7 @@ class FalterAtSpider(FeedsSpider):
                 dayfirst=False,
             )
             il.add_value(
-                "path",
-                "lokalfuehrer_{}".format(response.meta["lokalfuehrer"])
+                "path", "lokalfuehrer_{}".format(response.meta["lokalfuehrer"])
             )
             il.add_value(
                 "link", "https://www.{}/lokal/{}".format(self.name, entry["id"])
@@ -129,12 +128,14 @@ class FalterAtSpider(FeedsSpider):
             il.add_value("content_html", entry["category_text"])
             il.add_value(
                 "content_html",
-                "<p>{} {}, {}</p>".format(entry["zip"], entry["city"], entry["street"])
+                "<p>{} {}, {}</p>".format(entry["zip"], entry["city"], entry["street"]),
             )
             il.add_value(
                 "content_html",
-                ('<p><a href="https://www.google.com/maps?q={lat},{lon}">'
-                 + 'Google Maps</a></p>').format(**entry["location"])
+                (
+                    '<p><a href="https://www.google.com/maps?q={lat},{lon}">'
+                    + "Google Maps</a></p>"
+                ).format(**entry["location"]),
             )
             yield il.load_item()
 

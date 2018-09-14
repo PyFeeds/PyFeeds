@@ -12,7 +12,9 @@ Some feeds already provide the full content but in a tag that is not used by
 your feed reader. E.g. feeds created by Wordpress usually have the full
 content in the "encoded" tag. In such cases it's best to add the URL to the
 ``fulltext_urls`` entry which extracts the content directly from the feed
-without Readability_.
+without Readability_. There is a little helper script in
+``scripts/check-for-fulltext-content`` to detect if a feed contains full-text
+content.
 
 Configuration
 ~~~~~~~~~~~~~

@@ -1,0 +1,63 @@
+#!/usr/bin/python3
+# Check feed URLs for full-text content
+
+import argparse
+import logging
+import sys
+
+import requests
+
+# Wordpress
+MATCHER_STRINGS = ["<content:encoded>"]
+
+
+def has_full_text_content(url):
+    logging.debug(f"Checking URL: '{url}'")
+    response = requests.get(url)
+    if response.status_code != requests.codes.ok:
+        logging.debug(f"Ignoring non-ok status code: {response.status_code}")
+        return False
+
+    for string in MATCHER_STRINGS:
+        if string in response.text:
+            logging.debug(f"String '{string}' matches URL '{url}'")
+            return True
+
+    return False
+
+
+def parse_args():
+    parser = argparse.ArgumentParser(
+        description="Check feed URLs for full-text content",
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter,
+    )
+    parser.add_argument(
+        "-v",
+        "--verbosity",
+        choices=["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"],
+        default="WARNING",
+        help="the log verbosity level",
+    )
+    parser.add_argument(
+        "urls",
+        type=argparse.FileType("r"),
+        default=sys.stdin,
+        help="a file with URLs to check",
+    )
+
+    return parser.parse_args()
+
+
+def main():
+    """main"""
+    args = parse_args()
+    logging.basicConfig(level=args.verbosity)
+
+    urls = [url.strip() for url in args.urls if url.startswith("http")]
+    for url in urls:
+        if has_full_text_content(url):
+            print(url)
+
+
+if __name__ == "__main__":
+    main()

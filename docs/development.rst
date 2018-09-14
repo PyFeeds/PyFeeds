@@ -25,10 +25,9 @@ Writing a spider is easy! Consider the slightly simplified spider for
         _title = "Indie Hackers"
 
         def parse(self, response):
-            interviews = response.css(
-                ".interview__link::attr(href), .interview__date::text"
-            ).extract()
-            for link, date in zip(interviews[::2], interviews[1::2]):
+            interview_links = response.css(".interview__link::attr(href)").extract()
+            interview_dates = response.css(".interview__date::text").extract()
+            for link, date in zip(interview_links, interview_dates):
                 yield scrapy.Request(
                     response.urljoin(link),
                     self._parse_interview,
@@ -39,11 +38,6 @@ Writing a spider is easy! Consider the slightly simplified spider for
             remove_elems = [
                 ".shareable-quote",
                 ".share-bar",
-                # Remove the last two h2s and all paragraphs below.
-                ".interview-body > h2:last-of-type ~ p",
-                ".interview-body > h2:last-of-type",
-                ".interview-body > h2:last-of-type ~ p",
-                ".interview-body > h2:last-of-type",
             ]
             il = FeedEntryItemLoader(
                 response=response,
@@ -93,6 +87,7 @@ cleaning up the content (removing share buttons, etc.):
   * :ref:`spider_addendum.org`
   * :ref:`spider_arstechnica.com`
   * :ref:`spider_derstandard.at`
+  * :ref:`spider_dietiwag.org`
   * :ref:`spider_gnucash.org`
   * :ref:`spider_lwn.net`
   * :ref:`spider_orf.at`
@@ -140,6 +135,7 @@ scraping from there.
   * :ref:`spider_indiehackers.com`
   * :ref:`spider_openwrt.org`
   * :ref:`spider_puls4.com`
+  * :ref:`spider_python-patterns.guide`
   * :ref:`spider_usenix.org`
   * :ref:`spider_verbraucherrecht.at`
   * :ref:`spider_wienerlinien.at`

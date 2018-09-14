@@ -56,6 +56,7 @@ class AddendumOrgSpider(FeedsXMLFeedSpider):
             "style",
             ".icon-date",
             ".callToAction__button",
+            'a[href^="http://partners.webmasterplan.com/click.asp"]',
         ]
         change_tags = {
             "div.heroStage__introText": "strong",

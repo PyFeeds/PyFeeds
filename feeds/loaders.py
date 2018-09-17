@@ -134,7 +134,11 @@ def cleanup_html(tree, loader_context):
         for elem in selector(tree):
             for attrib in elem.attrib.keys():
                 if attrib in attribs:
-                    elem.attrib[attribs[attrib]] = elem.attrib.pop(attrib)
+                    old_attrib_value = elem.attrib.pop(attrib)
+                    if attribs[attrib] is not None:
+                        # If attribs[attrib] is None, attrib is removed instead of
+                        # renamed.
+                        elem.attrib[attribs[attrib]] = old_attrib_value
 
     # Change tag names.
     for elem_sel, elem_tag in loader_context.get("change_tags", {}).items():

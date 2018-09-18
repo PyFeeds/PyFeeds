@@ -40,7 +40,9 @@ class UebermedienDeSpider(FeedsXMLFeedSpider):
     def _steady_login(self, response):
         yield FormRequest.from_response(
             response,
-            formdata={"user[email]": self._username, "user[password]": self._password},
+            formdata=OrderedDict(
+                [("user[email]", self._username), ("user[password]", self._password)]
+            ),
             callback=self._request_steady_token,
             dont_filter=True,
             meta={"handle_httpstatus_list": [301], "cache_expires": timedelta(days=1)},

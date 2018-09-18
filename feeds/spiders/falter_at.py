@@ -32,11 +32,13 @@ class FalterAtSpider(FeedsSpider):
             if abonr and password:
                 yield scrapy.FormRequest(
                     url="https://www.{}/falter/e-paper/login".format(self.name),
-                    formdata={
-                        "login[abonr]": abonr,
-                        "login[password]": password,
-                        "redirect_url": "/archiv/",
-                    },
+                    formdata=OrderedDict(
+                        [
+                            ("login[abonr]", abonr),
+                            ("login[password]", password),
+                            ("redirect_url", "/archiv/"),
+                        ]
+                    ),
                     meta={
                         "dont_redirect": True,
                         "cache_expires": timedelta(hours=3),

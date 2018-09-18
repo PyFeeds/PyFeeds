@@ -1,3 +1,5 @@
+from collections import OrderedDict
+
 import scrapy
 
 from feeds.loaders import FeedEntryItemLoader
@@ -28,12 +30,14 @@ class NachrichtenAtSpider(FeedsXMLFeedSpider):
         if username and password:
             yield scrapy.FormRequest(
                 "https://www.{}/login/".format(self.name),
-                formdata={
-                    "user[control][login]": "true",
-                    "permanent": "checked",
-                    "username": username,
-                    "password": password,
-                },
+                formdata=OrderedDict(
+                    [
+                        ("user[control][login]", "true"),
+                        ("permanent", "checked"),
+                        ("username", username),
+                        ("password", password),
+                    ]
+                ),
                 callback=self._after_login,
             )
         else:

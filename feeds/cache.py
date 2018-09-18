@@ -33,7 +33,6 @@ def cleanup_cache(cache_dir, expires):
     for cache_entry_path, _dirs, files in os.walk(cache_dir, topdown=False):
         if "pickled_meta" in files:
             meta = read_meta(cache_entry_path)
-            logger.debug("Checking cache entry for URL {}".format(meta["response_url"]))
             try:
                 entry_expires = timedelta(seconds=meta["cache_expires"])
             except KeyError:
@@ -42,9 +41,6 @@ def cleanup_cache(cache_dir, expires):
             threshold = (
                 datetime.fromtimestamp(meta["timestamp"], tz=timezone.utc)
                 + entry_expires
-            )
-            logger.debug(
-                "Entry expires after {} at {}".format(entry_expires, threshold)
             )
             if now > threshold:
                 remove_cache_entry(cache_entry_path)

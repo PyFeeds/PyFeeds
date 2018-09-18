@@ -1,3 +1,5 @@
+from collections import OrderedDict
+
 import scrapy
 
 from feeds.loaders import FeedEntryItemLoader
@@ -20,7 +22,7 @@ class KonsumentAtSpider(FeedsSpider):
             yield scrapy.FormRequest.from_response(
                 response,
                 formcss="#login form",
-                formdata={"user": user, "pwd": pwd},
+                formdata=OrderedDict([("user", user), ("pwd", pwd)]),
                 callback=self._after_login,
                 meta={"dont_cache": True},
             )

@@ -33,12 +33,21 @@ class DieTiwagOrgSpider(FeedsXMLFeedSpider):
         remove_elems = [
             ".noprint",
             "form",
-            ".lineall > font[size='2'] > b:first-child",
-            "font[size='2'] > br:first-child",
-            "font[size='2'] > br:first-child",
-            "font[size='2'] > br:last-child",
-            "font[size='2'] > br:last-child",
-            "font[size='2'] > br:last-child",
+            "font[size='3'] > b",
+            "font[size='2'] > b:first-child",
+            'a[href="mailto:m.wilhelm@dietiwag.org"]',
+            "br:first-child",
+            "br:first-child",
+            "br:first-child",
+            "br:first-child",
+            "br:first-child",
+            "br:first-child",
+            "br:last-child",
+            "br:last-child",
+            "br:last-child",
+            "br:last-child",
+            "br:last-child",
+            "br:last-child",
         ]
         replace_regex = {
             r"\[\d{2}\.\d{2}\.\d{4}\]": "",
@@ -46,17 +55,20 @@ class DieTiwagOrgSpider(FeedsXMLFeedSpider):
             "\xA0": "",
             r"<br>\s*<br>\s*\d{1,2}\.\d{1,2}\.\d{4}\s*<br>": "",
         }
+        change_attribs = {"font": {"size": None, "face": None, "color": None}}
+        change_tags = {"font": "div", "center": "div"}
         il = FeedEntryItemLoader(
             response=response,
             base_url=response.url,
             remove_elems=remove_elems,
             replace_regex=replace_regex,
+            change_attribs=change_attribs,
+            change_tags=change_tags,
             parent=response.meta["il"],
         )
         il.add_css("author_name", ".sidebar .authors__name::text")
         if response.css(".printwidth2"):
-            il.add_css("content_html", ".printwidth2 > font[size='2']")
-            il.add_css("content_html", ".printwidth2 > font[size='3'] > font[size='2']")
+            il.add_css("content_html", ".printwidth2")
         else:
             # Tagebuch
             il.add_css("content_html", ".lineall")

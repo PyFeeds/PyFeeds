@@ -1,4 +1,5 @@
 import re
+from collections import OrderedDict
 from datetime import timedelta
 
 import scrapy
@@ -84,12 +85,14 @@ class LwnNetSpider(FeedsXMLFeedSpider):
         if username and password:
             yield scrapy.FormRequest(
                 url="https://{}/login".format(self.name),
-                formdata={
-                    "Username": username,
-                    "Password": password,
-                    "target": "/MyAccount/",
-                    "submit": "Log+in",
-                },
+                formdata=OrderedDict(
+                    [
+                        ("Username", username),
+                        ("Password", password),
+                        ("target", "/MyAccount/"),
+                        ("submit", "Log+in"),
+                    ]
+                ),
                 callback=self._after_login,
                 # Session cookie is valid for a month. 14 days is a good compromise.
                 meta={"cache_expires": timedelta(days=14)},

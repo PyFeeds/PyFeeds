@@ -33,7 +33,6 @@ def cleanup_cache(cache_dir, expires):
     for cache_entry_path, _dirs, files in os.walk(cache_dir, topdown=False):
         if "pickled_meta" in files:
             meta = read_meta(cache_entry_path)
-            logger.debug("Checking cache entry for URL {}".format(meta["response_url"]))
             try:
                 entry_expires = timedelta(seconds=meta["cache_expires"])
             except KeyError:
@@ -42,9 +41,6 @@ def cleanup_cache(cache_dir, expires):
             threshold = (
                 datetime.fromtimestamp(meta["timestamp"], tz=timezone.utc)
                 + entry_expires
-            )
-            logger.debug(
-                "Entry expires after {} at {}".format(entry_expires, threshold)
             )
             if now > threshold:
                 remove_cache_entry(cache_entry_path)
@@ -62,17 +58,19 @@ def cleanup_cache(cache_dir, expires):
 
 
 def remove_cache_entry(cache_entry_path, remove_parents=False):
-    if os.path.exists(cache_entry_path):
+    try:
         meta = read_meta(cache_entry_path)
-        if remove_parents:
-            logger.debug(
-                "Removing parent cache entries for URL {}".format(meta["response_url"])
-            )
-            spider_root = os.path.dirname(os.path.dirname(cache_entry_path))
-            for fingerprint in meta["parents"]:
-                path = os.path.join(spider_root, fingerprint[0:2], fingerprint)
-                remove_cache_entry(path, read_meta(path)["response_url"])
-        logger.debug("Removing cache entry for URL {}".format(meta["response_url"]))
-        shutil.rmtree(cache_entry_path)
-    else:
-        logger.debug("Cannot remove cache entry {}".format(cache_entry_path))
+    except FileNotFoundError:
+        return
+
+    if remove_parents:
+        logger.debug(
+            "Removing parent cache entries for URL {}".format(meta["response_url"])
+        )
+        spider_root = os.path.dirname(os.path.dirname(cache_entry_path))
+        for fingerprint in meta["parents"]:
+            path = os.path.join(spider_root, fingerprint[0:2], fingerprint)
+            remove_cache_entry(path, remove_parents=False)
+
+    logger.debug("Removing cache entry for URL {}".format(meta["response_url"]))
+    shutil.rmtree(cache_entry_path, ignore_errors=True)

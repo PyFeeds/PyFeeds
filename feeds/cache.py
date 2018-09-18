@@ -69,6 +69,6 @@ def remove_cache_entry(cache_entry_path, remove_parents=False):
                 path = os.path.join(spider_root, fingerprint[0:2], fingerprint)
                 remove_cache_entry(path, read_meta(path)["response_url"])
         logger.debug("Removing cache entry for URL {}".format(meta["response_url"]))
-        shutil.rmtree(cache_entry_path)
+        shutil.rmtree(cache_entry_path, ignore_errors=True)
     else:
         logger.debug("Cannot remove cache entry {}".format(cache_entry_path))

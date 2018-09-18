@@ -1,3 +1,4 @@
+import logging
 import os
 import pickle
 
@@ -6,6 +7,9 @@ from scrapy.utils.python import to_bytes
 from scrapy.utils.request import request_fingerprint
 
 from feeds.cache import IGNORE_HTTP_CODES, remove_cache_entry
+
+
+logger = logging.getLogger(__name__)
 
 
 class FeedsCacheStorage(FilesystemCacheStorage):
@@ -19,9 +23,14 @@ class FeedsCacheStorage(FilesystemCacheStorage):
         """Return response if present in cache, or None otherwise."""
         metadata = self._read_meta(spider, request)
         if metadata is not None and metadata["status"] in IGNORE_HTTP_CODES:
-            return  # ignore cache entry for error responses
+            # ignore cache entry for error responses
+            logger.debug("Response for {} not cached".format(request))
+            return
         # Retrieve response from cache.
-        return super().retrieve_response(spider, request)
+        try:
+            return super().retrieve_response(spider, request)
+        finally:
+            logger.debug("Retrieved response for {} from cache".format(request))
 
     def store_response(self, spider, request, response):
         """Store the given response in the cache."""

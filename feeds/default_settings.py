@@ -43,6 +43,7 @@ HTTPCACHE_ENABLED = True
 HTTPCACHE_STORAGE = "feeds.extensions.FeedsCacheStorage"
 HTTPCACHE_POLICY = "scrapy.extensions.httpcache.DummyPolicy"
 HTTPCACHE_DIR = save_cache_path("feeds")
+HTTPCACHE_EXPIRATION_SECS = FEEDS_CONFIG_CACHE_EXPIRES * 24 * 60 * 60
 # We cache everything and delete cache entries (and every parent request) during
 # cleanup.
 HTTPCACHE_IGNORE_HTTP_CODES = []

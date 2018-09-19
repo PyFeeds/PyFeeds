@@ -38,14 +38,20 @@ def load_feeds_settings(file_):
 
     # Mapping of feeds config section to setting names.
     feeds_cfgfile_mapping = {
-        "USER_AGENT": config.get("feeds", "useragent", fallback=None),
-        "LOG_LEVEL": config.get("feeds", "loglevel", fallback=None),
-        "HTTPCACHE_ENABLED": config.getboolean("feeds", "cache_enabled", fallback=None),
-        "HTTPCACHE_DIR": config.get("feeds", "cache_dir", fallback=None),
+        "USER_AGENT": (config.get, "useragent", str),
+        "LOG_LEVEL": (config.get, "loglevel", str),
+        "HTTPCACHE_ENABLED": (config.getboolean, "cache_enabled", bool),
+        "HTTPCACHE_DIR": (config.get, "cache_dir", str),
+        "HTTPCACHE_EXPIRATION_SECS": (
+            config.getint,
+            "cache_expires",
+            lambda e: e * 24 * 60 * 60,
+        ),
     }
     for key, value in feeds_cfgfile_mapping.items():
-        if value is not None:
-            settings.set(key, value)
+        setting_value = value[0]("feeds", value[1], fallback=None)
+        if setting_value is not None:
+            settings.set(key, value[2](setting_value))
 
     file_.close()
 

@@ -3,6 +3,7 @@ import logging
 import os
 import pickle
 import shutil
+from collections import defaultdict
 from datetime import datetime, timezone
 from time import time
 
@@ -18,6 +19,30 @@ class FeedsCachePolicy(DummyPolicy):
     def should_cache_response(self, response, request):
         # We cache all responses regardless of HTTP code.
         return True
+
+
+class FeedsCache:
+    def __init__(self, settings):
+        if settings.getbool("HTTPCACHE_ENABLED"):
+            self.storage = FeedsCacheStorage(settings)
+        else:
+            self.storage = FeedsCacheInMemoryStorage()
+
+    def get(self, spider, key):
+        return self.storage.retrieve_object(spider, key)
+
+    def set(self, spider, key, obj):
+        return self.storage.store_object(spider, key, obj)
+
+    def setdefault(self, spider, key, default_obj):
+        obj = self.storage.retrieve_object(spider, key)
+        if obj is not None:
+            return obj
+        self.storage.store_object(spider, key, default_obj)
+        return default_obj
+
+    def cleanup(self):
+        self.storage.cleanup()
 
 
 class FeedsCacheStorage(FilesystemCacheStorage):
@@ -169,3 +194,17 @@ class FeedsCacheStorage(FilesystemCacheStorage):
 
         logger.debug("Removing cache entry for URL {}".format(meta["response_url"]))
         shutil.rmtree(cache_entry_path, ignore_errors=True)
+
+
+class FeedsCacheInMemoryStorage:
+    def __init__(self):
+        self.data = defaultdict(dict)
+
+    def retrieve_object(self, spider, key):
+        return self.data[spider].get(key)
+
+    def store_object(self, spider, key, obj):
+        self.data[spider][key] = obj
+
+    def cleanup(self):
+        pass

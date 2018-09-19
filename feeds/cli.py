@@ -7,15 +7,15 @@ from scrapy.utils.log import configure_logging
 from scrapy.utils.project import get_project_settings
 from twisted.python import failure
 
-from feeds.cache import FeedsCacheStorage
+from feeds.cache import FeedsCache
 from feeds.settings import load_feeds_settings
 
 logger = logging.getLogger(__name__)
 
 
 def run_cleanup_cache(settings):
-    storage = FeedsCacheStorage(settings)
-    storage.cleanup()
+    cache = FeedsCache(settings)
+    cache.cleanup()
 
 
 def spiders_to_crawl(process, argument_spiders):

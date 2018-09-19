@@ -1,3 +1,4 @@
+from datetime import datetime, timezone
 import uuid
 
 from scrapy import signals
@@ -24,6 +25,20 @@ class AtomAutogenerateFieldsPipeline(object):
             # Having a title is mandatory, so we use an empty string if none
             # is set.
             item["title"] = ""
+
+        if isinstance(item, FeedEntryItem) and "updated" not in item:
+            if "link" in item:
+                item["updated"] = spider.cache.setdefault(
+                    spider,
+                    key="{}|updated".format(item["id"]),
+                    default_obj=datetime.now(timezone.utc),
+                )
+            else:
+                raise DropItem(
+                    "A link is required to autogenerate the updated field for: {}".format(
+                        item
+                    )
+                )
 
         return item
 

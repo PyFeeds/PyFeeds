@@ -141,3 +141,7 @@ useragent = feeds (+https://github.com/nblock/feeds)
 #  software
 #  telecom
 #  web
+
+#[ubup.com]
+#links =
+#   /katalog?sortiertnach=neueste

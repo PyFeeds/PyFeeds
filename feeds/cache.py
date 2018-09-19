@@ -1,12 +1,15 @@
+import hashlib
 import logging
 import os
 import pickle
 import shutil
 from datetime import datetime, timezone
+from time import time
 
 from scrapy.extensions.httpcache import FilesystemCacheStorage, DummyPolicy
 from scrapy.utils.python import to_bytes
 from scrapy.utils.request import request_fingerprint
+import scrapy
 
 logger = logging.getLogger(__name__)
 
@@ -56,20 +59,36 @@ class FeedsCacheStorage(FilesystemCacheStorage):
                 old_metadata["parents"] if old_metadata else []
             )
         )
-        if (
-            "cache_expires" in request.meta
-            and request.meta["cache_expires"] is not None
-        ):
+        if request.meta.get("cache_expires") is not None:
             metadata["cache_expires"] = request.meta["cache_expires"].total_seconds()
+        metadata["type"] = "response"
         # Write it back.
         rpath = self._get_request_path(spider, request)
-        with self._open(os.path.join(rpath, "meta"), "wb") as f:
-            f.write(to_bytes(repr(metadata)))
-        with self._open(os.path.join(rpath, "pickled_meta"), "wb") as f:
-            pickle.dump(metadata, f, protocol=2)
+        self._write_meta_to_path(rpath, metadata)
 
     def _get_request_path(self, spider, request):
         key = request_fingerprint(request, include_headers=["Cookie"])
+        return os.path.join(self.cachedir, spider.name, key[0:2], key)
+
+    def retrieve_object(self, spider, key):
+        metadata = self._read_meta(spider, key)
+        if metadata is None:
+            return None
+        path = self._get_key_path(spider, key)
+        with self._open(os.path.join(path, "object"), "rb") as f:
+            return pickle.load(f)
+
+    def store_object(self, spider, key, obj):
+        path = self._get_key_path(spider, key)
+        if not os.path.exists(path):
+            os.makedirs(path)
+        metadata = {"timestamp": time(), "type": "object"}
+        self._write_meta_to_path(path, metadata)
+        with self._open(os.path.join(path, "object"), "wb") as f:
+            pickle.dump(obj, f, protocol=2)
+
+    def _get_key_path(self, spider, key):
+        key = hashlib.sha1(to_bytes(key)).hexdigest()
         return os.path.join(self.cachedir, spider.name, key[0:2], key)
 
     def item_dropped(self, item, response, exception, spider):
@@ -77,9 +96,25 @@ class FeedsCacheStorage(FilesystemCacheStorage):
             self._get_request_path(spider, response.request), remove_parents=True
         )
 
+    def _read_meta(self, spider, key):
+        if isinstance(key, scrapy.Request):
+            path = self._get_request_path(spider, key)
+        else:
+            path = self._get_key_path(spider, key)
+        return self._read_meta_from_path(path)
+
     def _read_meta_from_path(self, path):
-        with open(os.path.join(path, "pickled_meta"), "rb") as f:
-            return pickle.load(f)
+        try:
+            with open(os.path.join(path, "pickled_meta"), "rb") as f:
+                return pickle.load(f)
+        except FileNotFoundError:
+            return None
+
+    def _write_meta_to_path(self, path, metadata):
+        with self._open(os.path.join(path, "meta"), "wb") as f:
+            f.write(to_bytes(repr(metadata)))
+        with self._open(os.path.join(path, "pickled_meta"), "wb") as f:
+            pickle.dump(metadata, f, protocol=2)
 
     def cleanup(self):
         """Removes cache entries in path.
@@ -98,12 +133,15 @@ class FeedsCacheStorage(FilesystemCacheStorage):
                 meta = self._read_meta_from_path(cache_entry_path)
                 entry_expires_after = min(
                     meta.get("cache_expires", self.expiration_secs),
-                    self.expiration_secs
+                    self.expiration_secs,
                 )
                 threshold = meta["timestamp"] + entry_expires_after
                 if now > threshold:
                     self.remove_cache_entry(cache_entry_path)
-                elif meta["status"] in self.ignore_http_codes:
+                elif (
+                    meta.get("type", "response") == "response"
+                    and meta["status"] in self.ignore_http_codes
+                ):
                     self.remove_cache_entry(cache_entry_path, remove_parents=True)
             elif not os.path.samefile(cache_entry_path, self.cachedir):
                 # Try to delete parent directory of cache entries.
@@ -116,9 +154,8 @@ class FeedsCacheStorage(FilesystemCacheStorage):
         logger.debug("Finished cleaning cache entries.")
 
     def remove_cache_entry(self, cache_entry_path, remove_parents=False):
-        try:
-            meta = self._read_meta_from_path(cache_entry_path)
-        except FileNotFoundError:
+        meta = self._read_meta_from_path(cache_entry_path)
+        if meta is None:
             return
 
         if remove_parents:

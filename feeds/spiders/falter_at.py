@@ -1,7 +1,7 @@
 import json
 import re
 from collections import OrderedDict
-from datetime import datetime, timedelta
+from datetime import timedelta
 
 import scrapy
 from dateutil.parser import parse as dateutil_parse
@@ -112,12 +112,9 @@ class FalterAtSpider(FeedsSpider):
                 il.add_value("title", review["post_subtitle"])
                 il.add_value("author_name", review["meta"].split("|")[0].title())
                 il.add_value("category", "review")
-                updated = review["post_date"]
+                il.add_value("updated", review["post_date"])
             else:
                 il.add_value("title", entry["name"])
-                # Estimate that 7 restaurants are added every week.
-                updated = datetime(2018, 1, 1) + timedelta(days=entry["id"] - 10782)
-            il.add_value("updated", updated)
             if "pictures" in entry and entry["pictures"]:
                 il.add_value(
                     "content_html",

@@ -22,22 +22,18 @@ class UbupComSpider(FeedsSpider):
     def start_requests(self):
         links = self.settings.get("FEEDS_SPIDER_UBUP_COM_LINKS")
         if links:
-            self._links = links.split()
+            links = links.split()
         else:
-            self._links = ["katalog?sortiertnach=neueste"]
+            links = ["katalog?sortiertnach=neueste"]
 
-        for link in self._links:
+        for link in links:
             yield scrapy.Request(
                 urljoin(self._base_url, link),
                 meta={"dont_cache": True, "path": urlquote_plus(link)},
             )
 
     def feed_headers(self):
-        for link in self._links:
-            yield self.generate_feed_header(
-                link=urljoin(self._base_url, link),
-                path=urlquote_plus(link),
-            )
+        return []
 
     def parse(self, response):
         for item in response.css(".thumbnail"):
@@ -56,6 +52,14 @@ class UbupComSpider(FeedsSpider):
             yield il.load_item()
 
         page = int(response.css(".pagination .active a::text").extract_first())
+        if page == 1:
+            yield self.generate_feed_header(
+                title=response.css("title ::text").re_first(
+                    "(ubup | .*) Second Hand kaufen"
+                ),
+                link=response.url,
+                path=response.meta["path"],
+            )
         if page < self._scrape_pages:
             next_page = response.css(
                 ".pagination .active + li a::attr(href)"

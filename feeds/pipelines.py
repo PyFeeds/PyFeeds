@@ -35,9 +35,8 @@ class AtomAutogenerateFieldsPipeline(object):
                 )
             else:
                 raise DropItem(
-                    "A link is required to autogenerate the updated field for: {}".format(
-                        item
-                    )
+                    "A link is required to autogenerate the updated field "
+                    "for: {}".format(item)
                 )
 
         return item

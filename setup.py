@@ -19,6 +19,7 @@ setup(
         "python-dateutil>=2.7.3",
         "pyxdg>=0.26",
         "readability-lxml>=0.7",
+        "scrapy-inline-requests",
     ],
     extras_require={
         "docs": ["doc8", "restructuredtext_lint", "sphinx", "sphinx_rtd_theme"],

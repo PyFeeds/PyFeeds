@@ -36,6 +36,10 @@ class UbupComSpider(FeedsSpider):
         return []
 
     def parse(self, response):
+        if len(response.css(".thumbnail")) == 0:
+            self.logger.info("No items found.")
+            return
+
         for item in response.css(".thumbnail"):
             il = FeedEntryItemLoader(selector=item, base_url=self._base_url)
             il.add_css("title", ".item_brand_text ::text")

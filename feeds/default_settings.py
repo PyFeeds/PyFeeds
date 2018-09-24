@@ -40,12 +40,11 @@ DOWNLOADER_MIDDLEWARES = {
 }
 
 HTTPCACHE_ENABLED = True
-HTTPCACHE_STORAGE = "feeds.extensions.FeedsCacheStorage"
-HTTPCACHE_POLICY = "scrapy.extensions.httpcache.DummyPolicy"
+HTTPCACHE_STORAGE = "feeds.cache.FeedsCacheStorage"
+HTTPCACHE_POLICY = "feeds.cache.FeedsCachePolicy"
 HTTPCACHE_DIR = save_cache_path("feeds")
-# We cache everything and delete cache entries (and every parent request) during
-# cleanup.
-HTTPCACHE_IGNORE_HTTP_CODES = []
+HTTPCACHE_EXPIRATION_SECS = FEEDS_CONFIG_CACHE_EXPIRES * 24 * 60 * 60
+HTTPCACHE_IGNORE_HTTP_CODES = [403, 404] + list(range(500, 600))
 
 # Default user agent. Can be overriden in feeds.cfg.
 USER_AGENT = "feeds (+https://github.com/nblock/feeds)"

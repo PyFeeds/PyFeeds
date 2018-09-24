@@ -1,7 +1,9 @@
+import json
 import re
 from urllib.parse import urlparse
 
 import scrapy
+from inline_requests import inline_requests
 
 from feeds.loaders import FeedEntryItemLoader
 from feeds.spiders import FeedsXMLFeedSpider
@@ -103,21 +105,16 @@ class OrfAtSpider(FeedsXMLFeedSpider):
                 # Sometimes there is a space at the end of a link ...
                 yield scrapy.Request(link.strip(), self._parse_article, meta=meta)
 
+    @inline_requests
     def _parse_article(self, response):
-        try:
-            # Heuristic for news.ORF.at to to detect teaser articles.
-            more = response.css(
-                ".story-story p > strong:contains('Mehr') + a::attr(href), "
-                + ".story-story p > a:contains('Lesen Sie mehr')::attr(href)"
-            ).extract_first()
-            if more and more != response.url:
-                self.logger.debug(
-                    "Detected teaser article, redirecting to {}".format(more)
-                )
-                yield scrapy.Request(more, self._parse_article, meta=response.meta)
-                return
-        except IndexError:
-            pass
+        # Heuristic for news.ORF.at to to detect teaser articles.
+        more = response.css(
+            ".story-story p > strong:contains('Mehr') + a::attr(href), "
+            + ".story-story p > a:contains('Lesen Sie mehr')::attr(href)"
+        ).extract_first()
+        if more and more != response.url:
+            self.logger.debug("Detected teaser article, redirecting to {}".format(more))
+            response = yield scrapy.Request(more, meta=response.meta)
 
         remove_elems = [
             ".byline",
@@ -129,7 +126,6 @@ class OrfAtSpider(FeedsXMLFeedSpider):
             ".toplink",
             ".offscreen",
             ".storyMeta",
-            ".slideshow",
             "script",
             ".oon-youtube-logo",
             # redesign
@@ -139,6 +135,7 @@ class OrfAtSpider(FeedsXMLFeedSpider):
             ".linkcard",
         ]
         pullup_elems = {
+            ".remote .slideshow": 1,
             ".remote .instagram": 1,
             ".remote .facebook": 1,
             ".remote .twitter": 1,
@@ -146,7 +143,7 @@ class OrfAtSpider(FeedsXMLFeedSpider):
             ".remote table": 1,
         }
         replace_elems = {
-            ".remote": "<p><em>Hinweis: Der eingebettete Inhalt ist nur im Artikel "
+            ".video": "<p><em>Hinweis: Das eingebettete Video ist nur im Artikel "
             + "verfügbar.</em></p>"
         }
         change_attribs = {"img": {"data-src": "src"}}
@@ -159,6 +156,17 @@ class OrfAtSpider(FeedsXMLFeedSpider):
         else:
             self.logger.debug("Could not extract author name")
             author = "{}.ORF.at".format(response.meta["path"])
+
+        for slideshow in response.css(".slideshow"):
+            link = response.urljoin(
+                slideshow.css('::attr("data-slideshow-json-href")').extract_first()
+            ).replace("jsonp", "json")
+            slideshow_id = slideshow.css('::attr("id")').extract_first()
+            slideshow_response = yield scrapy.Request(link)
+            replace_elems["#{}".format(slideshow_id)] = self._create_slideshow_html(
+                slideshow_response
+            )
+
         il = FeedEntryItemLoader(
             response=response,
             remove_elems=remove_elems,
@@ -167,6 +175,7 @@ class OrfAtSpider(FeedsXMLFeedSpider):
             change_attribs=change_attribs,
             change_tags=change_tags,
         )
+
         # The field is part of a JSON that is sometimes not valid, so don't bother with
         # parsing it properly.
         match = re.search(r'"datePublished": "([^"]+)"', response.text)
@@ -187,6 +196,21 @@ class OrfAtSpider(FeedsXMLFeedSpider):
         il.add_value("path", response.meta["path"])
         il.add_value("category", response.meta["categories"])
         yield il.load_item()
+
+    @staticmethod
+    def _create_slideshow_html(response):
+        slideshow = json.loads(response.text)
+        figures = []
+        for photo in slideshow["photos"]:
+            url = photo["url"]
+            caption = photo.get("description") or ""
+            figures.append(
+                (
+                    '<figure><div><img src="{url}"></div>'
+                    + "<figcaption>{caption}</figcaption></figure>"
+                ).format(url=url, caption=caption)
+            )
+        return "<div>" + "".join(figures) + "</div>"
 
     @staticmethod
     def _extract_author(response):

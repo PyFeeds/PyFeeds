@@ -1,24 +1,21 @@
 import logging
 import os
-from datetime import timedelta
 
 import click
 from scrapy.crawler import CrawlerProcess
 from scrapy.utils.log import configure_logging
-from scrapy.utils.project import data_path, get_project_settings
+from scrapy.utils.project import get_project_settings
 from twisted.python import failure
 
-from feeds.cache import cleanup_cache
+from feeds.cache import FeedsCache
 from feeds.settings import load_feeds_settings
 
 logger = logging.getLogger(__name__)
 
 
 def run_cleanup_cache(settings):
-    days = settings.getint("FEEDS_CONFIG_CACHE_EXPIRES")
-    if days <= 0:
-        raise ValueError("cache_expires must be >= 0.")
-    cleanup_cache(data_path(settings.get("HTTPCACHE_DIR")), timedelta(days=days))
+    cache = FeedsCache(settings)
+    cache.cleanup()
 
 
 def spiders_to_crawl(process, argument_spiders):

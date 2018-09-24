@@ -1,7 +1,4 @@
-import datetime
-
 import scrapy
-import w3lib
 
 from feeds.loaders import FeedEntryItemLoader
 from feeds.spiders import FeedsSpider
@@ -39,11 +36,5 @@ class AkCiandoComSpider(FeedsSpider):
         il.add_xpath("content_html", '//div[@class="bookcontent"]//text()')
         il.add_xpath("content_html", '//div[@class="p_book_image"]/img')
         il.add_xpath("content_html", '//span[@style="color:red;"]/b/text()')
-
-        # NOTE: The page does not provide any usable timestamp so we convert
-        # the bok_id parameter to unix epoch.
-        bok_id = w3lib.url.url_query_parameter(response.url, "bok_id", "0")
-        timestamp = datetime.datetime.utcfromtimestamp(int(bok_id))
-        il.add_value("updated", timestamp.isoformat())
 
         yield il.load_item()

@@ -1,5 +1,3 @@
-import datetime
-
 import scrapy
 
 from feeds.loaders import FeedEntryItemLoader
@@ -29,25 +27,7 @@ class ZeitdiebinAtSpider(FeedsSpider):
             dayfirst=True,
             remove_elems=[".ruler", "h1"],
         )
-
         il.add_css("title", "h1.event-title::text")
         il.add_value("link", response.url)
-
-        date = response.css("title").re_first(r"(\d{2}\.\d{2}\.\d{4})")
-        time = response.css("title").re_first(r"(\d{2}:\d{2})") or ""
-        if date:
-            il.add_value("updated", "{} {}".format(date, time))
-        else:
-            day_month = response.css("title").re_first(r"\d{2}\.\d{2}")
-            if day_month:
-                il.add_value(
-                    "updated",
-                    "{}.{} {}".format(day_month, datetime.datetime.now().year, time),
-                )
-            else:
-                pass
-                # Item is skipped.
-
         il.add_css("content_html", "div#content.container")
-
         yield il.load_item()

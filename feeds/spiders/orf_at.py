@@ -23,8 +23,6 @@ class OrfAtSpider(FeedsXMLFeedSpider):
     # Use XML iterator instead of regex magic which would fail due to the
     # introduced rss namespace prefix.
     iterator = "xml"
-    # Don't filter duplicates. This would impose a race condition.
-    custom_settings = {"DUPEFILTER_CLASS": "scrapy.dupefilters.BaseDupeFilter"}
 
     def start_requests(self):
         channels = self.settings.get("FEEDS_SPIDER_ORF_AT_CHANNELS")

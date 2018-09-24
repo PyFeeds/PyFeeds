@@ -9,9 +9,6 @@ from feeds.spiders import FeedsSpider
 class UbupComSpider(FeedsSpider):
     name = "ubup.com"
     allowed_domains = ["ubup.com"]
-    # Don't filter duplicates.
-    # This spider produces feeds with potentially overlapping items.
-    custom_settings = {"DUPEFILTER_CLASS": "scrapy.dupefilters.BaseDupeFilter"}
 
     _title = "ubup"
     _subtitle = "Deutschlands größter Second Hand-Onlineshop für Mode & Accessoires"

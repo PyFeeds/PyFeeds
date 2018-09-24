@@ -14,6 +14,7 @@ class AkCiandoComSpider(FeedsSpider):
 
     _title = "AK Digitale Bibliothek"
     _subtitle = "Neue Titel in der digitalen AK Bibliothek"
+    _link = "https://{}".format(name)
 
     def parse(self, response):
         for link in response.xpath('//p[@class="p_blr_title"]//a/@href').extract():
@@ -21,7 +22,7 @@ class AkCiandoComSpider(FeedsSpider):
 
     def parse_item(self, response):
         il = FeedEntryItemLoader(
-            selector=response.xpath('//div[@id="maincontentbook"]')
+            selector=response.xpath('//div[@id="maincontentbook"]'), base_url=self._link
         )
         il.add_xpath("title", '//h1[@class="p_book_title"]/text()')
         il.add_xpath("title", '//h3[@class="p_book_title_ebook"]/text()')

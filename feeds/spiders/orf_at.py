@@ -12,7 +12,6 @@ from feeds.utils import generate_feed_header
 
 class OrfAtSpider(FeedsXMLFeedSpider):
     name = "orf.at"
-    allowed_domains = ["orf.at"]
     namespaces = [
         ("dc", "http://purl.org/dc/elements/1.1/"),
         ("orfon", "http://rss.orf.at/1.0/"),

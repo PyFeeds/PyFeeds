@@ -6,7 +6,6 @@ from feeds.spiders import FeedsXMLFeedSpider
 
 class AddendumOrgSpider(FeedsXMLFeedSpider):
     name = "addendum.org"
-    allowed_domains = [name]
     start_urls = ["https://www.addendum.org/feed/rss2-addendum"]
 
     feed_title = "Addendum"

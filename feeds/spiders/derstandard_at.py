@@ -10,7 +10,6 @@ from feeds.utils import generate_feed_header
 
 class DerStandardAtSpider(FeedsXMLFeedSpider):
     name = "derstandard.at"
-    allowed_domains = [name]
     custom_settings = {"COOKIES_ENABLED": False}
 
     _titles = {}

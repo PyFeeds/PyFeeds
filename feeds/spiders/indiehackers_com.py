@@ -6,7 +6,6 @@ from feeds.spiders import FeedsSpider
 
 class IndieHackersComSpider(FeedsSpider):
     name = "indiehackers.com"
-    allowed_domains = [name]
     start_urls = ["https://www.indiehackers.com/interviews/page/1"]
 
     feed_title = "Indie Hackers"

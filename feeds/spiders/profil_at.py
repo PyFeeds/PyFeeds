@@ -9,7 +9,6 @@ from feeds.spiders import FeedsXMLFeedSpider
 
 class ProfilAtSpider(FeedsXMLFeedSpider):
     name = "profil.at"
-    allowed_domains = ["profil.at"]
     namespaces = [
         ("i", "http://www.google.com/schemas/sitemap-image/1.1"),
         ("rss", "http://www.sitemaps.org/schemas/sitemap/0.9"),

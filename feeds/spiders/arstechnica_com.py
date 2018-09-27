@@ -7,7 +7,6 @@ from feeds.utils import generate_feed_header
 
 class ArsTechnicaComSpider(FeedsXMLFeedSpider):
     name = "arstechnica.com"
-    allowed_domains = [name]
     itertag = "item"
 
     def start_requests(self):

@@ -7,7 +7,6 @@ from feeds.spiders import FeedsSpider
 
 class WienerLinienAtSpider(FeedsSpider):
     name = "wienerlinien.at"
-    allowed_domains = ["wienerlinien.at"]
     custom_settings = {
         "DEFAULT_REQUEST_HEADERS": {
             "Accept": "text/html",

@@ -8,7 +8,6 @@ from feeds.spiders import FeedsXMLFeedSpider
 
 class DieTiwagOrgSpider(FeedsXMLFeedSpider):
     name = "dietiwag.org"
-    allowed_domains = [name]
     start_urls = ["http://www.dietiwag.org/rss.xml.php"]
 
     feed_title = "dietiwag.org"

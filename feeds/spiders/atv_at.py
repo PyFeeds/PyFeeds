@@ -9,7 +9,6 @@ from feeds.spiders import FeedsSpider
 
 class AtvAtSpider(FeedsSpider):
     name = "atv.at"
-    allowed_domains = ["atv.at"]
     start_urls = ["https://atv.at/mediathek/neue-folgen/"]
     custom_settings = {
         # The site is really shitty, don't overwhelm it with more requests.

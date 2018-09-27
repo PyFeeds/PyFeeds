@@ -8,7 +8,6 @@ from feeds.spiders import FeedsXMLFeedSpider
 
 class TheOatmealComSpider(FeedsXMLFeedSpider):
     name = "theoatmeal.com"
-    allowed_domains = [name]
     start_urls = ["http://theoatmeal.com/feed/rss"]
 
     namespaces = [

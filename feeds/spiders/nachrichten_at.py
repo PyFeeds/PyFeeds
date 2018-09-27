@@ -9,7 +9,6 @@ from feeds.utils import generate_feed_header
 
 class NachrichtenAtSpider(FeedsXMLFeedSpider):
     name = "nachrichten.at"
-    allowed_domains = [name]
 
     def start_requests(self):
         self._ressorts = self.settings.get("FEEDS_SPIDER_NACHRICHTEN_AT_RESSORTS")

@@ -20,7 +20,6 @@ Writing a spider is easy! Consider the slightly simplified spider for
 
     class IndieHackersComSpider(FeedsSpider):
         name = "indiehackers.com"
-        allowed_domains = [name]
         start_urls = ["https://www.indiehackers.com/interviews/page/1"]
         feed_title = "Indie Hackers"
 

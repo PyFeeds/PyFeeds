@@ -59,7 +59,6 @@ def _split_categories(text, heading):
 
 class LwnNetSpider(FeedsXMLFeedSpider):
     name = "lwn.net"
-    allowed_domains = ["lwn.net"]
     namespaces = [
         ("dc", "http://purl.org/dc/elements/1.1/"),
         # Default (empty) namespaces are not supported so we just come up with

@@ -10,7 +10,6 @@ from feeds.spiders import FeedsSpider
 
 class TvthekOrfAtSpider(FeedsSpider):
     name = "tvthek.orf.at"
-    allowed_domains = ["api-tvthek.orf.at"]
     http_user = "ps_android_v3"
     http_pass = "6a63d4da29c721d4a986fdd31edc9e41"
 

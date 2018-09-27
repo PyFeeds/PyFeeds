@@ -6,7 +6,6 @@ from feeds.spiders import FeedsSpider
 
 class PythonPatternsGuide(FeedsSpider):
     name = "python-patterns.guide"
-    allowed_domains = [name]
     start_urls = ["http://{}".format(name)]
 
     feed_title = "Python Patterns"

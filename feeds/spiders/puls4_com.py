@@ -9,7 +9,6 @@ from feeds.spiders import FeedsSpider
 
 class Pusl4ComSpider(FeedsSpider):
     name = "puls4.com"
-    allowed_domains = ["puls4.com"]
     start_urls = ["https://www.puls4.com/api/json-fe/page/sendungen"]
 
     feed_icon = (

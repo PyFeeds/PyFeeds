@@ -8,7 +8,6 @@ from feeds.spiders import FeedsSpider
 
 class Oe1OrfAtSpider(FeedsSpider):
     name = "oe1.orf.at"
-    allowed_domains = ["audioapi.orf.at", name]
     start_urls = ["https://audioapi.orf.at/oe1/api/json/current/broadcasts"]
 
     feed_title = "oe1.ORF.at"

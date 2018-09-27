@@ -6,7 +6,6 @@ from feeds.spiders import FeedsSpider
 
 class VerbraucherrechtAtSpider(FeedsSpider):
     name = "verbraucherrecht.at"
-    allowed_domains = ["verbraucherrecht.at"]
     start_urls = ["https://verbraucherrecht.at/cms/index.php?id=198"]
 
     feed_title = "Verbraucherrecht"

@@ -6,7 +6,6 @@ from feeds.spiders import FeedsSpider
 
 class BibliowebAtSpider(FeedsSpider):
     name = "biblioweb.at"
-    allowed_domains = ["biblioweb.at"]
 
     _days = 60
 

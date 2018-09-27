@@ -10,7 +10,6 @@ from feeds.utils import generate_feed_header
 
 class UsenixOrgSpider(FeedsSpider):
     name = "usenix.org"
-    allowed_domains = ["usenix.org"]
 
     def feed_headers(self):
         return []

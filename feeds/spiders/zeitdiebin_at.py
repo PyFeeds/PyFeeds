@@ -6,7 +6,6 @@ from feeds.spiders import FeedsSpider
 
 class ZeitdiebinAtSpider(FeedsSpider):
     name = "zeit.diebin.at"
-    allowed_domains = ["zeit.diebin.at"]
     start_urls = ["https://zeit.diebin.at/upcoming"]
 
     feed_title = "zeitdiebin"

@@ -9,7 +9,6 @@ from feeds.utils import generate_feed_header
 
 class UbupComSpider(FeedsSpider):
     name = "ubup.com"
-    allowed_domains = ["ubup.com"]
 
     _base_url = "https://www.{}".format(name)
     _scrape_pages = 3

@@ -6,7 +6,6 @@ from feeds.spiders import FeedsSpider
 
 class HelpGvAtSpider(FeedsSpider):
     name = "help.gv.at"
-    allowed_domains = [name]
     start_urls = ["https://www.{}/Portal.Node/hlpd/public".format(name)]
     custom_settings = {
         # The redirect logic by help.gv.at relies on state saved for a session

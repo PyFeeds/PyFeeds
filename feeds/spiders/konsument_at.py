@@ -8,7 +8,6 @@ from feeds.spiders import FeedsSpider
 
 class KonsumentAtSpider(FeedsSpider):
     name = "konsument.at"
-    allowed_domains = ["konsument.at"]
     start_urls = ["https://www.konsument.at/page/das-aktuelle-heft"]
 
     feed_title = "KONSUMENT.AT"

@@ -11,7 +11,6 @@ from feeds.utils import generate_feed_header
 
 class FacebookComSpider(FeedsSpider):
     name = "facebook.com"
-    allowed_domains = ["facebook.com"]
 
     def feed_headers(self):
         return []

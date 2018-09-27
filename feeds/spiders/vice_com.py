@@ -10,7 +10,6 @@ from feeds.utils import generate_feed_header
 
 class ViceComSpider(FeedsSpider):
     name = "vice.com"
-    allowed_domains = ["vice.com"]
 
     def feed_headers(self):
         if not self._locales:

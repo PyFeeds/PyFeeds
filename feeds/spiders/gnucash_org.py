@@ -6,7 +6,6 @@ from feeds.spiders import FeedsXMLFeedSpider
 
 class GnucashOrgSpider(FeedsXMLFeedSpider):
     name = "gnucash.org"
-    allowed_domains = [name]
     start_urls = ["https://www.{}/atom.php".format(name)]
 
     namespaces = [("atom", "http://www.w3.org/2005/Atom")]

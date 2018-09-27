@@ -12,7 +12,6 @@ from feeds.spiders import FeedsXMLFeedSpider
 
 class UebermedienDeSpider(FeedsXMLFeedSpider):
     name = "uebermedien.de"
-    allowed_domains = ["uebermedien.de", "steadyhq.com"]
     start_urls = ["https://uebermedien.de/feed/"]
     namespaces = [("dc", "http://purl.org/dc/elements/1.1/")]
 

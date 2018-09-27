@@ -6,7 +6,6 @@ from feeds.spiders import FeedsSpider
 
 class AkCiandoComSpider(FeedsSpider):
     name = "ak.ciando.com"
-    allowed_domains = ["ak.ciando.com"]
     start_urls = [
         "https://ak.ciando.com/shop/index.cfm?fuseaction=cat_overview&cat_ID=0"
         "&cat_nav=0&more_new=1&rows=100&intStartRow=1"

@@ -13,7 +13,6 @@ class KonsumentAtSpider(FeedsSpider):
 
     _title = "KONSUMENT.AT"
     _subtitle = "Objektiv, unbestechlich, keine Werbung"
-    _timezone = "Europe/Vienna"
 
     def parse(self, response):
         user = self.settings.get("FEEDS_SPIDER_KONSUMENT_AT_USERNAME")
@@ -50,7 +49,7 @@ class KonsumentAtSpider(FeedsSpider):
         remove_elems = ['div[style="padding-top:10px;"]']
         il = FeedEntryItemLoader(
             response=response,
-            timezone=self._timezone,
+            timezone="Europe/Vienna",
             base_url="https://{}".format(self.name),
             dayfirst=True,
             remove_elems=remove_elems,

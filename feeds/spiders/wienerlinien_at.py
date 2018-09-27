@@ -22,7 +22,6 @@ class WienerLinienAtSpider(FeedsSpider):
 
     _title = "Wiener Linien"
     _subtitle = "Aktuelle Meldungen"
-    _timezone = "Europe/Vienna"
 
     def parse(self, response):
         # Wiener Linien returns HTML with an XML content type which creates an
@@ -31,7 +30,7 @@ class WienerLinienAtSpider(FeedsSpider):
         for item in response.css(".block-news-item"):
             il = FeedEntryItemLoader(
                 response=response,
-                timezone=self._timezone,
+                timezone="Europe/Vienna",
                 ignoretz=True,
                 base_url="https://www.{}".format(self.name),
             )

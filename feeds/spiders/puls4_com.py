@@ -12,7 +12,6 @@ class Pusl4ComSpider(FeedsSpider):
     allowed_domains = ["puls4.com"]
     start_urls = ["https://www.puls4.com/api/json-fe/page/sendungen"]
 
-    _timezone = "Europe/Vienna"
     _icon = (
         "https://www.puls4.com/bundles/wundermanpuls4/images/" + "favicon/favicon.png"
     )
@@ -56,7 +55,7 @@ class Pusl4ComSpider(FeedsSpider):
         il = FeedEntryItemLoader(
             response=response,
             base_url="https://{}".format(self.name),
-            timezone=self._timezone,
+            timezone="Europe/Vienna",
             dayfirst=True,
         )
         il.add_value("link", response.url)

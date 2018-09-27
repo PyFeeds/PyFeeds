@@ -46,7 +46,6 @@ class UsenixOrgSpider(FeedsSpider):
             response=response,
             base_url="https://www.{}".format(self.name),
             remove_elems=remove_elems,
-            dayfirst=False,
         )
         il.add_value("link", response.url)
         title = response.css("h1::text").extract_first().strip()

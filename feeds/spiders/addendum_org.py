@@ -15,7 +15,6 @@ class AddendumOrgSpider(FeedsXMLFeedSpider):
     _icon = (
         "https://www.{}/resources/dist/favicons/" "android-chrome-192x192.png"
     ).format(name)
-    _timezone = "Europe/Vienna"
     _max_articles = 10
     _num_articles = 0
 
@@ -74,7 +73,6 @@ class AddendumOrgSpider(FeedsXMLFeedSpider):
         }
         il = FeedEntryItemLoader(
             response=response,
-            timezone=self._timezone,
             base_url=response.url,
             remove_elems=remove_elems,
             change_tags=change_tags,

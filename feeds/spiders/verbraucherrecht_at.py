@@ -14,7 +14,6 @@ class VerbraucherrechtAtSpider(FeedsSpider):
     _author_name = "Verein für Konsumenteninformation"
     _link = "https://{}".format(name)
     _logo = "https://{}/cms/fileadmin/imag/logo.gif".format(name)
-    _timezone = "Europe/Vienna"
 
     def parse(self, response):
         # Fetch only the current news page and deliberately ignore old news.
@@ -27,7 +26,7 @@ class VerbraucherrechtAtSpider(FeedsSpider):
         il = FeedEntryItemLoader(
             response=response,
             base_url="{}/cms/".format(self._link),
-            timezone=self._timezone,
+            timezone="Europe/Vienna",
             remove_elems=[".news-latest-date", ".news-single-rightbox", "hr", "h7"],
             remove_elems_xpath=[
                 '//div[@class="news-single-item"]/b[1]',

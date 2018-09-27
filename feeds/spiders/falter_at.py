@@ -17,7 +17,6 @@ class FalterAtSpider(FeedsSpider):
 
     _subtitle = "Wir holen dich da raus."
     _link = "https://www.falter.at"
-    _timezone = "Europe/Vienna"
 
     def start_requests(self):
         pages = self.settings.get("FEEDS_SPIDER_FALTER_AT_PAGES")
@@ -92,10 +91,7 @@ class FalterAtSpider(FeedsSpider):
         entries = json.loads(response.text)[0]["hits"]
         for entry in entries:
             il = FeedEntryItemLoader(
-                response=response,
-                base_url="https://{}".format(self.name),
-                timezone=self._timezone,
-                dayfirst=False,
+                response=response, base_url="https://{}".format(self.name)
             )
             il.add_value(
                 "path", "lokalfuehrer_{}".format(response.meta["lokalfuehrer"])
@@ -161,7 +157,7 @@ class FalterAtSpider(FeedsSpider):
             il = FeedEntryItemLoader(
                 response=response,
                 base_url="https://{}".format(self.name),
-                timezone=self._timezone,
+                timezone="Europe/Vienna",
             )
             il.add_value("path", "magazine")
             link = response.urljoin(item["detail_link"])

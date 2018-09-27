@@ -17,7 +17,6 @@ class TvthekOrfAtSpider(FeedsSpider):
     _title = "TVthek.ORF.at"
     _subtitle = "ORF TVTHEK"
     _link = "https://tvthek.orf.at"
-    _timezone = "Europe/Vienna"
 
     def start_requests(self):
         # We only parse today and yesterday because at the end of the day this
@@ -26,7 +25,7 @@ class TvthekOrfAtSpider(FeedsSpider):
         # It's not enough to parse only today because we might miss shows that
         # aired just before midnight but were streamed after midnight
         # (see also https://github.com/nblock/feeds/issues/27)
-        today = datetime.now(gettz(self._timezone))
+        today = datetime.now(gettz("Europe/Vienna"))
         for day in [today, today - timedelta(days=1)]:
             yield Request(
                 "https://api-tvthek.orf.at/api/v3/schedule/{}?limit=1000".format(
@@ -44,9 +43,7 @@ class TvthekOrfAtSpider(FeedsSpider):
             )
 
         for item in json_response["_embedded"]["items"]:
-            il = FeedEntryItemLoader(
-                response=response, timezone=self._timezone, dayfirst=False
-            )
+            il = FeedEntryItemLoader(response=response)
             il.add_value("title", item["title"])
             il.add_value(
                 "content_html",

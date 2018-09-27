@@ -15,7 +15,6 @@ class NachrichtenAtSpider(FeedsXMLFeedSpider):
     _link = "https://www.{}".format(name)
     _icon = "https://static1.{}.at/oonup/images/apple-touch-icon.png".format(name)
     _logo = "https://www.{}/pics/webapp/touchicon_180x180.png".format(name)
-    _timezone = "Europe/Vienna"
 
     def start_requests(self):
         self._ressorts = self.settings.get("FEEDS_SPIDER_NACHRICHTEN_AT_RESSORTS")
@@ -79,7 +78,7 @@ class NachrichtenAtSpider(FeedsXMLFeedSpider):
         change_tags = {"h1": "h2", ".bildbox": "figure", ".bildtext": "figcaption"}
         il = FeedEntryItemLoader(
             response=response,
-            timezone=self._timezone,
+            timezone="Europe/Vienna",
             base_url="https://www.{}".format(self.name),
             remove_elems=remove_elems,
             change_tags=change_tags,

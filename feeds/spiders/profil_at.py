@@ -19,12 +19,11 @@ class ProfilAtSpider(FeedsXMLFeedSpider):
 
     _title = "PROFIL"
     _subtitle = "Österreichs unabhängiges Nachrichtenmagazin"
-    _timezone = "Europe/Vienna"
 
     def start_requests(self):
         # Scrape this and last month so that the feed is not empty on the first day of a
         # new month.
-        this_month = datetime.now(gettz(self._timezone)).date().replace(day=1)
+        this_month = datetime.now(gettz("Europe/Vienna")).date().replace(day=1)
         last_month = (this_month - timedelta(days=1)).replace(day=1)
         for month in [this_month, last_month]:
             yield scrapy.Request(
@@ -57,7 +56,6 @@ class ProfilAtSpider(FeedsXMLFeedSpider):
         ]
         il = FeedEntryItemLoader(
             response=response,
-            timezone=self._timezone,
             base_url="https://{}".format(self.name),
             remove_elems=remove_elems,
         )

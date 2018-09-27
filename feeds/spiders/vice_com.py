@@ -15,7 +15,6 @@ class ViceComSpider(FeedsSpider):
     _link = "https://www.{}".format(name)
     _logo = "https://www.{}/favicons/apple-touch-icon-60x60.png".format(name)
     _icon = _logo
-    _timezone = "Europe/Vienna"
 
     def feed_headers(self):
         if not self._locales:
@@ -49,7 +48,9 @@ class ViceComSpider(FeedsSpider):
             "p i:last-of-type:contains('Facebook'):contains('Twitter')",
         ]
         for article in articles:
-            il = FeedEntryItemLoader(timezone=self._timezone, remove_elems=remove_elems)
+            il = FeedEntryItemLoader(
+                timezone="Europe/Vienna", remove_elems=remove_elems
+            )
             il.add_value("title", article["title"])
             il.add_value("link", article["url"])
             if "thumbnail_url_1_1" in article:

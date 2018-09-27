@@ -18,7 +18,6 @@ class AtvAtSpider(FeedsSpider):
 
     _title = "ATV.at"
     _subtitle = "Mediathek"
-    _timezone = "Europe/Vienna"
     _timerange = timedelta(days=7)
 
     def parse(self, response):
@@ -42,7 +41,7 @@ class AtvAtSpider(FeedsSpider):
         il = FeedEntryItemLoader(
             response=response,
             base_url="https://{}".format(self.name),
-            timezone=self._timezone,
+            timezone="Europe/Vienna",
             dayfirst=True,
         )
         il.add_value("link", data["clipurl"])

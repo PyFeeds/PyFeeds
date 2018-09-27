@@ -21,7 +21,6 @@ class HelpGvAtSpider(FeedsSpider):
     _logo = "https://www.{}/HLPD_Static/img/" "120924_Header_helpgv_links.jpg".format(
         name
     )
-    _timezone = "Europe/Vienna"
 
     def parse(self, response):
         paths = ["171/Seite.1710000.html", "194/Seite.1940000.html"]
@@ -80,7 +79,7 @@ class HelpGvAtSpider(FeedsSpider):
         change_tags = {"abbr": "span"}
         il = FeedEntryItemLoader(
             response=response,
-            timezone=self._timezone,
+            timezone="Europe/Vienna",
             base_url="https://www.{}".format(self.name),
             remove_elems=remove_elems,
             remove_elems_xpath=remove_elems_xpath,

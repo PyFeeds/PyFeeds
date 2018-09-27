@@ -13,7 +13,6 @@ class ZeitdiebinAtSpider(FeedsSpider):
     _subtitle = "irgendwas ist immer ..."
     _link = "https://{}".format(name)
     _logo = "https://{}/favicon.ico".format(name)
-    _timezone = "Europe/Vienna"
 
     def parse(self, response):
         for link in response.css("a[href*=events]::attr(href)").re(r"events/\d+"):
@@ -23,7 +22,7 @@ class ZeitdiebinAtSpider(FeedsSpider):
         il = FeedEntryItemLoader(
             response=response,
             base_url="{}/".format(self._link),
-            timezone=self._timezone,
+            timezone="Europe/Vienna",
             dayfirst=True,
             remove_elems=[".ruler", "h1"],
         )

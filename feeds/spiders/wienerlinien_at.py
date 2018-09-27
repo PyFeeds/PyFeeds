@@ -20,8 +20,8 @@ class WienerLinienAtSpider(FeedsSpider):
         "scrolling=true&startIndex=0&channelId=-47186&programId=74577"
     ]
 
-    _title = "Wiener Linien"
-    _subtitle = "Aktuelle Meldungen"
+    feed_title = "Wiener Linien"
+    feed_subtitle = "Aktuelle Meldungen"
 
     def parse(self, response):
         # Wiener Linien returns HTML with an XML content type which creates an

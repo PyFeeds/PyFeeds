@@ -14,9 +14,9 @@ class TvthekOrfAtSpider(FeedsSpider):
     http_user = "ps_android_v3"
     http_pass = "6a63d4da29c721d4a986fdd31edc9e41"
 
-    _title = "TVthek.ORF.at"
-    _subtitle = "ORF TVTHEK"
-    _link = "https://tvthek.orf.at"
+    feed_title = "TVthek.ORF.at"
+    feed_subtitle = "ORF TVTHEK"
+    feed_link = "https://tvthek.orf.at"
 
     def start_requests(self):
         # We only parse today and yesterday because at the end of the day this

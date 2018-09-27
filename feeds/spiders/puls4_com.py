@@ -12,7 +12,7 @@ class Pusl4ComSpider(FeedsSpider):
     allowed_domains = ["puls4.com"]
     start_urls = ["https://www.puls4.com/api/json-fe/page/sendungen"]
 
-    _icon = (
+    feed_icon = (
         "https://www.puls4.com/bundles/wundermanpuls4/images/" + "favicon/favicon.png"
     )
 

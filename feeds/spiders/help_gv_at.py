@@ -14,11 +14,11 @@ class HelpGvAtSpider(FeedsSpider):
         "CONCURRENT_REQUESTS": 1
     }
 
-    _title = "HELP.gv.at"
-    _subtitle = "Ihr Wegweiser durch die Behörden und Ämter in Österreich"
-    _link = "https://www.{}".format(name)
-    _icon = "https://www.{}/HLPD_Static/img/favicon.ico".format(name)
-    _logo = "https://www.{}/HLPD_Static/img/" "120924_Header_helpgv_links.jpg".format(
+    feed_title = "HELP.gv.at"
+    feed_subtitle = "Ihr Wegweiser durch die Behörden und Ämter in Österreich"
+    feed_link = "https://www.{}".format(name)
+    feed_icon = "https://www.{}/HLPD_Static/img/favicon.ico".format(name)
+    feed_logo = "https://www.{}/HLPD_Static/img/120924_Header_helpgv_links.jpg".format(
         name
     )
 

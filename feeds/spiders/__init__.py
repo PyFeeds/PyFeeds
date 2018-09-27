@@ -2,38 +2,20 @@ import scrapy
 from scrapy.spiders import CrawlSpider, Spider, XMLFeedSpider
 
 from feeds.cache import FeedsCache
-from feeds.loaders import FeedItemLoader
+from feeds.utils import generate_feed_header
 
 
 class FeedsSpider(Spider):
-    def generate_feed_header(
-        self,
-        title=None,
-        subtitle=None,
-        link=None,
-        path=None,
-        author_name=None,
-        icon=None,
-        logo=None,
-    ):
-        _title = title or getattr(self, "_title", self.name)
-
-        il = FeedItemLoader()
-        il.add_value("title", _title)
-        il.add_value("subtitle", subtitle or getattr(self, "_subtitle", None))
-        il.add_value(
-            "link", link or getattr(self, "_link", "https://www.{}".format(self.name))
-        )
-        il.add_value("path", path or getattr(self, "_path", None))
-        il.add_value(
-            "author_name", author_name or getattr(self, "_author_name", _title)
-        )
-        il.add_value("icon", icon or getattr(self, "_icon", None))
-        il.add_value("logo", logo or getattr(self, "_logo", None))
-        return il.load_item()
-
     def feed_headers(self):
-        yield self.generate_feed_header()
+        yield generate_feed_header(
+            title=getattr(self, "feed_title", None),
+            subtitle=getattr(self, "feed_subtitle", None),
+            link=getattr(self, "feed_link", None),
+            path=getattr(self, "path", None),
+            author_name=getattr(self, "author_name", None),
+            icon=getattr(self, "icon", None),
+            logo=getattr(self, "logo", None),
+        )
 
     def start_requests(self):
         for url in self.start_urls:

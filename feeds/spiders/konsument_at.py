@@ -11,8 +11,8 @@ class KonsumentAtSpider(FeedsSpider):
     allowed_domains = ["konsument.at"]
     start_urls = ["https://www.konsument.at/page/das-aktuelle-heft"]
 
-    _title = "KONSUMENT.AT"
-    _subtitle = "Objektiv, unbestechlich, keine Werbung"
+    feed_title = "KONSUMENT.AT"
+    feed_subtitle = "Objektiv, unbestechlich, keine Werbung"
 
     def parse(self, response):
         user = self.settings.get("FEEDS_SPIDER_KONSUMENT_AT_USERNAME")

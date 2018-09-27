@@ -9,11 +9,11 @@ class AddendumOrgSpider(FeedsXMLFeedSpider):
     allowed_domains = [name]
     start_urls = ["https://www.addendum.org/feed/rss2-addendum"]
 
-    _title = "Addendum"
-    _subtitle = "das, was fehlt"
-    _link = "https://www.{}".format(name)
-    _icon = (
-        "https://www.{}/resources/dist/favicons/" "android-chrome-192x192.png"
+    feed_title = "Addendum"
+    feed_subtitle = "das, was fehlt"
+    feed_link = "https://www.{}".format(name)
+    feed_icon = (
+        "https://www.{}/resources/dist/favicons/android-chrome-192x192.png"
     ).format(name)
     _max_articles = 10
     _num_articles = 0

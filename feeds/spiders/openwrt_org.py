@@ -14,11 +14,11 @@ class OpenwrtOrgSpider(FeedsCrawlSpider):
         Rule(LinkExtractor(allow=("releases/(.*)/start",)), callback="parse_release"),
     )
 
-    _title = ("New OpenWRT Release Builds",)
-    _subtitle = "Newest release builds from OpenWRT."
+    feed_title = ("New OpenWRT Release Builds",)
+    feed_subtitle = "Newest release builds from OpenWRT."
     _base_url = "https://{}".format(name)
-    _icon = "https://{}/lib/tpl/openwrt/images/apple-touch-icon.png".format(name)
-    _logo = "https://{}/lib/tpl/openwrt/images/logo.png".format(name)
+    feed_icon = "https://{}/lib/tpl/openwrt/images/apple-touch-icon.png".format(name)
+    feed_logo = "https://{}/lib/tpl/openwrt/images/logo.png".format(name)
 
     def parse_release(self, response):
         for href in response.xpath(

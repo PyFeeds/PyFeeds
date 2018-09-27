@@ -8,6 +8,7 @@ from readability.readability import Document, Unparseable
 
 from feeds.loaders import FeedEntryItemLoader
 from feeds.spiders import FeedsSpider
+from feeds.utils import generate_feed_header
 
 # Readability's output is not that interesting to justify log level "INFO".
 import readability.readability
@@ -42,7 +43,7 @@ class GenericSpider(FeedsSpider):
         feed_entries = feed["entries"]
         feed = feed["feed"]
         path = urlquote_plus(response.url)
-        yield self.generate_feed_header(
+        yield generate_feed_header(
             title=feed.get("title"),
             subtitle=feed.get("subtitle"),
             link=feed["link"],

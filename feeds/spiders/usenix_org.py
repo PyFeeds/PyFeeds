@@ -5,6 +5,7 @@ import scrapy
 
 from feeds.loaders import FeedEntryItemLoader
 from feeds.spiders import FeedsSpider
+from feeds.utils import generate_feed_header
 
 
 class UsenixOrgSpider(FeedsSpider):
@@ -24,7 +25,7 @@ class UsenixOrgSpider(FeedsSpider):
     def parse_login_issues(self, response):
         # Only scrape the last 8 issues.
         issues = response.css(".issues .month a::attr(href)").extract()[:8]
-        yield self.generate_feed_header(
+        yield generate_feed_header(
             title=";login:",
             subtitle="The Usenix Magazine",
             link=response.url,

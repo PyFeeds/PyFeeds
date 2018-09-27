@@ -7,6 +7,7 @@ from inline_requests import inline_requests
 
 from feeds.loaders import FeedEntryItemLoader
 from feeds.spiders import FeedsXMLFeedSpider
+from feeds.utils import generate_feed_header
 
 
 class OrfAtSpider(FeedsXMLFeedSpider):
@@ -68,7 +69,7 @@ class OrfAtSpider(FeedsXMLFeedSpider):
     def feed_headers(self):
         for channel in self._channels:
             channel_url = "{}.ORF.at".format(channel)
-            yield self.generate_feed_header(
+            yield generate_feed_header(
                 title=channel_url,
                 link="https://{}".format(channel_url.lower()),
                 path=channel,

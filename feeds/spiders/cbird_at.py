@@ -11,11 +11,11 @@ class CbirdAtSpider(FeedsCrawlSpider):
     start_urls = ["https://cbird.at/hilfe/neu/", "https://cbird.at/impressum"]
     rules = (Rule(LinkExtractor(allow=("hilfe/neu/(\d+)",)), callback="parse_item"),)
 
-    _title = "Neue cbird Versionen"
-    _subtitle = "Die neuesten Versionen von cbird."
-    _link = start_urls[0]
-    _icon = "https://{}/images/bird-1.png".format(name)
-    _logo = "https://{}/images/bird-1.png".format(name)
+    feed_title = "Neue cbird Versionen"
+    feed_subtitle = "Die neuesten Versionen von cbird."
+    feed_link = start_urls[0]
+    feed_icon = "https://{}/images/bird-1.png".format(name)
+    feed_logo = "https://{}/images/bird-1.png".format(name)
 
     def parse_item(self, response):
         il = FeedEntryItemLoader(

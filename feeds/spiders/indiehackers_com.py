@@ -9,7 +9,7 @@ class IndieHackersComSpider(FeedsSpider):
     allowed_domains = [name]
     start_urls = ["https://www.indiehackers.com/interviews/page/1"]
 
-    _title = "Indie Hackers"
+    feed_title = "Indie Hackers"
 
     def parse(self, response):
         interviews = response.css(

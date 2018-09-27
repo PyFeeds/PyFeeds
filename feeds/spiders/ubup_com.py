@@ -4,16 +4,14 @@ import scrapy
 
 from feeds.loaders import FeedEntryItemLoader
 from feeds.spiders import FeedsSpider
+from feeds.utils import generate_feed_header
 
 
 class UbupComSpider(FeedsSpider):
     name = "ubup.com"
     allowed_domains = ["ubup.com"]
 
-    _title = "ubup"
-    _subtitle = "Deutschlands größter Second Hand-Onlineshop für Mode & Accessoires"
     _base_url = "https://www.{}".format(name)
-    _icon = "https://www.{}/images/favicon.ico".format(name)
     _scrape_pages = 3
 
     def start_requests(self):
@@ -54,10 +52,13 @@ class UbupComSpider(FeedsSpider):
 
         page = int(response.css(".pagination .active a::text").extract_first())
         if page == 1:
-            yield self.generate_feed_header(
+            yield generate_feed_header(
                 title=response.css("title ::text").re_first(
                     "(ubup | .*) Second Hand kaufen"
                 ),
+                subtitle="Deutschlands größter Second Hand-Onlineshop für "
+                "Mode & Accessoires",
+                icon="https://www.{}/images/favicon.ico".format(self.name),
                 link=response.url,
                 path=response.meta["path"],
             )

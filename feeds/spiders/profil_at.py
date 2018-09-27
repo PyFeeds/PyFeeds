@@ -17,8 +17,8 @@ class ProfilAtSpider(FeedsXMLFeedSpider):
     itertag = "rss:url"
     iterator = "xml"
 
-    _title = "PROFIL"
-    _subtitle = "Österreichs unabhängiges Nachrichtenmagazin"
+    feed_title = "PROFIL"
+    feed_subtitle = "Österreichs unabhängiges Nachrichtenmagazin"
 
     def start_requests(self):
         # Scrape this and last month so that the feed is not empty on the first day of a

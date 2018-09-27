@@ -2,21 +2,13 @@ import scrapy
 
 from feeds.loaders import FeedEntryItemLoader
 from feeds.spiders import FeedsXMLFeedSpider
+from feeds.utils import generate_feed_header
 
 
 class ArsTechnicaComSpider(FeedsXMLFeedSpider):
     name = "arstechnica.com"
     allowed_domains = [name]
     itertag = "item"
-
-    _icon = (
-        "https://cdn.arstechnica.net/wp-content/uploads/2016/10/"
-        + "cropped-ars-logo-512_480-32x32.png"
-    )
-    _logo = (
-        "https://cdn.arstechnica.net/wp-content/themes/ars-mobile/assets/images/"
-        + "material-ars.png"
-    )
 
     def start_requests(self):
         channels = self.settings.get("FEEDS_SPIDER_ARSTECHNICA_COM_CHANNELS")
@@ -35,10 +27,18 @@ class ArsTechnicaComSpider(FeedsXMLFeedSpider):
 
     def feed_headers(self):
         for channel in self._channels:
-            yield self.generate_feed_header(
+            yield generate_feed_header(
                 title="Ars Technica: {}".format(channel.title()),
                 link="https://{}".format(self.name),
                 path=channel,
+                icon=(
+                    "https://cdn.arstechnica.net/wp-content/uploads/2016/10/"
+                    + "cropped-ars-logo-512_480-32x32.png"
+                ),
+                logo=(
+                    "https://cdn.arstechnica.net/wp-content/themes/ars-mobile/assets/"
+                    + "images/material-ars.png"
+                ),
             )
 
     def parse_node(self, response, node):

@@ -11,10 +11,10 @@ class DieTiwagOrgSpider(FeedsXMLFeedSpider):
     allowed_domains = [name]
     start_urls = ["http://www.dietiwag.org/rss.xml.php"]
 
-    _title = "dietiwag.org"
-    _subtitle = "die andere seite der tiroler wasser kraft"
-    _link = "http://www.{}".format(name)
-    _icon = "http://www.{}/favicon.ico".format(name)
+    feed_title = "dietiwag.org"
+    feed_subtitle = "die andere seite der tiroler wasser kraft"
+    feed_link = "http://www.{}".format(name)
+    feed_icon = "http://www.{}/favicon.ico".format(name)
 
     def parse_node(self, response, node):
         il = FeedEntryItemLoader(selector=node)

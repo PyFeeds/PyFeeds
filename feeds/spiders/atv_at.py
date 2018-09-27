@@ -16,8 +16,8 @@ class AtvAtSpider(FeedsSpider):
         "CONCURRENT_REQUESTS": 1
     }
 
-    _title = "ATV.at"
-    _subtitle = "Mediathek"
+    feed_title = "ATV.at"
+    feed_subtitle = "Mediathek"
     _timerange = timedelta(days=7)
 
     def parse(self, response):

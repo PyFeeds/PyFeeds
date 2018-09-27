@@ -13,11 +13,13 @@ class GnucashOrgSpider(FeedsXMLFeedSpider):
     iterator = "xml"
     itertag = "atom:entry"
 
-    _title = "GnuCash News"
-    _subtitle = "GnuCash is personal and small-business financial-accounting software."
-    _link = "https://www.{}".format(name)
-    _icon = "https://www.{}/images/icons/gnc-icon-129x129.png".format(name)
-    _logo = "https://www.{}/externals/logo_w120.png".format(name)
+    feed_title = "GnuCash News"
+    feed_subtitle = (
+        "GnuCash is personal and small-business financial-accounting software."
+    )
+    feed_link = "https://www.{}".format(name)
+    feed_icon = "https://www.{}/images/icons/gnc-icon-129x129.png".format(name)
+    feed_logo = "https://www.{}/externals/logo_w120.png".format(name)
 
     def parse_node(self, response, node):
         # Reuse most of the existing fields

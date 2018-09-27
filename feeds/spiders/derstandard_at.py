@@ -5,6 +5,7 @@ import scrapy
 
 from feeds.loaders import FeedEntryItemLoader
 from feeds.spiders import FeedsXMLFeedSpider
+from feeds.utils import generate_feed_header
 
 
 class DerStandardAtSpider(FeedsXMLFeedSpider):
@@ -12,11 +13,6 @@ class DerStandardAtSpider(FeedsXMLFeedSpider):
     allowed_domains = [name]
     custom_settings = {"COOKIES_ENABLED": False}
 
-    _title = "derStandard.at"
-    _subtitle = "Nachrichten in Echtzeit"
-    _link = "https://{}".format(name)
-    _icon = "https://at.staticfiles.at/sites/mainweb/img/icons/dst/dst-16.ico"
-    _logo = "https://at.staticfiles.at/sites/mainweb/img/icons/dst/dst-228.png"
     _titles = {}
     # Some ressorts have articles that are regulary updated, e.g. cartoons.
     _cache_expires = {"47": timedelta(minutes=60)}
@@ -43,7 +39,15 @@ class DerStandardAtSpider(FeedsXMLFeedSpider):
 
     def feed_headers(self):
         for ressort in self._ressorts:
-            yield self.generate_feed_header(title=self._titles[ressort], path=ressort)
+            yield generate_feed_header(
+                title=self._titles[ressort],
+                subtitle="Nachrichten in Echtzeit",
+                link="https://{}".format(self.name),
+                icon="https://at.staticfiles.at/sites/mainweb/img/icons/dst/dst-16.ico",
+                logo="https://at.staticfiles.at/sites/mainweb/img/icons/dst/"
+                "dst-228.png",
+                path=ressort,
+            )
 
     def parse_node(self, response, node):
         if response.meta["ressort"] not in self._titles:

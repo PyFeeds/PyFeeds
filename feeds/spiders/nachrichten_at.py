@@ -4,17 +4,12 @@ import scrapy
 
 from feeds.loaders import FeedEntryItemLoader
 from feeds.spiders import FeedsXMLFeedSpider
+from feeds.utils import generate_feed_header
 
 
 class NachrichtenAtSpider(FeedsXMLFeedSpider):
     name = "nachrichten.at"
     allowed_domains = [name]
-
-    _title = "Oberösterreichische Nachrichten"
-    _subtitle = "OÖN"
-    _link = "https://www.{}".format(name)
-    _icon = "https://static1.{}.at/oonup/images/apple-touch-icon.png".format(name)
-    _logo = "https://www.{}/pics/webapp/touchicon_180x180.png".format(name)
 
     def start_requests(self):
         self._ressorts = self.settings.get("FEEDS_SPIDER_NACHRICHTEN_AT_RESSORTS")
@@ -46,8 +41,15 @@ class NachrichtenAtSpider(FeedsXMLFeedSpider):
 
     def feed_headers(self):
         for ressort in self._ressorts:
-            yield self.generate_feed_header(
-                title="{} {}".format(self._title, ressort.title()), path=ressort
+            yield generate_feed_header(
+                title="Oberösterreichische Nachrichten {}".format(ressort.title()),
+                path=ressort,
+                subtitle="OÖN",
+                link="https://www.{}".format(self.name),
+                icon="https://static1.{}.at/oonup/images/"
+                "apple-touch-icon.png".format(self.name),
+                logo="https://www.{}/pics/webapp/"
+                "touchicon_180x180.png".format(self.name),
             )
 
     def _after_login(self, response=None):

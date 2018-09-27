@@ -18,13 +18,15 @@ class TheOatmealComSpider(FeedsXMLFeedSpider):
     iterator = "xml"
     itertag = "def:item"
 
-    _title = "The Oatmeal"
-    _subtitle = (
+    feed_title = "The Oatmeal"
+    feed_subtitle = (
         "The oatmeal tastes better than stale skittles found under the couch cushions"
     )
     _base_url = "https://{}".format(name)
-    _icon = "https://{}/favicon.ico".format(name)
-    _logo = "http://s3.amazonaws.com/theoatmeal-img/default/header2016/logo_rainbow.png"
+    feed_icon = "https://{}/favicon.ico".format(name)
+    feed_logo = (
+        "http://s3.amazonaws.com/theoatmeal-img/default/header2016/logo_rainbow.png"
+    )
 
     def parse_node(self, response, node):
         url = node.xpath("def:link/text()").extract_first()

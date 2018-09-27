@@ -9,11 +9,11 @@ class VerbraucherrechtAtSpider(FeedsSpider):
     allowed_domains = ["verbraucherrecht.at"]
     start_urls = ["https://verbraucherrecht.at/cms/index.php?id=198"]
 
-    _title = "Verbraucherrecht"
-    _subtitle = "Neuigkeiten rund um Konsumentenschutz und Verbraucherrechte"
-    _author_name = "Verein für Konsumenteninformation"
-    _link = "https://{}".format(name)
-    _logo = "https://{}/cms/fileadmin/imag/logo.gif".format(name)
+    feed_title = "Verbraucherrecht"
+    feed_subtitle = "Neuigkeiten rund um Konsumentenschutz und Verbraucherrechte"
+    feed_author_name = "Verein für Konsumenteninformation"
+    feed_link = "https://{}".format(name)
+    feed_logo = "https://{}/cms/fileadmin/imag/logo.gif".format(name)
 
     def parse(self, response):
         # Fetch only the current news page and deliberately ignore old news.
@@ -25,7 +25,7 @@ class VerbraucherrechtAtSpider(FeedsSpider):
     def parse_item(self, response):
         il = FeedEntryItemLoader(
             response=response,
-            base_url="{}/cms/".format(self._link),
+            base_url="{}/cms/".format(self.feed_link),
             timezone="Europe/Vienna",
             remove_elems=[".news-latest-date", ".news-single-rightbox", "hr", "h7"],
             remove_elems_xpath=[

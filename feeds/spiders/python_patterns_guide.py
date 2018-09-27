@@ -9,8 +9,8 @@ class PythonPatternsGuide(FeedsSpider):
     allowed_domains = [name]
     start_urls = ["http://{}".format(name)]
 
-    _title = "Python Patterns"
-    _link = "http://{}".format(name)
+    feed_title = "Python Patterns"
+    feed_link = "http://{}".format(name)
 
     def parse(self, response):
         for path in response.css(".toctree-l1 > a::attr(href)").extract():

@@ -12,9 +12,9 @@ class AkCiandoComSpider(FeedsSpider):
         "&cat_nav=0&more_new=1&rows=100&intStartRow=1"
     ]
 
-    _title = "AK Digitale Bibliothek"
-    _subtitle = "Neue Titel in der digitalen AK Bibliothek"
-    _link = "https://{}".format(name)
+    feed_title = "AK Digitale Bibliothek"
+    feed_subtitle = "Neue Titel in der digitalen AK Bibliothek"
+    feed_link = "https://{}".format(name)
 
     def parse(self, response):
         for link in response.xpath('//p[@class="p_blr_title"]//a/@href').extract():

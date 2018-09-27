@@ -8,15 +8,13 @@ from dateutil.parser import parse as dateutil_parse
 
 from feeds.loaders import FeedEntryItemLoader
 from feeds.spiders import FeedsSpider
+from feeds.utils import generate_feed_header
 
 
 class FalterAtSpider(FeedsSpider):
     name = "falter.at"
     # Don't overwhelm the poor Wordpress with too many requests at once.
     custom_settings = {"DOWNLOAD_DELAY": 1.0}
-
-    _subtitle = "Wir holen dich da raus."
-    _link = "https://www.falter.at"
 
     def start_requests(self):
         pages = self.settings.get("FEEDS_SPIDER_FALTER_AT_PAGES")
@@ -85,7 +83,12 @@ class FalterAtSpider(FeedsSpider):
 
     def feed_headers(self):
         for path in self.pages:
-            yield self.generate_feed_header(path=path)
+            yield generate_feed_header(
+                title="falter.at",
+                subtitle="Wir holen dich da raus.",
+                link="https://www.falter.at",
+                path=path,
+            )
 
     def parse_lokalfuehrer(self, response):
         entries = json.loads(response.text)[0]["hits"]

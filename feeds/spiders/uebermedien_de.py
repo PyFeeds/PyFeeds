@@ -16,8 +16,8 @@ class UebermedienDeSpider(FeedsXMLFeedSpider):
     start_urls = ["https://uebermedien.de/feed/"]
     namespaces = [("dc", "http://purl.org/dc/elements/1.1/")]
 
-    _title = "uebermedien.de"
-    _subtitle = "Medien besser kritisieren."
+    feed_title = "uebermedien.de"
+    feed_subtitle = "Medien besser kritisieren."
     _steady_token = None
 
     def start_requests(self):

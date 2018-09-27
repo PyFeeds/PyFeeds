@@ -2,6 +2,7 @@ from collections import OrderedDict
 
 import scrapy
 
+from feeds.exceptions import DropResponse
 from feeds.loaders import FeedEntryItemLoader
 from feeds.spiders import FeedsSpider
 
@@ -41,9 +42,13 @@ class KonsumentAtSpider(FeedsSpider):
             )
 
     def _parse_article_url(self, response):
+        if not response.css("#content"):
+            raise DropResponse("Skipping {} since it is empty".format(response.url))
+
         if "Fehler" in response.css("h2 ::text").extract_first():
-            self.logger.info("Skipping {} as it returned an error".format(response.url))
-            return
+            raise DropResponse(
+                "Skipping {} since it returned an error".format(response.url)
+            )
 
         remove_elems = ['div[style="padding-top:10px;"]']
         il = FeedEntryItemLoader(
@@ -64,14 +69,14 @@ class KonsumentAtSpider(FeedsSpider):
         )
         il.add_css("title", "h1::text")
         if url:
-            yield scrapy.Request(
+            return scrapy.Request(
                 response.urljoin(url), callback=self._parse_article, meta={"il": il}
             )
         else:
             il.add_value("category", "paywalled")
             il.add_css("content_html", ".primary")
             il.add_css("content_html", 'div[style="padding-top:10px;"] > h3')
-            yield il.load_item()
+            return il.load_item()
 
     def _parse_article(self, response):
         remove_elems = ["#issue", "h1", "#slogan", "#logo", "#footer"]

@@ -116,7 +116,7 @@ class FeedsCacheStorage(FilesystemCacheStorage):
         key = hashlib.sha1(to_bytes(key)).hexdigest()
         return os.path.join(self.cachedir, spider.name, key[0:2], key)
 
-    def item_dropped(self, item, response, exception, spider):
+    def remove_response(self, response, spider):
         self.remove_cache_entry(
             self._get_request_path(spider, response.request), remove_parents=True
         )

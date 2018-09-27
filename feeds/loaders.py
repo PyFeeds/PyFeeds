@@ -174,7 +174,7 @@ def convert_footnotes(tree, loader_context):
         selector = CSSSelector(elem_sel)
         for elem in selector(tree):
             elem.tag = "small"
-            elem.text = " ({})".format(elem.text)
+            elem.text = " ({})".format(elem.text.strip())
 
     return [tree]
 

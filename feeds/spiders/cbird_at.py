@@ -26,7 +26,7 @@ class CbirdAtSpider(FeedsCrawlSpider):
         il.add_xpath("content_html", "h1/following-sibling::*")
         il.add_value("updated", response.url.rstrip("/").split("/")[-1].split("_")[0])
         il.add_value("author_name", self.name)
-        yield il.load_item()
+        return il.load_item()
 
     def parse_imprint(self, response):
         self._author_name = (

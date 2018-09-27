@@ -60,13 +60,13 @@ class Oe1OrfAtSpider(FeedsSpider):
         )
         il.add_value("category", broadcast["tags"])
         if broadcast["url"] and "no_canonical_url" not in broadcast["url"]:
-            yield scrapy.Request(
+            return scrapy.Request(
                 broadcast["url"], self._parse_show, dont_filter=True, meta={"il": il}
             )
         else:
-            yield il.load_item()
+            return il.load_item()
 
     def _parse_show(self, response):
         il = FeedEntryItemLoader(response=response, parent=response.meta["il"])
         il.add_css("category", ".asideBlock:first-child h2::text")
-        yield il.load_item()
+        return il.load_item()

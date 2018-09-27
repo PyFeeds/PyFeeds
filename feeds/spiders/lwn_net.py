@@ -113,7 +113,7 @@ class LwnNetSpider(FeedsXMLFeedSpider):
             self._subscribed = "You are currently subscribed" in text
             if not self._subscribed:
                 self.logger.warning("You are not subscribed to LWN.net")
-        yield self._start_requests()
+        return self._start_requests()
 
     def _start_requests(self):
         return scrapy.Request(
@@ -144,7 +144,7 @@ class LwnNetSpider(FeedsXMLFeedSpider):
                 "content_text", node.xpath("rss:description/text()").extract_first()
             )
             il.add_value("link", link)
-            yield il.load_item()
+            return il.load_item()
         else:
             if "LWN.net Weekly Edition for" in title:
                 meta["updated"] = updated
@@ -155,7 +155,7 @@ class LwnNetSpider(FeedsXMLFeedSpider):
             # Don't include link yet, we will use the subscriber link later.
             # So subscriber articles can be shared from the feed reader and
             # read in browser without logging in.
-            yield scrapy.Request(link, callback, meta=meta)
+            return scrapy.Request(link, callback, meta=meta)
 
     def _parse_article(self, response):
         remove_elems = [
@@ -198,7 +198,7 @@ class LwnNetSpider(FeedsXMLFeedSpider):
             il.add_value("updated", response.meta["updated"])
         if response.css(".MakeALink"):
             # Get subscriber link for paywalled content.
-            yield scrapy.FormRequest.from_response(
+            return scrapy.FormRequest.from_response(
                 response,
                 formcss=".MakeALink form",
                 callback=self._subscriber_link,
@@ -206,13 +206,13 @@ class LwnNetSpider(FeedsXMLFeedSpider):
             )
         else:
             il.add_value("link", response.url)
-            yield il.load_item()
+            return il.load_item()
 
     def _subscriber_link(self, response):
         il = response.meta["il"]
         link = response.css(".ArticleText li a::attr(href)").extract_first()
         il.add_value("link", link)
-        yield il.load_item()
+        return il.load_item()
 
     def _parse_weekly_edition(self, response):
         remove_elems = ["h1"]
@@ -261,4 +261,4 @@ class LwnNetSpider(FeedsXMLFeedSpider):
         il.add_css("title", "h1::text")
         il.add_value("content_html", text)
         il.add_value("link", response.url)
-        yield il.load_item()
+        return il.load_item()

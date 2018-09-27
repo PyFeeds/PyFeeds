@@ -65,7 +65,7 @@ class DerStandardAtSpider(FeedsXMLFeedSpider):
 
         updated = node.xpath("pubDate/text()").extract_first()
         cache_expires = self._cache_expires.get(response.meta["ressort"])
-        yield scrapy.Request(
+        return scrapy.Request(
             url,
             self._parse_article,
             meta={
@@ -132,7 +132,7 @@ class DerStandardAtSpider(FeedsXMLFeedSpider):
             url = (
                 "https://{}/userprofil/bloggingdelivery/blogeintrag?godotid={}"
             ).format(self.name, blog_id)
-            yield scrapy.Request(url, self._parse_blog_article, meta={"il": il})
+            return scrapy.Request(url, self._parse_blog_article, meta={"il": il})
         elif response.css("#feature-content"):
             cover_photo = response.css("#feature-cover-photo::attr(style)").re_first(
                 "\((.*)\)"
@@ -140,15 +140,15 @@ class DerStandardAtSpider(FeedsXMLFeedSpider):
             il.add_value("content_html", '<img src="{}">'.format(cover_photo))
             il.add_css("content_html", "#feature-cover-title h2")
             il.add_css("content_html", "#feature-content > .copytext")
-            yield il.load_item()
+            return il.load_item()
         else:
             il.add_css("content_html", "#content-aside")
             il.add_css("content_html", "#objectContent > .copytext")
             il.add_css("content_html", "#content-main > .copytext")
             il.add_css("content_html", ".slide")
-            yield il.load_item()
+            return il.load_item()
 
     def _parse_blog_article(self, response):
         il = response.meta["il"]
         il.add_value("content_html", response.text)
-        yield il.load_item()
+        return il.load_item()

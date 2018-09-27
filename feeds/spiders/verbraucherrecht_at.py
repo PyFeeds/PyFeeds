@@ -60,4 +60,4 @@ class VerbraucherrechtAtSpider(FeedsSpider):
         il.add_css("content_html", ".news-single-item h7 font strong")
         il.add_css("content_html", ".news-single-item")
 
-        yield il.load_item()
+        return il.load_item()

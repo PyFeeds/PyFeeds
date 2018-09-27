@@ -10,18 +10,12 @@ from feeds.utils import generate_feed_header
 
 class UsenixOrgSpider(FeedsSpider):
     name = "usenix.org"
+    start_urls = ["https://www.usenix.org/publications/login"]
 
     def feed_headers(self):
         return []
 
-    def start_requests(self):
-        yield scrapy.Request(
-            "https://www.usenix.org/publications/login",
-            self.parse_login_issues,
-            meta={"dont_cache": True},
-        )
-
-    def parse_login_issues(self, response):
+    def parse(self, response):
         # Only scrape the last 8 issues.
         issues = response.css(".issues .month a::attr(href)").extract()[:8]
         yield generate_feed_header(
@@ -55,7 +49,7 @@ class UsenixOrgSpider(FeedsSpider):
         il.add_value("path", "login")
         if response.css(".usenix-files-protected"):
             il.add_value("category", "paywalled")
-        yield il.load_item()
+        return il.load_item()
 
     def _date_from_title(self, issue):
         """Try to guess the publication date of an issue from the title."""

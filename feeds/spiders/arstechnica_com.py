@@ -46,7 +46,7 @@ class ArsTechnicaComSpider(FeedsXMLFeedSpider):
         il.add_value("title", node.xpath("title/text()").extract_first())
         il.add_value("updated", node.xpath("pubDate/text()").extract_first())
         il.add_value("category", node.xpath("category/text()").extract())
-        yield scrapy.Request(
+        return scrapy.Request(
             link,
             self._parse_article,
             cookies={"view": "mobile"},
@@ -65,10 +65,10 @@ class ArsTechnicaComSpider(FeedsXMLFeedSpider):
             il.add_value("path", response.meta["path"])
         il.add_css("content_html", ".article-content")
         if response.css(".next"):
-            yield scrapy.Request(
+            return scrapy.Request(
                 response.css(".numbers a::attr(href)").extract()[-1],
                 self._parse_article,
                 meta={"il": il, "path": response.meta["path"]},
             )
         else:
-            yield il.load_item()
+            return il.load_item()

@@ -64,7 +64,7 @@ class NachrichtenAtSpider(FeedsXMLFeedSpider):
 
     def parse_node(self, response, node):
         url = node.xpath("link/text()").extract_first()
-        yield scrapy.Request(
+        return scrapy.Request(
             url.replace("#ref=rss", ",PRINT"),
             self._parse_article,
             meta={"handle_httpstatus_list": [410], "ressort": response.meta["ressort"]},
@@ -94,4 +94,4 @@ class NachrichtenAtSpider(FeedsXMLFeedSpider):
         il.add_css("updated", 'meta[http-equiv="last-modified"]::attr(content)')
         il.add_css("content_html", ".druckcontent")
         il.add_value("path", response.meta["ressort"])
-        yield il.load_item()
+        return il.load_item()

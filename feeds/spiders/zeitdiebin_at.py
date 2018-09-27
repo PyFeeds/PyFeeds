@@ -28,4 +28,4 @@ class ZeitdiebinAtSpider(FeedsSpider):
         il.add_css("title", "h1.event-title::text")
         il.add_value("link", response.url)
         il.add_css("content_html", "div#content.container")
-        yield il.load_item()
+        return il.load_item()

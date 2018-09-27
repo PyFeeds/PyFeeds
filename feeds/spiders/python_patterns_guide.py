@@ -33,4 +33,4 @@ class PythonPatternsGuide(FeedsSpider):
         il.add_value("updated", updated)
         il.add_css("title", "title::text")
         il.add_css("content_html", "body > .section")
-        yield il.load_item()
+        return il.load_item()

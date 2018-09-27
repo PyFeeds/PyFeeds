@@ -17,7 +17,7 @@ class Pusl4ComSpider(FeedsSpider):
 
     def parse(self, response):
         path = json.loads(response.text)["content"][0]["url"]
-        yield scrapy.Request(
+        return scrapy.Request(
             response.urljoin(path), self._parse_shows_list, meta={"dont_cache": True}
         )
 
@@ -79,4 +79,4 @@ class Pusl4ComSpider(FeedsSpider):
             ),
         )
         il.add_css("content_html", ".player-video-description-intro::text")
-        yield il.load_item()
+        return il.load_item()

@@ -33,7 +33,7 @@ class GnucashOrgSpider(FeedsXMLFeedSpider):
         # an ID. Extract an item's id and use it to subsequently extract the
         # corresponding news text.
         url, news_id = node.xpath("atom:link/@href").extract_first().split("#")
-        yield scrapy.Request(
+        return scrapy.Request(
             url, self._parse_news, dont_filter=True, meta={"news_id": news_id, "il": il}
         )
 
@@ -46,4 +46,4 @@ class GnucashOrgSpider(FeedsXMLFeedSpider):
                 response.meta["news_id"]
             ),
         )
-        yield il.load_item()
+        return il.load_item()

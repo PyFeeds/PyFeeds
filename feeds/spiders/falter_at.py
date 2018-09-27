@@ -147,7 +147,7 @@ class FalterAtSpider(FeedsSpider):
             revisions.popitem(last=False)[1][-1], ignoretz=True
         )
         issuenr = latest_issue_date.strftime("%Y%W")
-        yield scrapy.Request(
+        return scrapy.Request(
             response.urljoin(
                 "/archiv/ajax/search?count=1000&issuenr={}".format(issuenr)
             ),
@@ -191,4 +191,4 @@ class FalterAtSpider(FeedsSpider):
         if "Lesen Sie diesen Artikel in voller Länge" in content:
             il.add_value("category", "paywalled")
         il.add_value("content_html", content)
-        yield il.load_item()
+        return il.load_item()

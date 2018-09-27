@@ -50,4 +50,4 @@ class WienerLinienAtSpider(FeedsSpider):
             base_url="https://www.{}".format(self.name),
         )
         il.add_xpath("content_html", '//div[@id="main-inner"]')
-        yield il.load_item()
+        return il.load_item()

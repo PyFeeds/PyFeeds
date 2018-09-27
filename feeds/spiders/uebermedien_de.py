@@ -37,7 +37,7 @@ class UebermedienDeSpider(FeedsXMLFeedSpider):
             yield from super().start_requests()
 
     def _steady_login(self, response):
-        yield FormRequest.from_response(
+        return FormRequest.from_response(
             response,
             formdata=OrderedDict(
                 [("user[email]", self._username), ("user[password]", self._password)]
@@ -62,7 +62,7 @@ class UebermedienDeSpider(FeedsXMLFeedSpider):
                 ("redirect_uri", "https://uebermedien.de"),
             ]
         )
-        yield scrapy.Request(
+        return scrapy.Request(
             "https://steadyhq.com/api/v1/oauth/token",
             method="POST",
             body=json.dumps(body),

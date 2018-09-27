@@ -50,4 +50,4 @@ class AtvAtSpider(FeedsSpider):
         item = il.load_item()
         # Only include videos posted in the last 7 days.
         if item["updated"] + self._timerange > datetime.now(timezone.utc):
-            yield item
+            return item

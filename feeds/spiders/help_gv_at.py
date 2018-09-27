@@ -95,4 +95,4 @@ class HelpGvAtSpider(FeedsSpider):
             "updated", response.css(".state").re_first(r"(\d{2}\.\d{2}\.\d{4})")
         )
         il.add_css("content_html", ".Content")
-        yield il.load_item()
+        return il.load_item()

@@ -18,7 +18,7 @@ class KonsumentAtSpider(FeedsSpider):
         user = self.settings.get("FEEDS_SPIDER_KONSUMENT_AT_USERNAME")
         pwd = self.settings.get("FEEDS_SPIDER_KONSUMENT_AT_PASSWORD")
         if user and pwd:
-            yield scrapy.FormRequest.from_response(
+            return scrapy.FormRequest.from_response(
                 response,
                 formcss="#login form",
                 formdata=OrderedDict([("user", user), ("pwd", pwd)]),
@@ -29,7 +29,7 @@ class KonsumentAtSpider(FeedsSpider):
             # Username, password or section not found in feeds.cfg.
             self.logger.info("Login failed: No username or password given")
             # We can still try to scrape the free articles.
-            yield from self._after_login(response)
+            return self._after_login(response)
 
     def _after_login(self, response):
         if "login_failed" in response.body_as_unicode():
@@ -87,4 +87,4 @@ class KonsumentAtSpider(FeedsSpider):
             remove_elems=remove_elems,
         )
         il.add_css("content_html", "#page")
-        yield il.load_item()
+        return il.load_item()

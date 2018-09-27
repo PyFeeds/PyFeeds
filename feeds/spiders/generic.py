@@ -86,4 +86,4 @@ class GenericSpider(FeedsSpider):
         except Unparseable:
             content = summary
         il.add_value("content_html", content)
-        yield il.load_item()
+        return il.load_item()

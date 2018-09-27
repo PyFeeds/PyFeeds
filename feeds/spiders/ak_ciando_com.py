@@ -36,5 +36,4 @@ class AkCiandoComSpider(FeedsSpider):
         il.add_xpath("content_html", '//div[@class="bookcontent"]//text()')
         il.add_xpath("content_html", '//div[@class="p_book_image"]/img')
         il.add_xpath("content_html", '//span[@style="color:red;"]/b/text()')
-
-        yield il.load_item()
+        return il.load_item()

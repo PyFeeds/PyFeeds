@@ -31,7 +31,7 @@ class TheOatmealComSpider(FeedsXMLFeedSpider):
         url = node.xpath("def:link/text()").extract_first()
         author_name = node.xpath("dc:creator/text()").extract_first()
         updated = node.xpath("dc:date/text()").extract_first()
-        yield scrapy.Request(
+        return scrapy.Request(
             url, self.parse_item, meta={"updated": updated, "author_name": author_name}
         )
 
@@ -49,4 +49,4 @@ class TheOatmealComSpider(FeedsXMLFeedSpider):
 
         # blog
         il.add_css("content_html", "#blog .center_text img")
-        yield il.load_item()
+        return il.load_item()

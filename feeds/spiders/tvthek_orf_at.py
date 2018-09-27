@@ -69,7 +69,7 @@ class TvthekOrfAtSpider(FeedsSpider):
         il.add_value(
             "category", self._categories_from_oewa_base_path(profile["oewa_base_path"])
         )
-        yield il.load_item()
+        return il.load_item()
 
     def _categories_from_oewa_base_path(self, oewa_base_path):
         """Parse ÖWA Base Path into a list of categories.

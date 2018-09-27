@@ -26,7 +26,7 @@ class AddendumOrgSpider(FeedsXMLFeedSpider):
             # Maximum number of articles reached.
             return
         self._num_articles += 1
-        yield scrapy.Request(url, self._parse_article)
+        return scrapy.Request(url, self._parse_article)
 
     def _parse_article(self, response):
         remove_elems = [
@@ -85,4 +85,4 @@ class AddendumOrgSpider(FeedsXMLFeedSpider):
         # If not yet modified:
         il.add_css("updated", 'meta[property="article:published_time"]::attr(content)')
         il.add_css("content_html", ".content")
-        yield il.load_item()
+        return il.load_item()

@@ -35,7 +35,7 @@ class BibliowebAtSpider(FeedsSpider):
         # Ignore the initial response to start.asp as it is required to get the
         # ASP cookie. Without this cookie the requests to webopac123 (!) are
         # ignored and will be redirected to the "login" page.
-        yield scrapy.Request(
+        return scrapy.Request(
             "https://www.biblioweb.at/webopac123/webopac.asp"
             "?kat=1&content=show_new&seit={}&order_by=Sachtitel".format(self._days),
             callback=self.parse_overview_page,
@@ -72,7 +72,7 @@ class BibliowebAtSpider(FeedsSpider):
             _content.append("<li>{}</li>".format(part))
         _content.append("</ul>")
         il.add_value("content_html", "".join(_content))
-        yield il.load_item()
+        return il.load_item()
 
     def _find_first_meta(self, parts):
         # Find the first entry after author | title | subtitle.

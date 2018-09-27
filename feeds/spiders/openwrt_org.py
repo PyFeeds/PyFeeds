@@ -39,7 +39,7 @@ class OpenwrtOrgSpider(FeedsCrawlSpider):
         il.add_xpath("updated", '//div[@class="docInfo"]', re="Last modified: (.*) by")
         il.add_value("content_html", "<h1>Release Notes</h1>")
         il.add_xpath("content_html", "//h1/following-sibling::*")
-        yield scrapy.Request(
+        return scrapy.Request(
             response.url.replace("notes-", "changelog-"),
             self.parse_release_changelog,
             meta={"il": il},
@@ -51,4 +51,4 @@ class OpenwrtOrgSpider(FeedsCrawlSpider):
         )
         il.add_value("content_html", "<h1>Detailed Changelog</h1>")
         il.add_xpath("content_html", "//h1/following-sibling::*")
-        yield il.load_item()
+        return il.load_item()

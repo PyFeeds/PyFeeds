@@ -26,7 +26,7 @@ class DieTiwagOrgSpider(FeedsXMLFeedSpider):
             # Use re.DOTALL since some titles have newlines in them.
             re=re.compile("(?:Artikel|Tagebuch): (.*)", re.DOTALL),
         )
-        yield scrapy.Request(url, self._parse_article, meta={"il": il})
+        return scrapy.Request(url, self._parse_article, meta={"il": il})
 
     def _parse_article(self, response):
         remove_elems = [
@@ -72,4 +72,4 @@ class DieTiwagOrgSpider(FeedsXMLFeedSpider):
             # Tagebuch
             il.add_css("content_html", ".lineall")
             il.add_value("category", "Tagebuch")
-        yield il.load_item()
+        return il.load_item()

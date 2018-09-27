@@ -66,4 +66,4 @@ class ProfilAtSpider(FeedsXMLFeedSpider):
         il.add_css("title", 'h1[itemprop="headline"]::text')
         il.add_value("updated", response.meta["updated"])
         il.add_css("content_html", "article")
-        yield il.load_item()
+        return il.load_item()

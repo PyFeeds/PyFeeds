@@ -46,6 +46,10 @@ HTTPCACHE_DIR = save_cache_path("feeds")
 HTTPCACHE_EXPIRATION_SECS = FEEDS_CONFIG_CACHE_EXPIRES * 24 * 60 * 60
 HTTPCACHE_IGNORE_HTTP_CODES = [403, 404] + list(range(500, 600))
 
+RETRY_ENABLED = True
+# equals 5 requests in total
+RETRY_TIMES = 4
+
 # Don't filter duplicates.
 # Spiders sometimes produce feeds with potentially overlapping items.
 DUPEFILTER_CLASS = "scrapy.dupefilters.BaseDupeFilter"

@@ -302,7 +302,7 @@ class BaseItemLoader(ItemLoader):
     # Defaults
     # Unescape twice to get rid of &amp;&xxx; encoding errors.
     default_input_processor = MapCompose(
-        skip_false, str.strip, html.unescape, html.unescape
+        str.strip, skip_false, html.unescape, html.unescape
     )
     default_output_processor = TakeFirst()
 

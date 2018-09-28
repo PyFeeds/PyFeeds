@@ -101,15 +101,30 @@ def cleanup_html(tree, loader_context):
                     )
                 )
 
-    for elem_sel, elem_new in loader_context.get("replace_elems", {}).items():
-        elem_new = lxml.html.fragment_fromstring(elem_new)
+    for elem_sel, elem_repl in loader_context.get("replace_elems", {}).items():
         selector = CSSSelector(elem_sel)
         for elem in selector(tree):
-            # New element could be replaced more than once but every node must be a
-            # different element.
-            elem_new_copy = deepcopy(elem_new)
-            elem_new_copy.tail = elem.tail
-            elem.getparent().replace(elem, elem_new_copy)
+            # If elem_repl is callable, call it to create a new element (or just modify
+            # the old one).
+            if callable(elem_repl):
+                elem_new = elem_repl(elem)
+            else:
+                elem_new = elem_repl
+
+            # The new element is None, just remove the old one.
+            if elem_new is None:
+                elem.drop_tree()
+            else:
+                if isinstance(elem_new, str):
+                    # The new element is a string, create a proper element out of it.
+                    elem_new = lxml.html.fragment_fromstring(elem_new)
+                else:
+                    # Create a copy of elem_new in case the element should be used as a
+                    # replacement more than once.
+                    elem_new = deepcopy(elem_new)
+                # Take care to preserve the tail of the old element.
+                elem_new.tail = elem.tail
+                elem.getparent().replace(elem, elem_new)
 
     remove_elems = []
 

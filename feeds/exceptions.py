@@ -5,4 +5,6 @@ class FeedsException(Exception):
 
 
 class DropResponse(FeedsException):
-    pass
+    def __init__(self, message, transient=False):
+        self.transient = transient
+        super().__init__(message)

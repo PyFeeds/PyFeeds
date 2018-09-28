@@ -82,6 +82,10 @@ class FeedsHttpCacheMiddleware:
         # raised from a generator.
         # See also https://github.com/scrapy/scrapy/issues/220.
         if isinstance(exception, DropResponse):
-            logger.warning(exception)
+            if exception.transient:
+                lgr = logger.info
+            else:
+                lgr = logger.warning
+            lgr(exception)
             self.storage.remove_response(response, spider)
             return []

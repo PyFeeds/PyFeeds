@@ -43,11 +43,14 @@ class KonsumentAtSpider(FeedsSpider):
 
     def _parse_article_url(self, response):
         if not response.css("#content"):
-            raise DropResponse("Skipping {} since it is empty".format(response.url))
+            raise DropResponse(
+                "Skipping {} since it is empty".format(response.url), transient=True
+            )
 
         if "Fehler" in response.css("h2 ::text").extract_first():
             raise DropResponse(
-                "Skipping {} since it returned an error".format(response.url)
+                "Skipping {} since it returned an error".format(response.url),
+                transient=True,
             )
 
         remove_elems = ['div[style="padding-top:10px;"]']

@@ -1,6 +1,5 @@
 import html
 import logging
-import os
 import re
 from copy import deepcopy
 from datetime import datetime
@@ -14,7 +13,7 @@ from dateutil.tz import gettz
 from lxml.cssselect import CSSSelector
 from lxml.html.clean import Cleaner
 from scrapy.loader import ItemLoader
-from scrapy.loader.processors import Compose, Join, MapCompose, TakeFirst
+from scrapy.loader.processors import Compose, Join, MapCompose, TakeFirst, Identity
 from w3lib.html import remove_tags
 
 from feeds.items import FeedEntryItem, FeedItem
@@ -334,7 +333,7 @@ class BaseItemLoader(ItemLoader):
     author_name_out = Join(", ")
 
     # Optional
-    path_out = Join(os.sep)
+    path_out = Identity()
 
 
 class FeedItemLoader(BaseItemLoader):

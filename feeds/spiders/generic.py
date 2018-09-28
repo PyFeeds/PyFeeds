@@ -52,7 +52,7 @@ class GenericSpider(FeedsSpider):
         yield generate_feed_header(
             title=feed.get("title"),
             subtitle=feed.get("subtitle"),
-            link=feed["link"],
+            link=feed.get("link") or response.url,
             path=response.meta["path"],
             author_name=feed.get("author_detail", {}).get("name"),
             logo=feed.get("image", {}).get("href"),

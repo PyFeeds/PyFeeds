@@ -14,7 +14,7 @@ from dateutil.tz import gettz
 from lxml.cssselect import CSSSelector
 from lxml.html.clean import Cleaner
 from scrapy.loader import ItemLoader
-from scrapy.loader.processors import Compose, Identity, Join, MapCompose, TakeFirst
+from scrapy.loader.processors import Compose, Join, MapCompose, TakeFirst
 from w3lib.html import remove_tags
 
 from feeds.items import FeedEntryItem, FeedItem
@@ -342,4 +342,4 @@ class FeedEntryItemLoader(BaseItemLoader):
     )
     content_html_out = Compose(Join(), truncate_text)
 
-    category_out = Identity()
+    category_out = set

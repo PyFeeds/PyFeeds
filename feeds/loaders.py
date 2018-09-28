@@ -22,6 +22,10 @@ from feeds.settings import get_feeds_settings
 
 logger = logging.getLogger(__name__)
 
+_lxml_cleaner = Cleaner(
+    scripts=True, javascript=True, comments=True, style=True, inline_style=True
+)
+
 
 def parse_datetime(date_time, loader_context):
     if isinstance(date_time, datetime):
@@ -84,7 +88,7 @@ def make_links_absolute(tree):
     return [tree]
 
 
-def cleanup_html(tree, loader_context):
+def pullup_elems(tree, loader_context):
     for elem_child, parent_dist in loader_context.get("pullup_elems", {}).items():
         selector = CSSSelector(elem_child)
         for elem in selector(tree):
@@ -101,6 +105,10 @@ def cleanup_html(tree, loader_context):
                     )
                 )
 
+    return [tree]
+
+
+def replace_elems(tree, loader_context):
     for elem_sel, elem_repl in loader_context.get("replace_elems", {}).items():
         selector = CSSSelector(elem_sel)
         for elem in selector(tree):
@@ -126,6 +134,10 @@ def cleanup_html(tree, loader_context):
                 elem_new.tail = elem.tail
                 elem.getparent().replace(elem, elem_new)
 
+    return [tree]
+
+
+def remove_elems(tree, loader_context):
     remove_elems = []
 
     settings = get_feeds_settings()
@@ -143,6 +155,10 @@ def cleanup_html(tree, loader_context):
         for elem in tree.xpath(elem_sel):
             elem.drop_tree()
 
+    return [tree]
+
+
+def change_attribs(tree, loader_context):
     # Change attrib names.
     for elem_sel, attribs in loader_context.get("change_attribs", {}).items():
         selector = CSSSelector(elem_sel)
@@ -154,13 +170,20 @@ def cleanup_html(tree, loader_context):
                         # If attribs[attrib] is None, attrib is removed instead of
                         # renamed.
                         elem.attrib[attribs[attrib]] = old_attrib_value
+    return [tree]
 
+
+def change_tags(tree, loader_context):
     # Change tag names.
     for elem_sel, elem_tag in loader_context.get("change_tags", {}).items():
         selector = CSSSelector(elem_sel)
         for elem in selector(tree):
             elem.tag = elem_tag
 
+    return [tree]
+
+
+def cleanup_html(tree, loader_context):
     # tree.iter() iterates over the tree including the root node.
     for elem in tree.iter():
         # Remove class and id attribute from all elements which are not needed
@@ -176,10 +199,7 @@ def cleanup_html(tree, loader_context):
 
 
 def lxml_cleaner(tree):
-    cleaner = Cleaner(
-        scripts=True, javascript=True, comments=True, style=True, inline_style=True
-    )
-    cleaner(tree)
+    _lxml_cleaner(tree)
     return [tree]
 
 
@@ -197,7 +217,7 @@ def convert_footnotes(tree, loader_context):
 def convert_iframes(tree, loader_context):
     """Convert iframes to divs with links to its src.
 
-    convert_iframes() is called after cleanup_html() so that unwanted iframes can be
+    convert_iframes() is called after remove_elems() so that unwanted iframes can be
     eliminated first.
     """
     base_url = loader_context.get("base_url", None) if loader_context else None
@@ -333,6 +353,10 @@ class FeedEntryItemLoader(BaseItemLoader):
         replace_regex,
         build_tree,
         convert_footnotes,
+        replace_elems,
+        remove_elems,
+        change_attribs,
+        change_tags,
         cleanup_html,
         convert_iframes,
         lxml_cleaner,

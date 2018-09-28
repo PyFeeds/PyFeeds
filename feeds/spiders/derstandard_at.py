@@ -78,6 +78,16 @@ class DerStandardAtSpider(FeedsXMLFeedSpider):
         )
 
     def _parse_article(self, response):
+        def _fix_img_src(elem):
+            src = elem.attrib.pop("data-zoom-src", None)
+            # data-zoom-src is only valid if it starts with //images.derstandard.at.
+            if src and src.startswith("//images.derstandard.at"):
+                elem.attrib["src"] = src
+            elem.attrib.pop("width", None)
+            elem.attrib.pop("height", None)
+            elem.attrib.pop("class", None)
+            return elem
+
         remove_elems = [
             ".credits",
             ".owner-info",
@@ -94,26 +104,20 @@ class DerStandardAtSpider(FeedsXMLFeedSpider):
             ".photo": "figure",
             ".caption": "figcaption",
         }
-        replace_regex = {
-            # Replace every special script container with its unescaped content.
-            r'<script class="js-embed-template" type="text/html">([^<]+)</script>': (
-                lambda match: html.unescape(match.group(1))
-            ),
-            # data-zoom-src is only valid if it starts with //images.derstandard.at.
-            r'<img[^>]+data-zoom-src="(//images.derstandard.at/[^"]+)"': (
-                r'<img src="\1"'
-            ),
-        }
         replace_elems = {
             ".embedded-posting": "<p><em>Hinweis: Das eingebettete Posting ist nur "
-            + "im Artikel verfügbar.</em></p>"
+            + "im Artikel verfügbar.</em></p>",
+            # Replace every special script container with its unescaped content.
+            "script.js-embed-template": lambda elem: "<div>"
+            + html.unescape(elem.text)
+            + "</div>",
+            "img": _fix_img_src,
         }
         il = FeedEntryItemLoader(
             response=response,
             base_url="https://{}".format(self.name),
             remove_elems=remove_elems,
             change_tags=change_tags,
-            replace_regex=replace_regex,
             replace_elems=replace_elems,
         )
         il.add_value("link", response.url)

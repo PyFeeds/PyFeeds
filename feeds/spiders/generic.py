@@ -30,7 +30,14 @@ class GenericSpider(FeedsSpider):
             zip(urls.split(), itertools.repeat(False)),
             zip(fulltext_urls.split(), itertools.repeat(True)),
         ):
-            yield scrapy.Request(url, meta={"dont_cache": True, "fulltext": fulltext})
+            yield scrapy.Request(
+                url,
+                meta={
+                    "dont_cache": True,
+                    "fulltext": fulltext,
+                    "path": urlquote_plus(url),
+                },
+            )
 
     def feed_headers(self):
         return []
@@ -42,12 +49,11 @@ class GenericSpider(FeedsSpider):
             return
         feed_entries = feed["entries"]
         feed = feed["feed"]
-        path = urlquote_plus(response.url)
         yield generate_feed_header(
             title=feed.get("title"),
             subtitle=feed.get("subtitle"),
             link=feed["link"],
-            path=path,
+            path=response.meta["path"],
             author_name=feed.get("author_detail", {}).get("name"),
             logo=feed.get("image", {}).get("href"),
         )
@@ -56,7 +62,7 @@ class GenericSpider(FeedsSpider):
             # Deals with protocol-relative URLs.
             link = urljoin(base_url, entry["link"])
             il = FeedEntryItemLoader(base_url=base_url)
-            il.add_value("path", path)
+            il.add_value("path", response.meta["path"])
             il.add_value("updated", entry.get("updated") or entry.get("published"))
             il.add_value("author_name", entry.get("author_detail", {}).get("name"))
             il.add_value("link", link)

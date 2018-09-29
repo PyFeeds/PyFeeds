@@ -54,12 +54,9 @@ class AddendumOrgSpider(FeedsXMLFeedSpider):
             ".icon-date",
             ".callToAction__button",
             'a[href^="http://partners.webmasterplan.com/click.asp"]',
+            ".relatedSlider",
         ]
-        change_tags = {
-            "div.heroStage__introText": "strong",
-            "figcaption": "i",
-            "figure": "div",
-        }
+        change_tags = {"div.heroStage__introText": "strong"}
         replace_regex = {
             r'<span data-src="([^"]+)"></span>.*?<span data-src="([^"]+)" '
             + r'data-min-width="1000">': r'<a href="\2"><img src="\1"></a>',

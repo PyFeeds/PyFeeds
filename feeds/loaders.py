@@ -365,4 +365,5 @@ class FeedEntryItemLoader(BaseItemLoader):
     )
     content_html_out = Compose(Join(), truncate_text)
 
-    category_out = set
+    # Use sorted to keep the output stable.
+    category_out = Compose(set, sorted)

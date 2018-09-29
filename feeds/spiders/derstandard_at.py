@@ -109,7 +109,7 @@ class DerStandardAtSpider(FeedsXMLFeedSpider):
             + "im Artikel verfügbar.</em></p>",
             # Replace every special script container with its unescaped content.
             "script.js-embed-template": lambda elem: "<div>"
-            + html.unescape(elem.text)
+            + html.unescape(elem.text or "")
             + "</div>",
             "img": _fix_img_src,
         }

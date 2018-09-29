@@ -96,6 +96,8 @@ class DerStandardAtSpider(FeedsXMLFeedSpider):
             ".sequence-number",
             ".js-embed-output",
             "#mycountrytalks-embed",
+            # Remove self-promotion for ressorts (links starting with "/r").
+            '.js-embed-output-feeds a[href^="/r"]',
         ]
         change_tags = {
             "#media-list li .description": "figcaption",
@@ -108,9 +110,11 @@ class DerStandardAtSpider(FeedsXMLFeedSpider):
             ".embedded-posting": "<p><em>Hinweis: Das eingebettete Posting ist nur "
             + "im Artikel verfügbar.</em></p>",
             # Replace every special script container with its unescaped content.
-            "script.js-embed-template": lambda elem: "<div>"
-            + html.unescape(elem.text or "")
-            + "</div>",
+            "script.js-embed-template": lambda elem: (
+                '<div class="js-embed-output-feeds">'
+                + html.unescape(elem.text or "")
+                + "</div>"
+            ),
             "img": _fix_img_src,
         }
         il = FeedEntryItemLoader(

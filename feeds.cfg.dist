@@ -149,3 +149,14 @@ useragent = feeds (+https://github.com/nblock/feeds)
 #[diepresse.com]
 #sections =
 #   Meinung/Pizzicato
+
+#[kurier.at]
+#channels =
+#    /chronik/wien
+#articles =
+#    /meinung/pammesberger-2018-die-karikatur-zum-tag/309.629.015/slideshow
+#authors =
+#    niki.glattauer
+#    guido.tartarotti
+#    florian.holzer
+#    barbara.kaufmann

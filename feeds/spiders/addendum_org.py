@@ -67,6 +67,20 @@ class AddendumOrgSpider(FeedsXMLFeedSpider):
                 image.attrib["src"] = src
                 return image
 
+        def _inline_picture(elem):
+            elem.tag = "img"
+            src = elem.attrib.get("data-original")
+            data_min_width = 1000 if src else -1
+            for child in elem.getchildren():
+                if child.tag != "span":
+                    continue
+                if int(child.attrib.get("data-min-width", 0)) > data_min_width:
+                    src = child.attrib["data-src"]
+                    data_min_width = int(child.attrib.get("data-min-width", 0))
+                child.drop_tree()
+            elem.attrib["src"] = src
+            return elem
+
         audio_ids = response.css(
             '#BCaudioPlayer_eindeutig::attr("data-video-id")'
         ).extract()
@@ -112,17 +126,15 @@ class AddendumOrgSpider(FeedsXMLFeedSpider):
             ".relatedSlider",
         ]
         change_tags = {"div.heroStage__introText": "strong"}
-        replace_regex = {
-            r'<span data-src="([^"]+)"></span>.*?<span data-src="([^"]+)" '
-            + r'data-min-width="1000">': r'<a href="\2"><img src="\1"></a>'
+        replace_elems = {
+            "video": partial(_inline_video, media),
+            ".picture": _inline_picture,
         }
-        replace_elems = {"video": partial(_inline_video, media)}
         il = FeedEntryItemLoader(
             response=response,
             base_url=response.url,
             remove_elems=remove_elems,
             change_tags=change_tags,
-            replace_regex=replace_regex,
             replace_elems=replace_elems,
         )
         il.add_value("link", response.url)

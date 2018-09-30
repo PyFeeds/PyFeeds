@@ -6,10 +6,9 @@ from feeds.spiders import FeedsSpider
 
 class IndieHackersComSpider(FeedsSpider):
     name = "indiehackers.com"
-    allowed_domains = [name]
     start_urls = ["https://www.indiehackers.com/interviews/page/1"]
 
-    _title = "Indie Hackers"
+    feed_title = "Indie Hackers"
 
     def parse(self, response):
         interviews = response.css(
@@ -50,4 +49,4 @@ class IndieHackersComSpider(FeedsSpider):
         il.add_css("author_name", "header .user-link__name::text")
         il.add_css("content_html", ".interview-body")
         il.add_value("updated", response.meta["updated"])
-        yield il.load_item()
+        return il.load_item()

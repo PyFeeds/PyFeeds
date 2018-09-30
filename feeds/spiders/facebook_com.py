@@ -6,11 +6,11 @@ from scrapy import Request
 
 from feeds.loaders import FeedEntryItemLoader
 from feeds.spiders import FeedsSpider
+from feeds.utils import generate_feed_header
 
 
 class FacebookComSpider(FeedsSpider):
     name = "facebook.com"
-    allowed_domains = ["facebook.com"]
 
     def feed_headers(self):
         return []
@@ -60,7 +60,7 @@ class FacebookComSpider(FeedsSpider):
 
     def parse(self, response):
         page = json.loads(response.text)
-        yield self.generate_feed_header(
+        yield generate_feed_header(
             title=page["name"], link=page["link"], path=response.meta["page_id"]
         )
         for entry in page["posts"]["data"]:

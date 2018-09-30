@@ -5,26 +5,20 @@ import scrapy
 
 from feeds.loaders import FeedEntryItemLoader
 from feeds.spiders import FeedsSpider
+from feeds.utils import generate_feed_header
 
 
 class UsenixOrgSpider(FeedsSpider):
     name = "usenix.org"
-    allowed_domains = ["usenix.org"]
+    start_urls = ["https://www.usenix.org/publications/login"]
 
     def feed_headers(self):
         return []
 
-    def start_requests(self):
-        yield scrapy.Request(
-            "https://www.usenix.org/publications/login",
-            self.parse_login_issues,
-            meta={"dont_cache": True},
-        )
-
-    def parse_login_issues(self, response):
+    def parse(self, response):
         # Only scrape the last 8 issues.
         issues = response.css(".issues .month a::attr(href)").extract()[:8]
-        yield self.generate_feed_header(
+        yield generate_feed_header(
             title=";login:",
             subtitle="The Usenix Magazine",
             link=response.url,
@@ -46,7 +40,6 @@ class UsenixOrgSpider(FeedsSpider):
             response=response,
             base_url="https://www.{}".format(self.name),
             remove_elems=remove_elems,
-            dayfirst=False,
         )
         il.add_value("link", response.url)
         title = response.css("h1::text").extract_first().strip()
@@ -56,7 +49,7 @@ class UsenixOrgSpider(FeedsSpider):
         il.add_value("path", "login")
         if response.css(".usenix-files-protected"):
             il.add_value("category", "paywalled")
-        yield il.load_item()
+        return il.load_item()
 
     def _date_from_title(self, issue):
         """Try to guess the publication date of an issue from the title."""

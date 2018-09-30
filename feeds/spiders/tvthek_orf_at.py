@@ -10,14 +10,12 @@ from feeds.spiders import FeedsSpider
 
 class TvthekOrfAtSpider(FeedsSpider):
     name = "tvthek.orf.at"
-    allowed_domains = ["api-tvthek.orf.at"]
     http_user = "ps_android_v3"
     http_pass = "6a63d4da29c721d4a986fdd31edc9e41"
 
-    _title = "TVthek.ORF.at"
-    _subtitle = "ORF TVTHEK"
-    _link = "https://tvthek.orf.at"
-    _timezone = "Europe/Vienna"
+    feed_title = "TVthek.ORF.at"
+    feed_subtitle = "ORF TVTHEK"
+    feed_link = "https://tvthek.orf.at"
 
     def start_requests(self):
         # We only parse today and yesterday because at the end of the day this
@@ -26,7 +24,7 @@ class TvthekOrfAtSpider(FeedsSpider):
         # It's not enough to parse only today because we might miss shows that
         # aired just before midnight but were streamed after midnight
         # (see also https://github.com/nblock/feeds/issues/27)
-        today = datetime.now(gettz(self._timezone))
+        today = datetime.now(gettz("Europe/Vienna"))
         for day in [today, today - timedelta(days=1)]:
             yield Request(
                 "https://api-tvthek.orf.at/api/v3/schedule/{}?limit=1000".format(
@@ -44,9 +42,7 @@ class TvthekOrfAtSpider(FeedsSpider):
             )
 
         for item in json_response["_embedded"]["items"]:
-            il = FeedEntryItemLoader(
-                response=response, timezone=self._timezone, dayfirst=False
-            )
+            il = FeedEntryItemLoader(response=response)
             il.add_value("title", item["title"])
             il.add_value(
                 "content_html",
@@ -73,7 +69,7 @@ class TvthekOrfAtSpider(FeedsSpider):
         il.add_value(
             "category", self._categories_from_oewa_base_path(profile["oewa_base_path"])
         )
-        yield il.load_item()
+        return il.load_item()
 
     def _categories_from_oewa_base_path(self, oewa_base_path):
         """Parse ÖWA Base Path into a list of categories.

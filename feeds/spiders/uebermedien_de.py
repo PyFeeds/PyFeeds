@@ -12,12 +12,11 @@ from feeds.spiders import FeedsXMLFeedSpider
 
 class UebermedienDeSpider(FeedsXMLFeedSpider):
     name = "uebermedien.de"
-    allowed_domains = ["uebermedien.de", "steadyhq.com"]
     start_urls = ["https://uebermedien.de/feed/"]
     namespaces = [("dc", "http://purl.org/dc/elements/1.1/")]
 
-    _title = "uebermedien.de"
-    _subtitle = "Medien besser kritisieren."
+    feed_title = "uebermedien.de"
+    feed_subtitle = "Medien besser kritisieren."
     _steady_token = None
 
     def start_requests(self):
@@ -38,7 +37,7 @@ class UebermedienDeSpider(FeedsXMLFeedSpider):
             yield from super().start_requests()
 
     def _steady_login(self, response):
-        yield FormRequest.from_response(
+        return FormRequest.from_response(
             response,
             formdata=OrderedDict(
                 [("user[email]", self._username), ("user[password]", self._password)]
@@ -63,7 +62,7 @@ class UebermedienDeSpider(FeedsXMLFeedSpider):
                 ("redirect_uri", "https://uebermedien.de"),
             ]
         )
-        yield scrapy.Request(
+        return scrapy.Request(
             "https://steadyhq.com/api/v1/oauth/token",
             method="POST",
             body=json.dumps(body),

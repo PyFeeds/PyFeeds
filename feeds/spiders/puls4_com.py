@@ -9,17 +9,15 @@ from feeds.spiders import FeedsSpider
 
 class Pusl4ComSpider(FeedsSpider):
     name = "puls4.com"
-    allowed_domains = ["puls4.com"]
     start_urls = ["https://www.puls4.com/api/json-fe/page/sendungen"]
 
-    _timezone = "Europe/Vienna"
-    _icon = (
+    feed_icon = (
         "https://www.puls4.com/bundles/wundermanpuls4/images/" + "favicon/favicon.png"
     )
 
     def parse(self, response):
         path = json.loads(response.text)["content"][0]["url"]
-        yield scrapy.Request(
+        return scrapy.Request(
             response.urljoin(path), self._parse_shows_list, meta={"dont_cache": True}
         )
 
@@ -56,7 +54,7 @@ class Pusl4ComSpider(FeedsSpider):
         il = FeedEntryItemLoader(
             response=response,
             base_url="https://{}".format(self.name),
-            timezone=self._timezone,
+            timezone="Europe/Vienna",
             dayfirst=True,
         )
         il.add_value("link", response.url)
@@ -81,4 +79,4 @@ class Pusl4ComSpider(FeedsSpider):
             ),
         )
         il.add_css("content_html", ".player-video-description-intro::text")
-        yield il.load_item()
+        return il.load_item()

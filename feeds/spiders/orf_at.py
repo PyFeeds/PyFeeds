@@ -7,11 +7,11 @@ from inline_requests import inline_requests
 
 from feeds.loaders import FeedEntryItemLoader
 from feeds.spiders import FeedsXMLFeedSpider
+from feeds.utils import generate_feed_header
 
 
 class OrfAtSpider(FeedsXMLFeedSpider):
     name = "orf.at"
-    allowed_domains = ["orf.at"]
     namespaces = [
         ("dc", "http://purl.org/dc/elements/1.1/"),
         ("orfon", "http://rss.orf.at/1.0/"),
@@ -23,8 +23,6 @@ class OrfAtSpider(FeedsXMLFeedSpider):
     # Use XML iterator instead of regex magic which would fail due to the
     # introduced rss namespace prefix.
     iterator = "xml"
-    # Don't filter duplicates. This would impose a race condition.
-    custom_settings = {"DUPEFILTER_CLASS": "scrapy.dupefilters.BaseDupeFilter"}
 
     def start_requests(self):
         channels = self.settings.get("FEEDS_SPIDER_ORF_AT_CHANNELS")
@@ -70,7 +68,7 @@ class OrfAtSpider(FeedsXMLFeedSpider):
     def feed_headers(self):
         for channel in self._channels:
             channel_url = "{}.ORF.at".format(channel)
-            yield self.generate_feed_header(
+            yield generate_feed_header(
                 title=channel_url,
                 link="https://{}".format(channel_url.lower()),
                 path=channel,

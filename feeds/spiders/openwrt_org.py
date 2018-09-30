@@ -14,12 +14,11 @@ class OpenwrtOrgSpider(FeedsCrawlSpider):
         Rule(LinkExtractor(allow=("releases/(.*)/start",)), callback="parse_release"),
     )
 
-    _title = ("New OpenWRT Release Builds",)
-    _subtitle = "Newest release builds from OpenWRT."
-    _timezone = "Europe/Berlin"
+    feed_title = ("New OpenWRT Release Builds",)
+    feed_subtitle = "Newest release builds from OpenWRT."
     _base_url = "https://{}".format(name)
-    _icon = "https://{}/lib/tpl/openwrt/images/apple-touch-icon.png".format(name)
-    _logo = "https://{}/lib/tpl/openwrt/images/logo.png".format(name)
+    feed_icon = "https://{}/lib/tpl/openwrt/images/apple-touch-icon.png".format(name)
+    feed_logo = "https://{}/lib/tpl/openwrt/images/logo.png".format(name)
 
     def parse_release(self, response):
         for href in response.xpath(
@@ -33,14 +32,14 @@ class OpenwrtOrgSpider(FeedsCrawlSpider):
 
     def parse_release_notes(self, response):
         il = FeedEntryItemLoader(
-            response=response, timezone=self._timezone, base_url=self._base_url
+            response=response, timezone="Europe/Berlin", base_url=self._base_url
         )
         il.add_xpath("title", "//h1/text()")
         il.add_value("link", response.url)
         il.add_xpath("updated", '//div[@class="docInfo"]', re="Last modified: (.*) by")
         il.add_value("content_html", "<h1>Release Notes</h1>")
         il.add_xpath("content_html", "//h1/following-sibling::*")
-        yield scrapy.Request(
+        return scrapy.Request(
             response.url.replace("notes-", "changelog-"),
             self.parse_release_changelog,
             meta={"il": il},
@@ -52,4 +51,4 @@ class OpenwrtOrgSpider(FeedsCrawlSpider):
         )
         il.add_value("content_html", "<h1>Detailed Changelog</h1>")
         il.add_xpath("content_html", "//h1/following-sibling::*")
-        yield il.load_item()
+        return il.load_item()

@@ -6,11 +6,10 @@ from feeds.spiders import FeedsSpider
 
 class PythonPatternsGuide(FeedsSpider):
     name = "python-patterns.guide"
-    allowed_domains = [name]
     start_urls = ["http://{}".format(name)]
 
-    _title = "Python Patterns"
-    _link = "http://{}".format(name)
+    feed_title = "Python Patterns"
+    feed_link = "http://{}".format(name)
 
     def parse(self, response):
         for path in response.css(".toctree-l1 > a::attr(href)").extract():
@@ -34,4 +33,4 @@ class PythonPatternsGuide(FeedsSpider):
         il.add_value("updated", updated)
         il.add_css("title", "title::text")
         il.add_css("content_html", "body > .section")
-        yield il.load_item()
+        return il.load_item()

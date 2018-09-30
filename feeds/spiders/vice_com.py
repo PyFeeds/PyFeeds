@@ -5,25 +5,25 @@ import scrapy
 
 from feeds.loaders import FeedEntryItemLoader
 from feeds.spiders import FeedsSpider
+from feeds.utils import generate_feed_header
 
 
 class ViceComSpider(FeedsSpider):
     name = "vice.com"
-    allowed_domains = ["vice.com"]
-
-    _title = "VICE"
-    _link = "https://www.{}".format(name)
-    _logo = "https://www.{}/favicons/apple-touch-icon-60x60.png".format(name)
-    _icon = _logo
-    _timezone = "Europe/Vienna"
 
     def feed_headers(self):
         if not self._locales:
             return []
 
         for locale in self._locales:
-            yield self.generate_feed_header(
-                title="{} {}".format(self._title, locale.title()), path=locale
+            yield generate_feed_header(
+                title="VICE {}".format(locale.title()),
+                path=locale,
+                link="https://www.{}".format(self.name),
+                logo="https://www.{}/favicons/"
+                "apple-touch-icon-60x60.png".format(self.name),
+                icon="https://www.{}/favicons/"
+                "apple-touch-icon-60x60.png".format(self.name),
             )
 
     def start_requests(self):
@@ -49,7 +49,9 @@ class ViceComSpider(FeedsSpider):
             "p i:last-of-type:contains('Facebook'):contains('Twitter')",
         ]
         for article in articles:
-            il = FeedEntryItemLoader(timezone=self._timezone, remove_elems=remove_elems)
+            il = FeedEntryItemLoader(
+                timezone="Europe/Vienna", remove_elems=remove_elems
+            )
             il.add_value("title", article["title"])
             il.add_value("link", article["url"])
             if "thumbnail_url_1_1" in article:

@@ -2,24 +2,23 @@ from collections import OrderedDict
 
 import scrapy
 
+from feeds.exceptions import DropResponse
 from feeds.loaders import FeedEntryItemLoader
 from feeds.spiders import FeedsSpider
 
 
 class KonsumentAtSpider(FeedsSpider):
     name = "konsument.at"
-    allowed_domains = ["konsument.at"]
     start_urls = ["https://www.konsument.at/page/das-aktuelle-heft"]
 
-    _title = "KONSUMENT.AT"
-    _subtitle = "Objektiv, unbestechlich, keine Werbung"
-    _timezone = "Europe/Vienna"
+    feed_title = "KONSUMENT.AT"
+    feed_subtitle = "Objektiv, unbestechlich, keine Werbung"
 
     def parse(self, response):
         user = self.settings.get("FEEDS_SPIDER_KONSUMENT_AT_USERNAME")
         pwd = self.settings.get("FEEDS_SPIDER_KONSUMENT_AT_PASSWORD")
         if user and pwd:
-            yield scrapy.FormRequest.from_response(
+            return scrapy.FormRequest.from_response(
                 response,
                 formcss="#login form",
                 formdata=OrderedDict([("user", user), ("pwd", pwd)]),
@@ -30,7 +29,7 @@ class KonsumentAtSpider(FeedsSpider):
             # Username, password or section not found in feeds.cfg.
             self.logger.info("Login failed: No username or password given")
             # We can still try to scrape the free articles.
-            yield from self._after_login(response)
+            return self._after_login(response)
 
     def _after_login(self, response):
         if "login_failed" in response.body_as_unicode():
@@ -43,14 +42,21 @@ class KonsumentAtSpider(FeedsSpider):
             )
 
     def _parse_article_url(self, response):
+        if not response.css("#content"):
+            raise DropResponse(
+                "Skipping {} since it is empty".format(response.url), transient=True
+            )
+
         if "Fehler" in response.css("h2 ::text").extract_first():
-            self.logger.info("Skipping {} as it returned an error".format(response.url))
-            return
+            raise DropResponse(
+                "Skipping {} since it returned an error".format(response.url),
+                transient=True,
+            )
 
         remove_elems = ['div[style="padding-top:10px;"]']
         il = FeedEntryItemLoader(
             response=response,
-            timezone=self._timezone,
+            timezone="Europe/Vienna",
             base_url="https://{}".format(self.name),
             dayfirst=True,
             remove_elems=remove_elems,
@@ -66,14 +72,14 @@ class KonsumentAtSpider(FeedsSpider):
         )
         il.add_css("title", "h1::text")
         if url:
-            yield scrapy.Request(
+            return scrapy.Request(
                 response.urljoin(url), callback=self._parse_article, meta={"il": il}
             )
         else:
             il.add_value("category", "paywalled")
             il.add_css("content_html", ".primary")
             il.add_css("content_html", 'div[style="padding-top:10px;"] > h3')
-            yield il.load_item()
+            return il.load_item()
 
     def _parse_article(self, response):
         remove_elems = ["#issue", "h1", "#slogan", "#logo", "#footer"]
@@ -84,4 +90,4 @@ class KonsumentAtSpider(FeedsSpider):
             remove_elems=remove_elems,
         )
         il.add_css("content_html", "#page")
-        yield il.load_item()
+        return il.load_item()

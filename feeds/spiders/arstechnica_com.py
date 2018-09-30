@@ -2,21 +2,12 @@ import scrapy
 
 from feeds.loaders import FeedEntryItemLoader
 from feeds.spiders import FeedsXMLFeedSpider
+from feeds.utils import generate_feed_header
 
 
 class ArsTechnicaComSpider(FeedsXMLFeedSpider):
     name = "arstechnica.com"
-    allowed_domains = [name]
     itertag = "item"
-
-    _icon = (
-        "https://cdn.arstechnica.net/wp-content/uploads/2016/10/"
-        + "cropped-ars-logo-512_480-32x32.png"
-    )
-    _logo = (
-        "https://cdn.arstechnica.net/wp-content/themes/ars-mobile/assets/images/"
-        + "material-ars.png"
-    )
 
     def start_requests(self):
         channels = self.settings.get("FEEDS_SPIDER_ARSTECHNICA_COM_CHANNELS")
@@ -35,10 +26,18 @@ class ArsTechnicaComSpider(FeedsXMLFeedSpider):
 
     def feed_headers(self):
         for channel in self._channels:
-            yield self.generate_feed_header(
+            yield generate_feed_header(
                 title="Ars Technica: {}".format(channel.title()),
                 link="https://{}".format(self.name),
                 path=channel,
+                icon=(
+                    "https://cdn.arstechnica.net/wp-content/uploads/2016/10/"
+                    + "cropped-ars-logo-512_480-32x32.png"
+                ),
+                logo=(
+                    "https://cdn.arstechnica.net/wp-content/themes/ars-mobile/assets/"
+                    + "images/material-ars.png"
+                ),
             )
 
     def parse_node(self, response, node):
@@ -47,7 +46,7 @@ class ArsTechnicaComSpider(FeedsXMLFeedSpider):
         il.add_value("title", node.xpath("title/text()").extract_first())
         il.add_value("updated", node.xpath("pubDate/text()").extract_first())
         il.add_value("category", node.xpath("category/text()").extract())
-        yield scrapy.Request(
+        return scrapy.Request(
             link,
             self._parse_article,
             cookies={"view": "mobile"},
@@ -66,10 +65,10 @@ class ArsTechnicaComSpider(FeedsXMLFeedSpider):
             il.add_value("path", response.meta["path"])
         il.add_css("content_html", ".article-content")
         if response.css(".next"):
-            yield scrapy.Request(
+            return scrapy.Request(
                 response.css(".numbers a::attr(href)").extract()[-1],
                 self._parse_article,
                 meta={"il": il, "path": response.meta["path"]},
             )
         else:
-            yield il.load_item()
+            return il.load_item()

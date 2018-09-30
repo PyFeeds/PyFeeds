@@ -6,18 +6,19 @@ from feeds.spiders import FeedsXMLFeedSpider
 
 class GnucashOrgSpider(FeedsXMLFeedSpider):
     name = "gnucash.org"
-    allowed_domains = [name]
     start_urls = ["https://www.{}/atom.php".format(name)]
 
     namespaces = [("atom", "http://www.w3.org/2005/Atom")]
     iterator = "xml"
     itertag = "atom:entry"
 
-    _title = "GnuCash News"
-    _subtitle = "GnuCash is personal and small-business financial-accounting software."
-    _link = "https://www.{}".format(name)
-    _icon = "https://www.{}/images/icons/gnc-icon-129x129.png".format(name)
-    _logo = "https://www.{}/externals/logo_w120.png".format(name)
+    feed_title = "GnuCash News"
+    feed_subtitle = (
+        "GnuCash is personal and small-business financial-accounting software."
+    )
+    feed_link = "https://www.{}".format(name)
+    feed_icon = "https://www.{}/images/icons/gnc-icon-129x129.png".format(name)
+    feed_logo = "https://www.{}/externals/logo_w120.png".format(name)
 
     def parse_node(self, response, node):
         # Reuse most of the existing fields
@@ -32,7 +33,7 @@ class GnucashOrgSpider(FeedsXMLFeedSpider):
         # an ID. Extract an item's id and use it to subsequently extract the
         # corresponding news text.
         url, news_id = node.xpath("atom:link/@href").extract_first().split("#")
-        yield scrapy.Request(
+        return scrapy.Request(
             url, self._parse_news, dont_filter=True, meta={"news_id": news_id, "il": il}
         )
 
@@ -45,4 +46,4 @@ class GnucashOrgSpider(FeedsXMLFeedSpider):
                 response.meta["news_id"]
             ),
         )
-        yield il.load_item()
+        return il.load_item()

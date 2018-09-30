@@ -9,16 +9,14 @@ from feeds.spiders import FeedsSpider
 
 class AtvAtSpider(FeedsSpider):
     name = "atv.at"
-    allowed_domains = ["atv.at"]
     start_urls = ["https://atv.at/mediathek/neue-folgen/"]
     custom_settings = {
         # The site is really shitty, don't overwhelm it with more requests.
         "CONCURRENT_REQUESTS": 1
     }
 
-    _title = "ATV.at"
-    _subtitle = "Mediathek"
-    _timezone = "Europe/Vienna"
+    feed_title = "ATV.at"
+    feed_subtitle = "Mediathek"
     _timerange = timedelta(days=7)
 
     def parse(self, response):
@@ -42,7 +40,7 @@ class AtvAtSpider(FeedsSpider):
         il = FeedEntryItemLoader(
             response=response,
             base_url="https://{}".format(self.name),
-            timezone=self._timezone,
+            timezone="Europe/Vienna",
             dayfirst=True,
         )
         il.add_value("link", data["clipurl"])
@@ -52,4 +50,4 @@ class AtvAtSpider(FeedsSpider):
         item = il.load_item()
         # Only include videos posted in the last 7 days.
         if item["updated"] + self._timerange > datetime.now(timezone.utc):
-            yield item
+            return item

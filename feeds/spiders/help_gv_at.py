@@ -6,7 +6,6 @@ from feeds.spiders import FeedsSpider
 
 class HelpGvAtSpider(FeedsSpider):
     name = "help.gv.at"
-    allowed_domains = [name]
     start_urls = ["https://www.{}/Portal.Node/hlpd/public".format(name)]
     custom_settings = {
         # The redirect logic by help.gv.at relies on state saved for a session
@@ -14,14 +13,13 @@ class HelpGvAtSpider(FeedsSpider):
         "CONCURRENT_REQUESTS": 1
     }
 
-    _title = "HELP.gv.at"
-    _subtitle = "Ihr Wegweiser durch die Behörden und Ämter in Österreich"
-    _link = "https://www.{}".format(name)
-    _icon = "https://www.{}/HLPD_Static/img/favicon.ico".format(name)
-    _logo = "https://www.{}/HLPD_Static/img/" "120924_Header_helpgv_links.jpg".format(
+    feed_title = "HELP.gv.at"
+    feed_subtitle = "Ihr Wegweiser durch die Behörden und Ämter in Österreich"
+    feed_link = "https://www.{}".format(name)
+    feed_icon = "https://www.{}/HLPD_Static/img/favicon.ico".format(name)
+    feed_logo = "https://www.{}/HLPD_Static/img/120924_Header_helpgv_links.jpg".format(
         name
     )
-    _timezone = "Europe/Vienna"
 
     def parse(self, response):
         paths = ["171/Seite.1710000.html", "194/Seite.1940000.html"]
@@ -80,7 +78,7 @@ class HelpGvAtSpider(FeedsSpider):
         change_tags = {"abbr": "span"}
         il = FeedEntryItemLoader(
             response=response,
-            timezone=self._timezone,
+            timezone="Europe/Vienna",
             base_url="https://www.{}".format(self.name),
             remove_elems=remove_elems,
             remove_elems_xpath=remove_elems_xpath,
@@ -97,4 +95,4 @@ class HelpGvAtSpider(FeedsSpider):
             "updated", response.css(".state").re_first(r"(\d{2}\.\d{2}\.\d{4})")
         )
         il.add_css("content_html", ".Content")
-        yield il.load_item()
+        return il.load_item()

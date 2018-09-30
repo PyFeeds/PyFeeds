@@ -145,3 +145,7 @@ useragent = feeds (+https://github.com/nblock/feeds)
 #[ubup.com]
 #links =
 #   /katalog?sortiertnach=neueste
+
+#[diepresse.com]
+#sections =
+#   Meinung/Pizzicato

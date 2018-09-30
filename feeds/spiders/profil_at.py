@@ -9,7 +9,6 @@ from feeds.spiders import FeedsXMLFeedSpider
 
 class ProfilAtSpider(FeedsXMLFeedSpider):
     name = "profil.at"
-    allowed_domains = ["profil.at"]
     namespaces = [
         ("i", "http://www.google.com/schemas/sitemap-image/1.1"),
         ("rss", "http://www.sitemaps.org/schemas/sitemap/0.9"),
@@ -17,14 +16,13 @@ class ProfilAtSpider(FeedsXMLFeedSpider):
     itertag = "rss:url"
     iterator = "xml"
 
-    _title = "PROFIL"
-    _subtitle = "Österreichs unabhängiges Nachrichtenmagazin"
-    _timezone = "Europe/Vienna"
+    feed_title = "PROFIL"
+    feed_subtitle = "Österreichs unabhängiges Nachrichtenmagazin"
 
     def start_requests(self):
         # Scrape this and last month so that the feed is not empty on the first day of a
         # new month.
-        this_month = datetime.now(gettz(self._timezone)).date().replace(day=1)
+        this_month = datetime.now(gettz("Europe/Vienna")).date().replace(day=1)
         last_month = (this_month - timedelta(days=1)).replace(day=1)
         for month in [this_month, last_month]:
             yield scrapy.Request(
@@ -57,7 +55,6 @@ class ProfilAtSpider(FeedsXMLFeedSpider):
         ]
         il = FeedEntryItemLoader(
             response=response,
-            timezone=self._timezone,
             base_url="https://{}".format(self.name),
             remove_elems=remove_elems,
         )
@@ -69,4 +66,4 @@ class ProfilAtSpider(FeedsXMLFeedSpider):
         il.add_css("title", 'h1[itemprop="headline"]::text')
         il.add_value("updated", response.meta["updated"])
         il.add_css("content_html", "article")
-        yield il.load_item()
+        return il.load_item()

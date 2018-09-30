@@ -20,9 +20,8 @@ Writing a spider is easy! Consider the slightly simplified spider for
 
     class IndieHackersComSpider(FeedsSpider):
         name = "indiehackers.com"
-        allowed_domains = [name]
         start_urls = ["https://www.indiehackers.com/interviews/page/1"]
-        _title = "Indie Hackers"
+        feed_title = "Indie Hackers"
 
         def parse(self, response):
             interview_links = response.css(".interview__link::attr(href)").extract()
@@ -120,6 +119,7 @@ Utilizing the sitemap
 ~~~~~~~~~~~~~~~~~~~~~
 Others provide a sitemap_ which we can parse:
 
+  * :ref:`spider_diepresse.com`
   * :ref:`spider_profil.at`
 
 Custom extraction

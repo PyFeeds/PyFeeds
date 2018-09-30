@@ -1,6 +1,5 @@
 import html
 import logging
-import os
 import re
 from copy import deepcopy
 from datetime import datetime
@@ -14,13 +13,17 @@ from dateutil.tz import gettz
 from lxml.cssselect import CSSSelector
 from lxml.html.clean import Cleaner
 from scrapy.loader import ItemLoader
-from scrapy.loader.processors import Compose, Identity, Join, MapCompose, TakeFirst
+from scrapy.loader.processors import Compose, Join, MapCompose, TakeFirst, Identity
 from w3lib.html import remove_tags
 
 from feeds.items import FeedEntryItem, FeedItem
 from feeds.settings import get_feeds_settings
 
 logger = logging.getLogger(__name__)
+
+_lxml_cleaner = Cleaner(
+    scripts=True, javascript=True, comments=True, style=True, inline_style=True
+)
 
 
 def parse_datetime(date_time, loader_context):
@@ -84,7 +87,7 @@ def make_links_absolute(tree):
     return [tree]
 
 
-def cleanup_html(tree, loader_context):
+def pullup_elems(tree, loader_context):
     for elem_child, parent_dist in loader_context.get("pullup_elems", {}).items():
         selector = CSSSelector(elem_child)
         for elem in selector(tree):
@@ -101,16 +104,39 @@ def cleanup_html(tree, loader_context):
                     )
                 )
 
-    for elem_sel, elem_new in loader_context.get("replace_elems", {}).items():
-        elem_new = lxml.html.fragment_fromstring(elem_new)
+    return [tree]
+
+
+def replace_elems(tree, loader_context):
+    for elem_sel, elem_repl in loader_context.get("replace_elems", {}).items():
         selector = CSSSelector(elem_sel)
         for elem in selector(tree):
-            # New element could be replaced more than once but every node must be a
-            # different element.
-            elem_new_copy = deepcopy(elem_new)
-            elem_new_copy.tail = elem.tail
-            elem.getparent().replace(elem, elem_new_copy)
+            # If elem_repl is callable, call it to create a new element (or just modify
+            # the old one).
+            if callable(elem_repl):
+                elem_new = elem_repl(elem)
+            else:
+                elem_new = elem_repl
 
+            # The new element is None, just remove the old one.
+            if elem_new is None:
+                elem.drop_tree()
+            else:
+                if isinstance(elem_new, str):
+                    # The new element is a string, create a proper element out of it.
+                    elem_new = lxml.html.fragment_fromstring(elem_new)
+                else:
+                    # Create a copy of elem_new in case the element should be used as a
+                    # replacement more than once.
+                    elem_new = deepcopy(elem_new)
+                # Take care to preserve the tail of the old element.
+                elem_new.tail = elem.tail
+                elem.getparent().replace(elem, elem_new)
+
+    return [tree]
+
+
+def remove_elems(tree, loader_context):
     remove_elems = []
 
     settings = get_feeds_settings()
@@ -128,6 +154,10 @@ def cleanup_html(tree, loader_context):
         for elem in tree.xpath(elem_sel):
             elem.drop_tree()
 
+    return [tree]
+
+
+def change_attribs(tree, loader_context):
     # Change attrib names.
     for elem_sel, attribs in loader_context.get("change_attribs", {}).items():
         selector = CSSSelector(elem_sel)
@@ -139,13 +169,20 @@ def cleanup_html(tree, loader_context):
                         # If attribs[attrib] is None, attrib is removed instead of
                         # renamed.
                         elem.attrib[attribs[attrib]] = old_attrib_value
+    return [tree]
 
+
+def change_tags(tree, loader_context):
     # Change tag names.
     for elem_sel, elem_tag in loader_context.get("change_tags", {}).items():
         selector = CSSSelector(elem_sel)
         for elem in selector(tree):
             elem.tag = elem_tag
 
+    return [tree]
+
+
+def cleanup_html(tree, loader_context):
     # tree.iter() iterates over the tree including the root node.
     for elem in tree.iter():
         # Remove class and id attribute from all elements which are not needed
@@ -161,10 +198,7 @@ def cleanup_html(tree, loader_context):
 
 
 def lxml_cleaner(tree):
-    cleaner = Cleaner(
-        scripts=True, javascript=True, comments=True, style=True, inline_style=True
-    )
-    cleaner(tree)
+    _lxml_cleaner(tree)
     return [tree]
 
 
@@ -174,7 +208,7 @@ def convert_footnotes(tree, loader_context):
         selector = CSSSelector(elem_sel)
         for elem in selector(tree):
             elem.tag = "small"
-            elem.text = " ({})".format(elem.text)
+            elem.text = " ({})".format(elem.text.strip())
 
     return [tree]
 
@@ -182,7 +216,7 @@ def convert_footnotes(tree, loader_context):
 def convert_iframes(tree, loader_context):
     """Convert iframes to divs with links to its src.
 
-    convert_iframes() is called after cleanup_html() so that unwanted iframes can be
+    convert_iframes() is called after remove_elems() so that unwanted iframes can be
     eliminated first.
     """
     base_url = loader_context.get("base_url", None) if loader_context else None
@@ -287,7 +321,7 @@ class BaseItemLoader(ItemLoader):
     # Defaults
     # Unescape twice to get rid of &amp;&xxx; encoding errors.
     default_input_processor = MapCompose(
-        skip_false, str.strip, html.unescape, html.unescape
+        str.strip, skip_false, html.unescape, html.unescape
     )
     default_output_processor = TakeFirst()
 
@@ -299,7 +333,7 @@ class BaseItemLoader(ItemLoader):
     author_name_out = Join(", ")
 
     # Optional
-    path_out = Join(os.sep)
+    path_out = Identity()
 
 
 class FeedItemLoader(BaseItemLoader):
@@ -318,6 +352,10 @@ class FeedEntryItemLoader(BaseItemLoader):
         replace_regex,
         build_tree,
         convert_footnotes,
+        replace_elems,
+        remove_elems,
+        change_attribs,
+        change_tags,
         cleanup_html,
         convert_iframes,
         lxml_cleaner,
@@ -327,4 +365,5 @@ class FeedEntryItemLoader(BaseItemLoader):
     )
     content_html_out = Compose(Join(), truncate_text)
 
-    category_out = Identity()
+    # Use sorted to keep the output stable.
+    category_out = Compose(set, sorted)

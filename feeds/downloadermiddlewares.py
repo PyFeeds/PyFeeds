@@ -10,4 +10,4 @@ class FeedsHttpCacheMiddleware(HttpCacheMiddleware):
         return o
 
     def item_dropped(self, item, response, exception, spider):
-        self.storage.item_dropped(item, response, exception, spider)
+        self.storage.remove_response(response, spider)

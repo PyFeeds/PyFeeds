@@ -1,5 +1,6 @@
 import logging
 import os
+from copy import deepcopy
 from urllib.parse import urljoin
 
 from lxml import etree
@@ -190,11 +191,18 @@ class AtomExporter(BaseItemExporter):
                     )
 
     def export_item(self, item):
-        path = os.path.join(self._name, item.pop("path", ""), "feed.atom")
-        if path not in self._feeds:
-            if self._output_url:
-                link_self = urljoin(self._output_url, path)
-            else:
-                link_self = None
-            self._feeds[path] = self.AtomFeed(exporter=self, link_self=link_self)
-        self._feeds[path].add_item(item)
+        for path in item.pop("path", [""]):
+            path = os.path.join(self._name, path, "feed.atom")
+            if path not in self._feeds:
+                if self._output_url:
+                    link_self = urljoin(self._output_url, path)
+                else:
+                    link_self = None
+                self._feeds[path] = self.AtomFeed(exporter=self, link_self=link_self)
+            # add_item() is destructive, so add a copy.
+            self._feeds[path].add_item(deepcopy(item))
+
+        # Pop content fields since we don't want to have them in scrapy's debug
+        # output.
+        item.pop("content_html", None)
+        item.pop("content_text", None)

@@ -8,14 +8,12 @@ from feeds.spiders import FeedsSpider
 
 class Oe1OrfAtSpider(FeedsSpider):
     name = "oe1.orf.at"
-    allowed_domains = ["audioapi.orf.at", name]
     start_urls = ["https://audioapi.orf.at/oe1/api/json/current/broadcasts"]
 
-    _title = "oe1.ORF.at"
-    _subtitle = "Ö1 Webradio"
-    _link = "https://oe1.orf.at"
-    _timezone = "Europe/Vienna"
-    _logo = "https://{}/static/img/logo_oe1.png".format(name)
+    feed_title = "oe1.ORF.at"
+    feed_subtitle = "Ö1 Webradio"
+    feed_link = "https://oe1.orf.at"
+    feed_logo = "https://{}/static/img/logo_oe1.png".format(name)
 
     def parse(self, response):
         for day in json.loads(response.text)[-2:]:
@@ -26,9 +24,7 @@ class Oe1OrfAtSpider(FeedsSpider):
 
     def _parse_broadcast(self, response):
         broadcast = json.loads(response.text)
-        il = FeedEntryItemLoader(
-            response=response, timezone=self._timezone, dayfirst=False
-        )
+        il = FeedEntryItemLoader(response=response)
         link = "https://{}/player/{}/{}".format(
             self.name, broadcast["broadcastDay"], broadcast["programKey"]
         )
@@ -64,13 +60,13 @@ class Oe1OrfAtSpider(FeedsSpider):
         )
         il.add_value("category", broadcast["tags"])
         if broadcast["url"] and "no_canonical_url" not in broadcast["url"]:
-            yield scrapy.Request(
+            return scrapy.Request(
                 broadcast["url"], self._parse_show, dont_filter=True, meta={"il": il}
             )
         else:
-            yield il.load_item()
+            return il.load_item()
 
     def _parse_show(self, response):
         il = FeedEntryItemLoader(response=response, parent=response.meta["il"])
         il.add_css("category", ".asideBlock:first-child h2::text")
-        yield il.load_item()
+        return il.load_item()

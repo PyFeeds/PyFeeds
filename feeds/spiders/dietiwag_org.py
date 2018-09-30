@@ -8,13 +8,12 @@ from feeds.spiders import FeedsXMLFeedSpider
 
 class DieTiwagOrgSpider(FeedsXMLFeedSpider):
     name = "dietiwag.org"
-    allowed_domains = [name]
     start_urls = ["http://www.dietiwag.org/rss.xml.php"]
 
-    _title = "dietiwag.org"
-    _subtitle = "die andere seite der tiroler wasser kraft"
-    _link = "http://www.{}".format(name)
-    _icon = "http://www.{}/favicon.ico".format(name)
+    feed_title = "dietiwag.org"
+    feed_subtitle = "die andere seite der tiroler wasser kraft"
+    feed_link = "http://www.{}".format(name)
+    feed_icon = "http://www.{}/favicon.ico".format(name)
 
     def parse_node(self, response, node):
         il = FeedEntryItemLoader(selector=node)
@@ -27,7 +26,7 @@ class DieTiwagOrgSpider(FeedsXMLFeedSpider):
             # Use re.DOTALL since some titles have newlines in them.
             re=re.compile("(?:Artikel|Tagebuch): (.*)", re.DOTALL),
         )
-        yield scrapy.Request(url, self._parse_article, meta={"il": il})
+        return scrapy.Request(url, self._parse_article, meta={"il": il})
 
     def _parse_article(self, response):
         remove_elems = [
@@ -73,4 +72,4 @@ class DieTiwagOrgSpider(FeedsXMLFeedSpider):
             # Tagebuch
             il.add_css("content_html", ".lineall")
             il.add_value("category", "Tagebuch")
-        yield il.load_item()
+        return il.load_item()

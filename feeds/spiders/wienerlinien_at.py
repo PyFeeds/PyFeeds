@@ -7,7 +7,6 @@ from feeds.spiders import FeedsSpider
 
 class WienerLinienAtSpider(FeedsSpider):
     name = "wienerlinien.at"
-    allowed_domains = ["wienerlinien.at"]
     custom_settings = {
         "DEFAULT_REQUEST_HEADERS": {
             "Accept": "text/html",
@@ -20,9 +19,8 @@ class WienerLinienAtSpider(FeedsSpider):
         "scrolling=true&startIndex=0&channelId=-47186&programId=74577"
     ]
 
-    _title = "Wiener Linien"
-    _subtitle = "Aktuelle Meldungen"
-    _timezone = "Europe/Vienna"
+    feed_title = "Wiener Linien"
+    feed_subtitle = "Aktuelle Meldungen"
 
     def parse(self, response):
         # Wiener Linien returns HTML with an XML content type which creates an
@@ -31,7 +29,7 @@ class WienerLinienAtSpider(FeedsSpider):
         for item in response.css(".block-news-item"):
             il = FeedEntryItemLoader(
                 response=response,
-                timezone=self._timezone,
+                timezone="Europe/Vienna",
                 ignoretz=True,
                 base_url="https://www.{}".format(self.name),
             )
@@ -52,4 +50,4 @@ class WienerLinienAtSpider(FeedsSpider):
             base_url="https://www.{}".format(self.name),
         )
         il.add_xpath("content_html", '//div[@id="main-inner"]')
-        yield il.load_item()
+        return il.load_item()

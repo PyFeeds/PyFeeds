@@ -8,7 +8,6 @@ from feeds.spiders import FeedsXMLFeedSpider
 
 class TheOatmealComSpider(FeedsXMLFeedSpider):
     name = "theoatmeal.com"
-    allowed_domains = [name]
     start_urls = ["http://theoatmeal.com/feed/rss"]
 
     namespaces = [
@@ -18,19 +17,21 @@ class TheOatmealComSpider(FeedsXMLFeedSpider):
     iterator = "xml"
     itertag = "def:item"
 
-    _title = "The Oatmeal"
-    _subtitle = (
+    feed_title = "The Oatmeal"
+    feed_subtitle = (
         "The oatmeal tastes better than stale skittles found under the couch cushions"
     )
     _base_url = "https://{}".format(name)
-    _icon = "https://{}/favicon.ico".format(name)
-    _logo = "http://s3.amazonaws.com/theoatmeal-img/default/header2016/logo_rainbow.png"
+    feed_icon = "https://{}/favicon.ico".format(name)
+    feed_logo = (
+        "http://s3.amazonaws.com/theoatmeal-img/default/header2016/logo_rainbow.png"
+    )
 
     def parse_node(self, response, node):
         url = node.xpath("def:link/text()").extract_first()
         author_name = node.xpath("dc:creator/text()").extract_first()
         updated = node.xpath("dc:date/text()").extract_first()
-        yield scrapy.Request(
+        return scrapy.Request(
             url, self.parse_item, meta={"updated": updated, "author_name": author_name}
         )
 
@@ -48,4 +49,4 @@ class TheOatmealComSpider(FeedsXMLFeedSpider):
 
         # blog
         il.add_css("content_html", "#blog .center_text img")
-        yield il.load_item()
+        return il.load_item()

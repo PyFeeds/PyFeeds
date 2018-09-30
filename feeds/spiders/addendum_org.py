@@ -42,7 +42,6 @@ class AddendumOrgSpider(FeedsXMLFeedSpider):
             ".heroStage__copyright",
             ".heroStage__downLink",
             "script",
-            "iframe",
             ".image__zoom ",
             ".image__copyrightWrapper",
             ".callToAction",

@@ -24,7 +24,8 @@ class DiePresseComSpider(FeedsXMLFeedSpider):
         else:
             self._sections = ["all"]
         yield scrapy.Request(
-            "https://diepresse.com/files/sitemaps/news/news-sitemap.xml"
+            "https://diepresse.com/files/sitemaps/news/news-sitemap.xml",
+            meta={"dont_cache": True},
         )
 
     def feed_headers(self):

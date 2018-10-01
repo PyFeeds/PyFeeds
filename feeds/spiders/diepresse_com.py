@@ -46,9 +46,15 @@ class DiePresseComSpider(FeedsXMLFeedSpider):
             node.xpath("news:news/news:keywords/text()").extract_first().split(", "),
         )
         il.add_xpath("updated", "news:news/news:publication_date/text()")
-        return scrapy.Request(url, self.parse_item, meta={"il": il})
+        return scrapy.Request(
+            url, self.parse_item, meta={"il": il, "handle_httpstatus_list": [404]}
+        )
 
     def parse_item(self, response):
+        if response.status == 404:
+            self.logger.info("Article '{}' not available anymore.".format(response.url))
+            return
+
         def _clean_caption(elem):
             if "–" in elem.text:
                 # Caption is of the format "text - credit".

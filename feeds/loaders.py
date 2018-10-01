@@ -4,7 +4,7 @@ import re
 from copy import deepcopy
 from datetime import datetime
 from textwrap import TextWrapper
-from urllib.parse import urljoin
+from urllib.parse import urljoin, quote_plus as urlquote_plus
 
 import dateparser
 import lxml
@@ -333,6 +333,7 @@ class BaseItemLoader(ItemLoader):
     author_name_out = Join(", ")
 
     # Optional
+    path_in = MapCompose(urlquote_plus)
     path_out = Identity()
 
 

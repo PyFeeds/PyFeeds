@@ -1,6 +1,6 @@
 import json
 import scrapy
-from urllib.parse import urljoin, quote_plus as urlquote_plus
+from urllib.parse import urljoin
 
 from feeds.loaders import FeedEntryItemLoader
 from feeds.spiders import FeedsSpider
@@ -17,7 +17,7 @@ class KurierAtSpider(FeedsSpider):
                 subtitle="Minutenaktuelle Nachrichten aus Österreich und der Welt. "
                 + "kurier.at - die österreichische Nachrichten-Plattform im Internet. "
                 + "24 hour news from Austria's biggest quality newspaper.",
-                path=urlquote_plus(medium),
+                path=medium,
                 link="https://www.{}".format(self.name),
                 logo="https://{}/assets/logos/logo.png".format(self.name),
             )
@@ -44,7 +44,7 @@ class KurierAtSpider(FeedsSpider):
                     self._parse_channel,
                     # The response should be stable since we only want to get the
                     # collection for the channel so we allow caching.
-                    meta={"path": urlquote_plus(channel)},
+                    meta={"path": channel},
                 )
 
         if articles:
@@ -54,7 +54,7 @@ class KurierAtSpider(FeedsSpider):
                         article
                     ),
                     self._parse_article,
-                    meta={"path": urlquote_plus(article), "dont_cache": True},
+                    meta={"path": article, "dont_cache": True},
                 )
 
         if authors:
@@ -65,7 +65,7 @@ class KurierAtSpider(FeedsSpider):
                     self._parse_author,
                     # The response should be stable since we only want to get the ID for
                     # the author so we allow caching.
-                    meta={"path": urlquote_plus(author)},
+                    meta={"path": author},
                 )
 
     def _parse_channel(self, response):

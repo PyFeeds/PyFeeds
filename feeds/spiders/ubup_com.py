@@ -1,4 +1,4 @@
-from urllib.parse import quote_plus as urlquote_plus, urljoin
+from urllib.parse import urljoin
 
 import scrapy
 
@@ -22,8 +22,7 @@ class UbupComSpider(FeedsSpider):
 
         for link in links:
             yield scrapy.Request(
-                urljoin(self._base_url, link),
-                meta={"dont_cache": True, "path": urlquote_plus(link)},
+                urljoin(self._base_url, link), meta={"dont_cache": True, "path": link}
             )
 
     def feed_headers(self):

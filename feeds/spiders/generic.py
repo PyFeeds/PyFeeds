@@ -1,6 +1,6 @@
 import io
 import itertools
-from urllib.parse import quote_plus as urlquote_plus, urlparse, urljoin
+from urllib.parse import urlparse, urljoin
 
 import feedparser
 import scrapy
@@ -31,12 +31,7 @@ class GenericSpider(FeedsSpider):
             zip(fulltext_urls.split(), itertools.repeat(True)),
         ):
             yield scrapy.Request(
-                url,
-                meta={
-                    "dont_cache": True,
-                    "fulltext": fulltext,
-                    "path": urlquote_plus(url),
-                },
+                url, meta={"dont_cache": True, "fulltext": fulltext, "path": url}
             )
 
     def feed_headers(self):

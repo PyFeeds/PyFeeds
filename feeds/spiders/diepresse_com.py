@@ -1,5 +1,4 @@
 import re
-from urllib.parse import quote_plus as urlquote_plus
 
 import scrapy
 
@@ -33,7 +32,7 @@ class DiePresseComSpider(FeedsXMLFeedSpider):
             yield generate_feed_header(
                 title="DiePresse.com/{}".format(section),
                 link="https://{}".format(self.name),
-                path=urlquote_plus(section),
+                path=section,
                 logo="http://diepresse.com/img/diepresse_250x40.png",
             )
 
@@ -94,5 +93,5 @@ class DiePresseComSpider(FeedsXMLFeedSpider):
         if "all" in self._sections:
             il.add_value("path", "all")
         if section in self._sections:
-            il.add_value("path", urlquote_plus(section))
+            il.add_value("path", section)
         return il.load_item()

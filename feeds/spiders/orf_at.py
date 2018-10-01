@@ -94,22 +94,34 @@ class OrfAtSpider(FeedsXMLFeedSpider):
         else:
             links = [node.xpath("rss:link/text()").extract_first()]
         for link in links:
-            if any(
-                link.startswith(url)
+            fixed_link = self._extract_link(link)
+            if fixed_link is None or any(
+                fixed_link.startswith(url)
                 for url in ["https://debatte.orf.at", "https://iptv.orf.at"]
             ):
-                self.logger.debug("Ignoring link to '{}'".format(link))
+                self.logger.debug(
+                    "Ignoring link to '{}' ('{}')".format(link, fixed_link)
+                )
             else:
-                # Sometimes there is a space at the end of a link ...
-                yield scrapy.Request(link.strip(), self._parse_article, meta=meta)
+                yield scrapy.Request(fixed_link, self._parse_article, meta=meta)
+
+    @staticmethod
+    def _extract_link(link):
+        """Extract a working link from a possibly broken link."""
+        if link is None:
+            return None
+        match = re.search(r"https?://(?:[^\.]+\.)?orf\.at/(?:news/)?stories/\d*", link)
+        return match.group(0) + "/" if match else None
 
     @inline_requests
     def _parse_article(self, response):
         # Heuristic for news.ORF.at to to detect teaser articles.
-        more = response.css(
-            ".story-story p > strong:contains('Mehr') + a::attr(href), "
-            + ".story-story p > a:contains('Lesen Sie mehr')::attr(href)"
-        ).extract_first()
+        more = self._extract_link(
+            response.css(
+                ".story-story p > strong:contains('Mehr') + a::attr(href), "
+                + ".story-story p > a:contains('Lesen Sie mehr')::attr(href)"
+            ).extract_first()
+        )
         if more and more != response.url:
             self.logger.debug("Detected teaser article, redirecting to {}".format(more))
             response = yield scrapy.Request(more, meta=response.meta)

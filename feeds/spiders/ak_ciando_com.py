@@ -21,7 +21,8 @@ class AkCiandoComSpider(FeedsSpider):
 
     def parse_item(self, response):
         il = FeedEntryItemLoader(
-            selector=response.xpath('//div[@id="maincontentbook"]'), base_url=self._link
+            selector=response.xpath('//div[@id="maincontentbook"]'),
+            base_url=self.feed_link,
         )
         il.add_xpath("title", '//h1[@class="p_book_title"]/text()')
         il.add_xpath("title", '//h3[@class="p_book_title_ebook"]/text()')

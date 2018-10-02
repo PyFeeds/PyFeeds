@@ -14,10 +14,10 @@ class BibliowebAtSpider(FeedsSpider):
             "FEEDS_SPIDER_BIBLIOWEB_AT_LOCATION", ""
         ).lower()
         if self._library:
-            self._path = self._library
-            self._title = "Bibliothek {}".format(self._library.title())
-            self._subtitle = "Neue Titel in der {}".format(self._title)
-            self._link = "https://www.biblioweb.at/{}/".format(self._library)
+            self.feed_path = self._library
+            self.feed_title = "Bibliothek {}".format(self._library.title())
+            self.feed_subtitle = "Neue Titel in der {}".format(self.feed_title)
+            self.feed_link = "https://www.biblioweb.at/{}/".format(self._library)
             yield scrapy.Request(
                 "https://www.biblioweb.at/{}/start.asp".format(self._library),
                 callback=self.parse,

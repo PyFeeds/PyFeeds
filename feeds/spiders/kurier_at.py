@@ -44,7 +44,7 @@ class KurierAtSpider(FeedsSpider):
                     self._parse_channel,
                     # The response should be stable since we only want to get the
                     # collection for the channel so we allow caching.
-                    meta={"path": channel},
+                    meta={"path": channel, "feed_type": "channel"},
                 )
 
         if articles:
@@ -54,7 +54,7 @@ class KurierAtSpider(FeedsSpider):
                         article
                     ),
                     self._parse_article,
-                    meta={"path": article, "dont_cache": True},
+                    meta={"path": article, "dont_cache": True, "feed_type": "article"},
                 )
 
         if authors:
@@ -65,7 +65,7 @@ class KurierAtSpider(FeedsSpider):
                     self._parse_author,
                     # The response should be stable since we only want to get the ID for
                     # the author so we allow caching.
-                    meta={"path": author},
+                    meta={"path": author, "feed_type": "author"},
                 )
 
     def _parse_channel(self, response):
@@ -77,7 +77,11 @@ class KurierAtSpider(FeedsSpider):
                         + "?start=0&limit=20"
                     ).format(block["collectionName"]),
                     self._parse_collection,
-                    meta={"path": response.meta["path"], "dont_cache": True},
+                    meta={
+                        "path": response.meta["path"],
+                        "dont_cache": True,
+                        "feed_type": response.meta["feed_type"],
+                    },
                 )
 
     def _parse_collection(self, response):
@@ -88,7 +92,10 @@ class KurierAtSpider(FeedsSpider):
                     article["url"]
                 ),
                 self._parse_article,
-                meta={"path": response.meta["path"]},
+                meta={
+                    "path": response.meta["path"],
+                    "feed_type": response.meta["feed_type"],
+                },
             )
 
     def _create_figure(self, src, caption=None):
@@ -134,7 +141,12 @@ class KurierAtSpider(FeedsSpider):
                     ),
                 )
             elif paragraph["type"] == "gallery":
-                for image in paragraph["data"]["images"][:1]:
+                # Only include 1 image (the latest) if the feed type is article.
+                # This is is a special case for comic articles where a new image is
+                # added to the article once a day and it doesn't make sense to always
+                # include all the old ones in the feed.
+                max_images = 1 if response.meta["feed_type"] == "article" else None
+                for image in paragraph["data"]["images"][:max_images]:
                     il.add_value(
                         "content_html",
                         self._create_figure(
@@ -161,7 +173,11 @@ class KurierAtSpider(FeedsSpider):
                 query
             ),
             self._parse_search,
-            meta={"path": response.meta["path"], "dont_cache": True},
+            meta={
+                "path": response.meta["path"],
+                "dont_cache": True,
+                "feed_type": response.meta["feed_type"],
+            },
         )
 
     def _parse_search(self, response):
@@ -172,5 +188,8 @@ class KurierAtSpider(FeedsSpider):
                     article["url"]
                 ),
                 self._parse_article,
-                meta={"path": response.meta["path"]},
+                meta={
+                    "path": response.meta["path"],
+                    "feed_type": response.meta["feed_type"],
+                },
             )

@@ -41,10 +41,9 @@ class DiePresseComSpider(FeedsXMLFeedSpider):
         il = FeedEntryItemLoader(selector=node)
         il.add_value("link", url)
         il.add_xpath("title", "news:news/news:title/text()")
-        il.add_value(
-            "category",
-            node.xpath("news:news/news:keywords/text()").extract_first().split(", "),
-        )
+        keywords = node.xpath("news:news/news:keywords/text()").extract_first()
+        if keywords:
+            il.add_value("category", keywords.split(", "))
         il.add_xpath("updated", "news:news/news:publication_date/text()")
         return scrapy.Request(url, self.parse_item, meta={"il": il})
 

@@ -207,8 +207,9 @@ def convert_footnotes(tree, loader_context):
     for elem_sel in loader_context.get("convert_footnotes", []):
         selector = CSSSelector(elem_sel)
         for elem in selector(tree):
-            elem.tag = "small"
-            elem.text = " ({})".format(elem.text.strip())
+            if elem.text is not None:
+                elem.tag = "small"
+                elem.text = " ({})".format(elem.text.strip())
 
     return [tree]
 

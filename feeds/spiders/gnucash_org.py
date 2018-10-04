@@ -22,7 +22,7 @@ class GnucashOrgSpider(FeedsXMLFeedSpider):
 
     def parse_node(self, response, node):
         # Reuse most of the existing fields
-        il = FeedEntryItemLoader(selector=node, base_url=self._link)
+        il = FeedEntryItemLoader(selector=node, base_url=self.feed_link)
         il.add_xpath("title", "atom:title/text()")
         il.add_xpath("link", "atom:link/@href")
         il.add_xpath("author_name", "atom:author/atom:name/text()")

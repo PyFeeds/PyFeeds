@@ -111,6 +111,7 @@ Some use a REST API which we can use to fetch the content.
 
   * :ref:`spider_facebook.com`
   * :ref:`spider_falter.at`
+  * :ref:`spider_kurier.at`
   * :ref:`spider_oe1.orf.at`
   * :ref:`spider_tvthek.orf.at`
   * :ref:`spider_vice.com`
@@ -136,6 +137,7 @@ scraping from there.
   * :ref:`spider_openwrt.org`
   * :ref:`spider_puls4.com`
   * :ref:`spider_python-patterns.guide`
+  * :ref:`spider_tuwien.ac.at`
   * :ref:`spider_ubup.com`
   * :ref:`spider_usenix.org`
   * :ref:`spider_verbraucherrecht.at`

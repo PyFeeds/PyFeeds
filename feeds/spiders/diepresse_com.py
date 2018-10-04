@@ -1,5 +1,4 @@
 import re
-from urllib.parse import quote_plus as urlquote_plus
 
 import scrapy
 
@@ -24,7 +23,8 @@ class DiePresseComSpider(FeedsXMLFeedSpider):
         else:
             self._sections = ["all"]
         yield scrapy.Request(
-            "https://diepresse.com/files/sitemaps/news/news-sitemap.xml"
+            "https://diepresse.com/files/sitemaps/news/news-sitemap.xml",
+            meta={"dont_cache": True},
         )
 
     def feed_headers(self):
@@ -32,7 +32,7 @@ class DiePresseComSpider(FeedsXMLFeedSpider):
             yield generate_feed_header(
                 title="DiePresse.com/{}".format(section),
                 link="https://{}".format(self.name),
-                path=urlquote_plus(section),
+                path=section,
                 logo="http://diepresse.com/img/diepresse_250x40.png",
             )
 
@@ -41,10 +41,9 @@ class DiePresseComSpider(FeedsXMLFeedSpider):
         il = FeedEntryItemLoader(selector=node)
         il.add_value("link", url)
         il.add_xpath("title", "news:news/news:title/text()")
-        il.add_value(
-            "category",
-            node.xpath("news:news/news:keywords/text()").extract_first().split(", "),
-        )
+        keywords = node.xpath("news:news/news:keywords/text()").extract_first()
+        if keywords:
+            il.add_value("category", keywords.split(", "))
         il.add_xpath("updated", "news:news/news:publication_date/text()")
         return scrapy.Request(url, self.parse_item, meta={"il": il})
 
@@ -93,5 +92,5 @@ class DiePresseComSpider(FeedsXMLFeedSpider):
         if "all" in self._sections:
             il.add_value("path", "all")
         if section in self._sections:
-            il.add_value("path", urlquote_plus(section))
+            il.add_value("path", section)
         return il.load_item()

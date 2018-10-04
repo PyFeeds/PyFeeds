@@ -31,6 +31,7 @@ class VerbraucherrechtAtSpider(FeedsSpider):
                 '//div[@class="news-single-item"]/b[1]',
                 '//div[@class="news-single-item"]/br[1]',
             ],
+            dayfirst=True,
         )
 
         il.add_value(

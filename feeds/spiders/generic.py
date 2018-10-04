@@ -1,8 +1,9 @@
 import io
 import itertools
-from urllib.parse import quote_plus as urlquote_plus, urlparse, urljoin
+from urllib.parse import urljoin, urlparse
 
 import feedparser
+import readability.readability
 import scrapy
 from readability.readability import Document, Unparseable
 
@@ -11,8 +12,6 @@ from feeds.spiders import FeedsSpider
 from feeds.utils import generate_feed_header
 
 # Readability's output is not that interesting to justify log level "INFO".
-import readability.readability
-
 readability.readability.log.info = readability.readability.log.debug
 
 
@@ -31,12 +30,7 @@ class GenericSpider(FeedsSpider):
             zip(fulltext_urls.split(), itertools.repeat(True)),
         ):
             yield scrapy.Request(
-                url,
-                meta={
-                    "dont_cache": True,
-                    "fulltext": fulltext,
-                    "path": urlquote_plus(url),
-                },
+                url, meta={"dont_cache": True, "fulltext": fulltext, "path": url}
             )
 
     def feed_headers(self):

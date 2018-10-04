@@ -4,6 +4,7 @@ import re
 from copy import deepcopy
 from datetime import datetime
 from textwrap import TextWrapper
+from urllib.parse import quote_plus as urlquote_plus
 from urllib.parse import urljoin
 
 import dateparser
@@ -13,7 +14,7 @@ from dateutil.tz import gettz
 from lxml.cssselect import CSSSelector
 from lxml.html.clean import Cleaner
 from scrapy.loader import ItemLoader
-from scrapy.loader.processors import Compose, Join, MapCompose, TakeFirst, Identity
+from scrapy.loader.processors import Compose, Identity, Join, MapCompose, TakeFirst
 from w3lib.html import remove_tags
 
 from feeds.items import FeedEntryItem, FeedItem
@@ -207,8 +208,9 @@ def convert_footnotes(tree, loader_context):
     for elem_sel in loader_context.get("convert_footnotes", []):
         selector = CSSSelector(elem_sel)
         for elem in selector(tree):
-            elem.tag = "small"
-            elem.text = " ({})".format(elem.text.strip())
+            if elem.text is not None:
+                elem.tag = "small"
+                elem.text = " ({})".format(elem.text.strip())
 
     return [tree]
 
@@ -333,6 +335,7 @@ class BaseItemLoader(ItemLoader):
     author_name_out = Join(", ")
 
     # Optional
+    path_in = MapCompose(urlquote_plus)
     path_out = Identity()
 
 

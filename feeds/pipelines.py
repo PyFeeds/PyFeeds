@@ -1,5 +1,5 @@
-from datetime import datetime, timezone
 import uuid
+from datetime import datetime, timezone
 
 from scrapy import signals
 from scrapy.exceptions import DropItem

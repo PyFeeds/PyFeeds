@@ -44,7 +44,7 @@ HTTPCACHE_STORAGE = "feeds.cache.FeedsCacheStorage"
 HTTPCACHE_POLICY = "feeds.cache.FeedsCachePolicy"
 HTTPCACHE_DIR = save_cache_path("feeds")
 HTTPCACHE_EXPIRATION_SECS = FEEDS_CONFIG_CACHE_EXPIRES * 24 * 60 * 60
-HTTPCACHE_IGNORE_HTTP_CODES = [403, 404] + list(range(500, 600))
+HTTPCACHE_IGNORE_HTTP_CODES = list(range(400, 600))
 
 RETRY_ENABLED = True
 # equals 5 requests in total

@@ -1,4 +1,5 @@
 import json
+from copy import deepcopy
 from functools import partial
 
 import lxml
@@ -7,20 +8,28 @@ from inline_requests import inline_requests
 
 from feeds.loaders import FeedEntryItemLoader
 from feeds.spiders import FeedsXMLFeedSpider
+from feeds.utils import generate_feed_header
 
 
 class AddendumOrgSpider(FeedsXMLFeedSpider):
     name = "addendum.org"
     start_urls = ["https://www.addendum.org/feed/rss2-addendum"]
 
-    feed_title = "Addendum"
-    feed_subtitle = "das, was fehlt"
-    feed_link = "https://www.{}".format(name)
-    feed_icon = (
-        "https://www.{}/resources/dist/favicons/android-chrome-192x192.png"
-    ).format(name)
     _max_articles = 10
     _num_articles = 0
+
+    def feed_headers(self):
+        feeds = {"": "Addendum", "podcast": "Addendum Podcast"}
+        for path, title in feeds.items():
+            yield generate_feed_header(
+                title=title,
+                path=path,
+                subtitle="das, was fehlt",
+                link="https://www.{}".format(self.name),
+                icon=(
+                    "https://www.{}/resources/dist/favicons/android-chrome-192x192.png"
+                ).format(self.name),
+            )
 
     def parse_node(self, response, node):
         url = node.xpath("link/text()").extract_first()
@@ -145,8 +154,20 @@ class AddendumOrgSpider(FeedsXMLFeedSpider):
         il.add_css("updated", 'meta[property="article:published_time"]::attr(content)')
         il.add_css("content_html", ".content")
         for medium_id, medium_url in media.items():
-            il.add_value("enclosure_iri", medium_url)
-            il.add_value(
-                "enclosure_type", "audio/mp4" if medium_id in audio_ids else "video/mp4"
-            )
-        yield il.load_item()
+            if medium_id not in audio_ids:
+                il.add_value("enclosure_iri", medium_url)
+                il.add_value("enclosure_type", "video/mp4")
+        item = il.load_item()
+        # Save a copy before yielding it.
+        item_podcast = deepcopy(item)
+        yield item
+
+        if audio_ids:
+            # Export to podcast feed.
+            il = FeedEntryItemLoader(item=item_podcast)
+            il.add_value("path", "podcast")
+            for medium_id, medium_url in media.items():
+                if medium_id in audio_ids:
+                    il.add_value("enclosure_iri", medium_url)
+                    il.add_value("enclosure_type", "audio/mp4")
+            yield il.load_item()

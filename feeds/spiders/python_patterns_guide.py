@@ -6,10 +6,10 @@ from feeds.spiders import FeedsSpider
 
 class PythonPatternsGuide(FeedsSpider):
     name = "python-patterns.guide"
-    start_urls = ["http://{}".format(name)]
+    start_urls = ["https://{}".format(name)]
 
     feed_title = "Python Patterns"
-    feed_link = "http://{}".format(name)
+    feed_link = "https://{}".format(name)
 
     def parse(self, response):
         for path in response.css(".toctree-l1 > a::attr(href)").extract():

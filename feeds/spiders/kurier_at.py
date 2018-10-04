@@ -35,38 +35,35 @@ class KurierAtSpider(FeedsSpider):
 
         self._media = channels + articles + authors
 
-        if channels:
-            for channel in channels:
-                yield scrapy.Request(
-                    "https://efs.kurier.at/api/v1/cfs/route?uri=/kurierat{}".format(
-                        channel
-                    ),
-                    self._parse_channel,
-                    # The response should be stable since we only want to get the
-                    # collection for the channel so we allow caching.
-                    meta={"path": channel, "feed_type": "channel"},
-                )
+        for channel in channels:
+            yield scrapy.Request(
+                "https://efs.kurier.at/api/v1/cfs/route?uri=/kurierat{}".format(
+                    channel
+                ),
+                self._parse_channel,
+                # The response should be stable since we only want to get the collection
+                # for the channel so we allow caching.
+                meta={"path": channel, "feed_type": "channel"},
+            )
 
-        if articles:
-            for article in articles:
-                yield scrapy.Request(
-                    "https://efs.kurier.at/api/v1/cfs/route?uri=/kurierat{}".format(
-                        article
-                    ),
-                    self._parse_article,
-                    meta={"path": article, "dont_cache": True, "feed_type": "article"},
-                )
+        for article in articles:
+            yield scrapy.Request(
+                "https://efs.kurier.at/api/v1/cfs/route?uri=/kurierat{}".format(
+                    article
+                ),
+                self._parse_article,
+                meta={"path": article, "dont_cache": True, "feed_type": "article"},
+            )
 
-        if authors:
-            for author in authors:
-                yield scrapy.Request(
-                    "https://efs.kurier.at/api/v1/cfs/route?uri=/kurierat"
-                    + "/author/{}".format(author),
-                    self._parse_author,
-                    # The response should be stable since we only want to get the ID for
-                    # the author so we allow caching.
-                    meta={"path": author, "feed_type": "author"},
-                )
+        for author in authors:
+            yield scrapy.Request(
+                "https://efs.kurier.at/api/v1/cfs/route?uri=/kurierat"
+                + "/author/{}".format(author),
+                self._parse_author,
+                # The response should be stable since we only want to get the ID for the
+                # author so we allow caching.
+                meta={"path": author, "feed_type": "author"},
+            )
 
     def _parse_channel(self, response):
         for block in json.loads(response.text)["layout"]["center"]:

@@ -7,10 +7,10 @@ from collections import defaultdict
 from datetime import datetime, timezone
 from time import time
 
-from scrapy.extensions.httpcache import FilesystemCacheStorage, DummyPolicy
+import scrapy
+from scrapy.extensions.httpcache import DummyPolicy, FilesystemCacheStorage
 from scrapy.utils.python import to_bytes
 from scrapy.utils.request import request_fingerprint
-import scrapy
 
 logger = logging.getLogger(__name__)
 

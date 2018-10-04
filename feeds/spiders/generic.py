@@ -1,8 +1,9 @@
 import io
 import itertools
-from urllib.parse import urlparse, urljoin
+from urllib.parse import urljoin, urlparse
 
 import feedparser
+import readability.readability
 import scrapy
 from readability.readability import Document, Unparseable
 
@@ -11,8 +12,6 @@ from feeds.spiders import FeedsSpider
 from feeds.utils import generate_feed_header
 
 # Readability's output is not that interesting to justify log level "INFO".
-import readability.readability
-
 readability.readability.log.info = readability.readability.log.debug
 
 

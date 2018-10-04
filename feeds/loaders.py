@@ -4,7 +4,8 @@ import re
 from copy import deepcopy
 from datetime import datetime
 from textwrap import TextWrapper
-from urllib.parse import urljoin, quote_plus as urlquote_plus
+from urllib.parse import quote_plus as urlquote_plus
+from urllib.parse import urljoin
 
 import dateparser
 import lxml
@@ -13,7 +14,7 @@ from dateutil.tz import gettz
 from lxml.cssselect import CSSSelector
 from lxml.html.clean import Cleaner
 from scrapy.loader import ItemLoader
-from scrapy.loader.processors import Compose, Join, MapCompose, TakeFirst, Identity
+from scrapy.loader.processors import Compose, Identity, Join, MapCompose, TakeFirst
 from w3lib.html import remove_tags
 
 from feeds.items import FeedEntryItem, FeedItem

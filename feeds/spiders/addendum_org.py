@@ -1,6 +1,6 @@
 import json
-from functools import partial
 from copy import deepcopy
+from functools import partial
 
 import lxml
 import scrapy

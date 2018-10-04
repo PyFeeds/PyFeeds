@@ -3,8 +3,8 @@ from copy import copy
 
 from scrapy import Request, signals
 from scrapy.exceptions import NotConfigured
-from scrapy.utils.misc import load_object
 from scrapy.spidermiddlewares.httperror import HttpError
+from scrapy.utils.misc import load_object
 from scrapy.utils.request import request_fingerprint
 
 from feeds.exceptions import DropResponse

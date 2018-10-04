@@ -1,8 +1,8 @@
 import re
 
-from scrapy.selector import Selector
-from scrapy.loader.processors import TakeFirst
 import scrapy
+from scrapy.loader.processors import TakeFirst
+from scrapy.selector import Selector
 
 from feeds.loaders import FeedEntryItemLoader
 from feeds.spiders import FeedsSpider

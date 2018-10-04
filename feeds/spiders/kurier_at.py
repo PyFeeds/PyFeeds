@@ -1,6 +1,7 @@
 import json
-import scrapy
 from urllib.parse import urljoin
+
+import scrapy
 
 from feeds.loaders import FeedEntryItemLoader
 from feeds.spiders import FeedsSpider

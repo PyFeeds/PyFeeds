@@ -138,6 +138,7 @@ class OrfAtSpider(FeedsXMLFeedSpider):
             ".storyMeta",
             "script",
             ".oon-youtube-logo",
+            ".vote",
             # redesign
             "#more-to-read-anchor",
             ".social-buttons",

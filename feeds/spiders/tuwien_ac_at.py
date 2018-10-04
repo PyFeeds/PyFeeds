@@ -12,11 +12,11 @@ class TuWienAcAtSpider(FeedsSpider):
     name = "tuwien.ac.at"
 
     feed_title = "TU Wien: Mitteilungsblätter"
-    feed_icon = "https://tuwien.ac.at/favicon.ico"
+    feed_icon = "https://{}/favicon.ico".format(name)
 
     def start_requests(self):
         yield scrapy.Request(
-            "https://tiss.tuwien.ac.at/mbl/main/uebersicht",
+            "https://tiss.{}/mbl/main/uebersicht".format(self.name),
             headers={"Accept-Language": "de-DE,de"},
             meta={"dont_cache": True},
         )

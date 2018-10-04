@@ -42,32 +42,53 @@ class TvthekOrfAtSpider(FeedsSpider):
             )
 
         for item in json_response["_embedded"]["items"]:
-            il = FeedEntryItemLoader(response=response)
-            il.add_value("title", item["title"])
-            il.add_value(
-                "content_html",
-                '<img src="{}">'.format(item["playlist"]["preview_image_url"]),
-            )
-            if item["description"]:
-                il.add_value(
-                    "content_html", item["description"].replace("\r\n", "<br>")
-                )
-            il.add_value("updated", item["date"])
-            il.add_value(
-                "link", item["url"].replace("api-tvthek.orf.at", "tvthek.orf.at")
-            )
+            # We scrape the episode itself so we can get the segments which are not
+            # embedded in the schedule response.
+            # Furthermore since this request will be cached, the download URL will also
+            # be cached which is convenient for youth protected content.
             yield Request(
-                item["_links"]["profile"]["href"],
-                self._parse_profile,
-                meta={"item": il},
-                dont_filter=True,
+                item["_links"]["self"]["href"],
+                self._parse_episode,
+                # Responses are > 100 KB and useless after 7 days.
+                # So don't keep them longer than necessary.
+                meta={"cache_expires": timedelta(days=7)},
             )
 
-    def _parse_profile(self, response):
-        il = response.meta["item"]
-        profile = json.loads(response.text)
+    def _parse_episode(self, response):
+        item = json.loads(response.text)
+        il = FeedEntryItemLoader()
+        il.add_value("title", item["title"])
         il.add_value(
-            "category", self._categories_from_oewa_base_path(profile["oewa_base_path"])
+            "content_html",
+            '<img src="{}">'.format(item["playlist"]["preview_image_url"]),
+        )
+        if item["description"]:
+            il.add_value("content_html", item["description"].replace("\r\n", "<br>"))
+        il.add_value("updated", item["date"])
+        il.add_value("link", item["url"].replace("api-tvthek.orf.at", "tvthek.orf.at"))
+        # Check how many segments are part of this episode.
+        if len(item["_embedded"]["segments"]) == 1:
+            # If only one segment, item["sources"] contains invalid links.
+            # We use the first embedded segment instead.
+            # This is also how mediathekviewweb.de works.
+            item["sources"] = item["_embedded"]["segments"][0]["sources"]
+        video = next(
+            s
+            for s in item["sources"]["progressive_download"]
+            if s["quality_key"] == "Q8C"
+        )
+        il.add_value("enclosure", {"iri": video["src"], "type": "video/mp4"})
+        subtitle = item["_embedded"].get("subtitle")
+        if subtitle:
+            subtitle = subtitle["_embedded"]["srt_file"]["public_urls"]["reference"]
+            il.add_value("enclosure", {"iri": subtitle["url"], "type": "text/plain"})
+        else:
+            self.logger.debug("No subtitle file found for '{}'".format(item["url"]))
+        il.add_value(
+            "category",
+            self._categories_from_oewa_base_path(
+                item["_embedded"]["profile"]["oewa_base_path"]
+            ),
         )
         return il.load_item()
 

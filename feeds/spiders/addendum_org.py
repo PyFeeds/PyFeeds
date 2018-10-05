@@ -155,8 +155,7 @@ class AddendumOrgSpider(FeedsXMLFeedSpider):
         il.add_css("content_html", ".content")
         for medium_id, medium_url in media.items():
             if medium_id not in audio_ids:
-                il.add_value("enclosure_iri", medium_url)
-                il.add_value("enclosure_type", "video/mp4")
+                il.add_value("enclosure", {"iri": medium_url, "type": "video/mp4"})
         item = il.load_item()
         # Save a copy before yielding it.
         item_podcast = deepcopy(item)
@@ -168,6 +167,5 @@ class AddendumOrgSpider(FeedsXMLFeedSpider):
             il.add_value("path", "podcast")
             for medium_id, medium_url in media.items():
                 if medium_id in audio_ids:
-                    il.add_value("enclosure_iri", medium_url)
-                    il.add_value("enclosure_type", "audio/mp4")
+                    il.add_value("enclosure", {"iri": medium_url, "type": "audio/mp4"})
             yield il.load_item()

@@ -56,6 +56,4 @@ class FeedEntryItem(BaseItem):
     content_html = scrapy.Field()
 
     # Optional
-    enclosure_iri = scrapy.Field()
-    # Optional
-    enclosure_type = scrapy.Field()
+    enclosure = scrapy.Field()

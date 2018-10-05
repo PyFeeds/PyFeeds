@@ -27,7 +27,7 @@ class AkCiandoComSpider(FeedsSpider):
         il.add_xpath("title", '//h1[@class="p_book_title"]/text()')
         il.add_xpath("title", '//h3[@class="p_book_title_ebook"]/text()')
         il.add_value("link", response.url)
-        il.add_value("author_name", self._title)
+        il.add_value("author_name", self.feed_title)
         il.add_xpath("content_html", '//h1[@class="p_book_title"]/text()')
         il.add_xpath("content_html", '//h2[@class="p_book_author"]/text()')
         il.add_xpath("content_html", '//p[@class="p_book_publisher"]/text()')

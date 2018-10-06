@@ -78,12 +78,6 @@ class TvthekOrfAtSpider(FeedsSpider):
             if s["quality_key"] == "Q8C"
         )
         il.add_value("enclosure", {"iri": video["src"], "type": "video/mp4"})
-        subtitle = item["_embedded"].get("subtitle")
-        if subtitle:
-            subtitle = subtitle["_embedded"]["srt_file"]["public_urls"]["reference"]
-            il.add_value("enclosure", {"iri": subtitle["url"], "type": "text/plain"})
-        else:
-            self.logger.debug("No subtitle file found for '{}'".format(item["url"]))
         il.add_value(
             "category",
             self._categories_from_oewa_base_path(

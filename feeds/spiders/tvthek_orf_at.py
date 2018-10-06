@@ -42,6 +42,9 @@ class TvthekOrfAtSpider(FeedsSpider):
             )
 
         for item in json_response["_embedded"]["items"]:
+            if not item["segments_complete"]:
+                continue
+
             # We scrape the episode itself so we can get the segments which are not
             # embedded in the schedule response.
             # Furthermore since this request will be cached, the download URL will also

@@ -248,6 +248,14 @@ def skip_empty_tree(tree):
     return None
 
 
+def skip_none(value):
+    """Skip values that are None immediately."""
+    if value is not None:
+        return value
+
+    return None
+
+
 def skip_false(value):
     """
     Skip values that evaluate to False.
@@ -323,7 +331,7 @@ class BaseItemLoader(ItemLoader):
     # Defaults
     # Unescape twice to get rid of &amp;&xxx; encoding errors.
     default_input_processor = MapCompose(
-        str.strip, skip_false, html.unescape, html.unescape
+        skip_none, str.strip, skip_false, html.unescape, html.unescape
     )
     default_output_processor = TakeFirst()
 

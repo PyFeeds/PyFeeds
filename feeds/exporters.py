@@ -8,6 +8,8 @@ from scrapy.exporters import BaseItemExporter
 
 from feeds.items import FeedEntryItem, FeedItem
 
+logger = logging.getLogger(__name__)
+
 
 class AtomExporter(BaseItemExporter):
     class AtomFeed(object):
@@ -19,6 +21,7 @@ class AtomExporter(BaseItemExporter):
             self._xml = etree.Element(
                 "feed", nsmap={None: "http://www.w3.org/2005/Atom"}
             )
+            self._ids = set()
 
         def add_item(self, item):
             if isinstance(item, FeedItem):
@@ -27,10 +30,16 @@ class AtomExporter(BaseItemExporter):
                 for child in self._convert_feed_item(item):
                     self._xml.insert(0, child)
             elif isinstance(item, FeedEntryItem):
-                entry = etree.Element("entry")
-                for child in self._convert_feed_item(item):
-                    entry.append(child)
-                self._feed_items.append(entry)
+                if item["id"] not in self._ids:
+                    self._ids.add(item["id"])
+                    entry = etree.Element("entry")
+                    for child in self._convert_feed_item(item):
+                        entry.append(child)
+                    self._feed_items.append(entry)
+                else:
+                    logger.debug(
+                        "Feed entry with id '{}' already in feed.".format(item["id"])
+                    )
 
         def insert_updated(self):
             child = etree.Element("updated")
@@ -165,14 +174,13 @@ class AtomExporter(BaseItemExporter):
         self._name = name
         self._feeds = {}
         self._pretty_print = kwargs.pop("pretty_print", True)
-        self._logger = logging.getLogger(__name__)
 
     def finish_exporting(self):
         for path, feed in self._feeds.items():
             path = os.path.join(self._output_path, path)
             os.makedirs(os.path.dirname(path), exist_ok=True)
             if len(feed) == 0:
-                self._logger.warning("Feed {} contains no items!".format(path))
+                logger.warning("Feed '{}' contains no items!".format(path))
                 try:
                     os.remove(path)
                 except OSError:

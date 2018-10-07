@@ -65,6 +65,14 @@ class OrfAtSpider(FeedsXMLFeedSpider):
 
         self._channels = channels
 
+        self._authors = [
+            author
+            for author in (
+                self.settings.get("FEEDS_SPIDER_ORF_AT_AUTHORS", "").split("\n")
+            )
+            if author
+        ]
+
     def feed_headers(self):
         for channel in self._channels:
             channel_url = "{}.ORF.at".format(channel)
@@ -74,6 +82,9 @@ class OrfAtSpider(FeedsXMLFeedSpider):
                 path=channel,
                 logo=self._get_logo(channel),
             )
+
+        for author in self._authors:
+            yield generate_feed_header(title="ORF.at: {}".format(author), path=author)
 
     def parse_node(self, response, node):
         categories = [
@@ -204,6 +215,8 @@ class OrfAtSpider(FeedsXMLFeedSpider):
         il.add_css("content_html", "#ss-storyText")
         il.add_css("content_html", "#ss-storyContent")  # news
         il.add_value("author_name", author)
+        if author in self._authors:
+            il.add_value("path", author)
         il.add_value("path", response.meta["path"])
         il.add_value("category", response.meta["categories"])
         yield il.load_item()
@@ -242,11 +255,11 @@ class OrfAtSpider(FeedsXMLFeedSpider):
             )
             author_selector = "#ss-storyText > .socialButtons + p"
             if author:
-                return (author, author_selector)
+                return (author.strip(), author_selector)
         elif domain == "orf.at":
             author = response.css(".byline ::text").extract_first()
             if author:
-                return (re.split(r"[/,]", author)[0], ".byline")
+                return (re.split(r"[/,]", author)[0].strip(), ".byline")
         elif domain in ["science.orf.at", "help.orf.at", "religion.orf.at"]:
             try:
                 author = (
@@ -259,7 +272,7 @@ class OrfAtSpider(FeedsXMLFeedSpider):
                     # Only take the author name before ",".
                     author = re.split(r"[/,]", author)[0]
                     return (
-                        author,
+                        author.strip(),
                         (
                             "#ss-storyText > p:not(.date):not(.toplink):"
                             + "contains('{}')"

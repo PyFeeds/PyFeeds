@@ -42,7 +42,9 @@ class TvthekOrfAtSpider(FeedsSpider):
             )
 
         for item in json_response["_embedded"]["items"]:
-            if not item["segments_complete"]:
+            # Skip incomplete items or items with active youth protection.
+            # We want to have working download links in the feed item.
+            if not item["segments_complete"] or item["has_active_youth_protection"]:
                 continue
 
             # We scrape the episode itself so we can get the segments which are not

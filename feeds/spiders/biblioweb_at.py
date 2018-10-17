@@ -6,6 +6,7 @@ from feeds.spiders import FeedsSpider
 
 class BibliowebAtSpider(FeedsSpider):
     name = "biblioweb.at"
+    custom_settings = {"DUPEFILTER_CLASS": "scrapy.dupefilters.RFPDupeFilter"}
 
     _days = 60
 
@@ -44,6 +45,8 @@ class BibliowebAtSpider(FeedsSpider):
 
     def parse_overview_page(self, response):
         # Find other pages
+        # Note that the dupefilter has to be enabled, otherwise already
+        # parsed pages will be parsed again.
         for href in response.xpath(
             '//div[@id="p_main"][1]/div/a/div[@id!="p_aktuell"]/../@href'
         ):

@@ -112,6 +112,8 @@ useragent = feeds (+https://github.com/nblock/feeds)
 #    vorarlberg
 #    tirol
 #    religion
+#authors =
+#    Erich Moechel
 
 #[derstandard.at]
 #ressorts =

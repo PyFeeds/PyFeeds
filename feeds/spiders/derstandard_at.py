@@ -96,8 +96,9 @@ class DerStandardAtSpider(FeedsXMLFeedSpider):
             ".sequence-number",
             ".js-embed-output",
             "#mycountrytalks-embed",
-            # Remove self-promotion for ressorts (links starting with "/r").
-            '.js-embed-output-feeds a[href^="/r"]',
+            # Remove self-promotion for (other) ressorts.
+            '.js-embed-output-feeds > a[href^="/r"]',
+            '.js-embed-output-feeds > a[href^="https://derstandard.at/"]',
         ]
         change_tags = {
             "#media-list li .description": "figcaption",

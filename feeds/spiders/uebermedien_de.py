@@ -4,8 +4,8 @@ from datetime import timedelta
 from urllib.parse import parse_qs, urlparse
 
 import scrapy
-from scrapy.http import FormRequest
 from inline_requests import inline_requests
+from scrapy.http import FormRequest
 
 from feeds.loaders import FeedEntryItemLoader
 from feeds.spiders import FeedsXMLFeedSpider

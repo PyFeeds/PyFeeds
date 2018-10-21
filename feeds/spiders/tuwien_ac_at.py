@@ -1,8 +1,8 @@
+import json
 import re
 
 import scrapy
-from scrapy.loader.processors import TakeFirst
-from scrapy.selector import Selector
+from inline_requests import inline_requests
 
 from feeds.loaders import FeedEntryItemLoader
 from feeds.spiders import FeedsSpider
@@ -21,31 +21,42 @@ class TuWienAcAtSpider(FeedsSpider):
             meta={"dont_cache": True},
         )
 
+    @inline_requests
     def parse(self, response):
         mitteilungsblaetter = response.css(".mitteilungsblaetter")
-        updated = mitteilungsblaetter.css("::text").re_first("(\d{2}\.\d{2}\.\d{4})")
+        updated = mitteilungsblaetter.css("::text").re_first(r"(\d{2}\.\d{2}\.\d{4})")
         link = response.urljoin(
             mitteilungsblaetter.css('a::attr("href")').extract_first()
         )
-        return scrapy.Request(
-            response.urljoin(link),
-            self._parse_mitteilungsblatt,
-            meta={"updated": updated},
-        )
 
-    def _parse_mitteilungsblatt(self, response):
-        content = "".join(response.css("#contentInner > div").extract())
-        for entry in re.split('<a name="n\d*">', content)[1:]:
-            entry = Selector(text=entry)
-            il = FeedEntryItemLoader(
-                selector=entry,
-                base_url="https://tiss.{}".format(self.name),
-                timezone="Europe/Vienna",
-                dayfirst=True,
-            )
-            il.add_value("updated", response.meta["updated"])
-            anchor_name = entry.css('::attr("name")').extract_first()
-            il.add_value("link", response.url + "#{}".format(anchor_name))
-            il.add_css("title", "strong > u ::text", TakeFirst())
-            il.add_css("content_html", "p")
-            yield il.load_item()
+        response = yield scrapy.Request(link, method="HEAD")
+        mb_url = response.url
+        mb_id = re.search(
+            r"https://tiss.tuwien.ac.at/mbl/blatt_struktur/anzeigen/(\d+)", mb_url
+        ).group(1)
+
+        url = "https://tiss.{}/api/mbl/v22/id/{}".format(self.name, mb_id)
+        response = yield scrapy.Request(url)
+
+        last_entry = None
+        for entry in reversed(json.loads(response.text)["knoten"]):
+            (entry["main"], entry["sub"]) = re.match(
+                r"(\d+)\.?(\d*)", entry["counter"]
+            ).groups()
+            if last_entry is not None and last_entry["main"] == entry["main"]:
+                entry["inhalt"] += "<h2>{}</h2>".format(last_entry["titel"])
+                entry["inhalt"] += last_entry["inhalt"]
+            if entry["sub"] == "":
+                il = FeedEntryItemLoader(
+                    base_url="https://tiss.{}".format(self.name),
+                    timezone="Europe/Vienna",
+                    dayfirst=True,
+                )
+                il.add_value("updated", updated)
+                il.add_value("link", mb_url + "#{}".format(entry["counter"]))
+                il.add_value("title", entry["titel"])
+                il.add_value("content_html", entry["inhalt"])
+                yield il.load_item()
+                last_entry = None
+            else:
+                last_entry = entry

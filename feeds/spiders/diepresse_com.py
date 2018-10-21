@@ -75,7 +75,12 @@ class DiePresseComSpider(FeedsXMLFeedSpider):
         il = FeedEntryItemLoader(
             response=response,
             parent=response.meta["il"],
-            remove_elems=[".ad", ".article-paid"],
+            remove_elems=[
+                ".ad",
+                ".article-paid",
+                ".js-overlay-close",
+                ".swiper-lazy-preloader",
+            ],
             change_tags={".article__lead": "strong"},
             pullup_elems={".zoomable__image--zoomed": 2},
             change_attribs={".zoomable__image--zoomed": {"data-src": "src"}},
@@ -84,14 +89,12 @@ class DiePresseComSpider(FeedsXMLFeedSpider):
         )
         il.add_css(
             "author_name",
-            ".article__main .article__author ::text",
+            "article .article__author ::text",
             re=re.compile(r"\s*(?:[Vv]on\s*)?(.+)", flags=re.DOTALL),
         )
-        il.add_css("content_html", ".article__main .article__media")
-        il.add_css(
-            "content_html", ".article__main .article__lead"
-        )  # change tags to strong
-        il.add_css("content_html", ".article__main .article__body")
+        il.add_css("content_html", "article .article__media .zoomable__inner")
+        il.add_css("content_html", "article .article__lead")  # change tags to strong
+        il.add_css("content_html", "article .article__body")
         if response.css(".article-paid"):
             il.add_value("category", "paywalled")
         il.add_value("category", section.split("/"))

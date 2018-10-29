@@ -26,6 +26,26 @@ _lxml_cleaner = Cleaner(
     scripts=True, javascript=True, comments=True, style=True, inline_style=True
 )
 
+# List of so-called empty elements in HTML.
+# Source: https://developer.mozilla.org/en-US/docs/Glossary/Empty_element
+EMPTY_ELEMENTS = [
+    "area",
+    "base",
+    "br",
+    "col",
+    "embed",
+    "hr",
+    "img",
+    "input",
+    "keygen",
+    "link",
+    "meta",
+    "param",
+    "source",
+    "track",
+    "wbr",
+]
+
 
 def parse_datetime(date_time, loader_context):
     if isinstance(date_time, datetime):
@@ -236,6 +256,31 @@ def convert_iframes(tree, loader_context):
     return [tree]
 
 
+def flatten_tree(tree):
+    # Post-order traversal.
+    for child in tree.iterchildren():
+        flatten_tree(child)
+
+    # Points to the first child if tree has a child and it's the only child or None
+    # otherwise.
+    only_child = list(tree)[0] if len(tree) == 1 else None
+    if (
+        tree.tag not in EMPTY_ELEMENTS
+        and (tree.text is None or tree.text.strip() == "")
+        and len(tree) == 0
+        and tree.getparent() is not None
+    ):
+        # Remove elements which don't have a text and are not supposed to be empty.
+        tree.drop_tree()
+        return None
+    elif only_child and only_child.tag == tree.tag and tree.getparent() is not None:
+        # Replace tree with child if there is only one child and it has the same tag.
+        only_child.tail = tree.tail
+        tree.getparent().replace(tree, only_child)
+
+    return [tree]
+
+
 def skip_empty_tree(tree):
     if tree.text:
         # Has a text.
@@ -371,6 +416,7 @@ class FeedEntryItemLoader(BaseItemLoader):
         cleanup_html,
         convert_iframes,
         lxml_cleaner,
+        flatten_tree,
         skip_empty_tree,
         make_links_absolute,
         serialize_tree,

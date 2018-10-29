@@ -82,7 +82,6 @@ class DiePresseComSpider(FeedsXMLFeedSpider):
                 ".swiper-lazy-preloader",
             ],
             change_tags={".article__lead": "strong"},
-            pullup_elems={".zoomable__image--zoomed": 2},
             change_attribs={".zoomable__image--zoomed": {"data-src": "src"}},
             replace_elems={".article__media-caption": _clean_caption},
             base_url="https://www.{}".format(self.name),

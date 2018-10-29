@@ -273,7 +273,11 @@ def flatten_tree(tree):
         # Remove elements which don't have a text and are not supposed to be empty.
         tree.drop_tree()
         return None
-    elif only_child and only_child.tag == tree.tag and tree.getparent() is not None:
+    elif (
+        only_child is not None
+        and only_child.tag == tree.tag
+        and tree.getparent() is not None
+    ):
         # Replace tree with child if there is only one child and it has the same tag.
         only_child.tail = tree.tail
         tree.getparent().replace(tree, only_child)

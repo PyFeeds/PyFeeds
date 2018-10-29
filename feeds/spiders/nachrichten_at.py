@@ -90,7 +90,7 @@ class NachrichtenAtSpider(FeedsXMLFeedSpider):
             il.add_value("category", "paywalled")
         il.add_css("link", 'link[rel="canonical"]::attr(href)')
         il.add_css("title", 'meta[property="og:title"]::attr(content)')
-        il.add_css("author_name", ".druckheadline::text", re="·\s*(.*)\s*·")
+        il.add_css("author_name", ".druckheadline::text", re=r"·\s*(.*)\s*·")
         # Mon, 01 Oct 18 13:42:45 +0200
         il.add_css("updated", 'meta[http-equiv="last-modified"]::attr(content)')
         il.add_css("content_html", ".druckcontent")

@@ -144,7 +144,7 @@ class DerStandardAtSpider(FeedsXMLFeedSpider):
             return scrapy.Request(url, self._parse_blog_article, meta={"il": il})
         elif response.css("#feature-content"):
             cover_photo = response.css("#feature-cover-photo::attr(style)").re_first(
-                "\((.*)\)"
+                r"\((.*)\)"
             )
             il.add_value("content_html", '<img src="{}">'.format(cover_photo))
             il.add_css("content_html", "#feature-cover-title h2")

@@ -9,7 +9,7 @@ class CbirdAtSpider(FeedsCrawlSpider):
     name = "cbird.at"
     allowed_domains = ["cbird.at"]
     start_urls = ["https://cbird.at/hilfe/neu/", "https://cbird.at/impressum"]
-    rules = (Rule(LinkExtractor(allow=("hilfe/neu/(\d+)",)), callback="parse_item"),)
+    rules = (Rule(LinkExtractor(allow=(r"hilfe/neu/(\d+)",)), callback="parse_item"),)
 
     feed_title = "Neue cbird Versionen"
     feed_subtitle = "Die neuesten Versionen von cbird."

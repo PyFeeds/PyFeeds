@@ -24,7 +24,7 @@ class Pusl4ComSpider(FeedsSpider):
     def _parse_shows_list(self, response):
         shows = json.loads(response.text)["formatOverviewItems"]
         for show in shows:
-            time = re.findall("(\d{2}:\d{2})", show["announcement"]) or None
+            time = re.findall(r"(\d{2}:\d{2})", show["announcement"]) or None
             if time:
                 time = time[0]
             yield scrapy.Request(
@@ -61,7 +61,7 @@ class Pusl4ComSpider(FeedsSpider):
         il.add_xpath(
             "title",
             '//meta[@name="title"]/@content',
-            re="(?s)(.*?)(?: vom .*)? - puls4\.com",
+            re=r"(?s)(.*?)(?: vom .*)? - puls4\.com",
         )
         il.add_value(
             "updated",

@@ -64,7 +64,7 @@ class KonsumentAtSpider(FeedsSpider):
         il.add_value("link", response.url)
         il.add_value("author_name", "VKI")
         date = response.css(".issue").re_first(
-            "veröffentlicht:\s*([0-9]{2}\.[0-9]{2}\.[0-9]{4})"
+            r"veröffentlicht:\s*([0-9]{2}\.[0-9]{2}\.[0-9]{4})"
         )
         il.add_value("updated", date)
         url = response.xpath('//a[text()="Druckversion"]/@onclick').re_first(

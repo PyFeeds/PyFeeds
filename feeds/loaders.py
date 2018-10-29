@@ -363,6 +363,7 @@ class FeedEntryItemLoader(BaseItemLoader):
         replace_regex,
         build_tree,
         convert_footnotes,
+        pullup_elems,
         replace_elems,
         remove_elems,
         change_attribs,

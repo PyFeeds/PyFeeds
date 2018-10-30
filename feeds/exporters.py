@@ -190,12 +190,24 @@ class AtomExporter(BaseItemExporter):
             else:
                 feed.insert_updated()
                 feed.sort()
-                with open(path, "wb") as f:
-                    f.write(
-                        feed.tostring(
-                            encoding=self.encoding,
-                            pretty_print=self._pretty_print,
-                            xml_declaration=True,
+                feed = feed.tostring(
+                    encoding=self.encoding,
+                    pretty_print=self._pretty_print,
+                    xml_declaration=True,
+                )
+                try:
+                    with open(path, "rb") as f:
+                        logger.debug("Found existing feed at '{}'".format(path))
+                        old_feed = f.read()
+                except FileNotFoundError:
+                    old_feed = None
+                if feed != old_feed:
+                    with open(path, "wb") as f:
+                        f.write(feed)
+                else:
+                    logger.debug(
+                        "Feed content not changed, not overwriting feed '{}'".format(
+                            path
                         )
                     )
 

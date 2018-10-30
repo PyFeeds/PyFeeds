@@ -46,11 +46,13 @@ class AtomExporter(BaseItemExporter):
             child.text = self._feed_updated
             self._xml.insert(0, child)
 
-        def sort(self, field="updated", default=0, reverse=True):
+        def sort(self, fields=("updated", "id"), default=0, reverse=True):
             for item in sorted(
                 self._feed_items,
                 reverse=reverse,
-                key=lambda k: k.findtext(field, default=default),
+                key=lambda k: tuple(
+                    k.findtext(field, default=default) for field in fields
+                ),
             ):
                 self._xml.append(item)
 

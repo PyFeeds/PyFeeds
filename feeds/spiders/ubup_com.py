@@ -42,7 +42,7 @@ class UbupComSpider(FeedsSpider):
                 "link",
                 response.urljoin(item.css(".item-link::attr(href)").extract_first()),
             )
-            image_url = item.css(".item-image::attr(style)").re_first("'([^']+)'")
+            image_url = item.css(".item-image::attr(data-bg)").re_first(r"url\(([^)]+)\)")
             il.add_value("content_html", '<img src="{}">'.format(image_url))
             il.add_css("content_html", ".item-des-container")
             il.add_value("path", response.meta["path"])

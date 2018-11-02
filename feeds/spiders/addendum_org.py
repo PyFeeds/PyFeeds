@@ -108,43 +108,57 @@ class AddendumOrgSpider(FeedsXMLFeedSpider):
             )[-1]["src"]
 
         remove_elems = [
-            ".projectNav",
             "h1",
+            "script",
+            "style",
+            ".projectNav",
+            ".socialShare",
+            ".socialShare__headline",
+            ".socialShare__icon",
+            ".socialMedia",
             ".socialMedia__headline",
             ".whyRead",
             ".overlayCTA",
             ".authors",
-            ".socialMedia",
-            ".sidebar",
             ".sectionBackground--colorTheme1",
             ".heroStage__copyright",
             ".heroStage__downLink",
-            "script",
-            ".image__zoom ",
-            ".image__copyrightWrapper",
             ".callToAction",
             ".print-action",
             ".internalLink span",
             ".addCommunity",
             ".download",
             ".BCaudioPlayer",
-            "style",
             ".icon-date",
             ".callToAction__button",
             'a[href^="http://partners.webmasterplan.com/click.asp"]',
             ".relatedSlider",
+            ".imageLightbox",
+            ".image__copyrightWrapper",
+            ".image__zoom",
+            ".image > .picture",
+            ".imageHC",
         ]
-        change_tags = {"div.heroStage__introText": "strong"}
+        change_tags = {
+            "div.heroStage__introText": "strong",
+            ".quote": "blockquote",
+            ".quote__label": "footer",
+            ".supernumber": "blockquote",
+            ".image": "figure",
+            ".image__element": "div",
+        }
         replace_elems = {
             "video": partial(_inline_video, media),
             ".picture": _inline_picture,
         }
+        pullup_elems = {".image__content figcaption": 3}
         il = FeedEntryItemLoader(
             response=response,
             base_url=response.url,
             remove_elems=remove_elems,
             change_tags=change_tags,
             replace_elems=replace_elems,
+            pullup_elems=pullup_elems,
         )
         il.add_value("link", response.url)
         il.add_css("author_name", ".sidebar .authors__name::text")

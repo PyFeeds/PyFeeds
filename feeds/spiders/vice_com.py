@@ -49,9 +49,7 @@ class ViceComSpider(FeedsSpider):
             "p i:last-of-type:contains('Facebook'):contains('Twitter')",
         ]
         for article in articles:
-            il = FeedEntryItemLoader(
-                timezone="Europe/Vienna", remove_elems=remove_elems
-            )
+            il = FeedEntryItemLoader(timezone="UTC", remove_elems=remove_elems)
             il.add_value("title", article["title"])
             il.add_value("link", article["url"])
             if "thumbnail_url_1_1" in article:
@@ -61,7 +59,7 @@ class ViceComSpider(FeedsSpider):
                 )
             il.add_value("content_html", article["body"])
             il.add_value(
-                "updated", datetime.fromtimestamp(article["publish_date"] / 1000)
+                "updated", datetime.utcfromtimestamp(article["publish_date"] / 1000)
             )
             il.add_value(
                 "author_name",

@@ -31,7 +31,7 @@ class DelinskiAtSpider(FeedsSpider):
             reverse=True,
         )
         for restaurant in restaurants[:20]:
-            il = FeedEntryItemLoader(timezone="Europe/Vienna", base_url=response.url)
+            il = FeedEntryItemLoader(timezone="UTC", base_url=response.url)
             url = response.urljoin(restaurant["url"])
             il.add_value("link", url)
             il.add_value("title", restaurant["name"])
@@ -44,7 +44,9 @@ class DelinskiAtSpider(FeedsSpider):
             </ul>
             """
             il.add_value("content_html", content.format(**restaurant))
-            il.add_value("updated", datetime.fromtimestamp(int(restaurant["created"])))
+            il.add_value(
+                "updated", datetime.utcfromtimestamp(int(restaurant["created"]))
+            )
             yield scrapy.Request(url, self._parse_restaurant, meta={"il": il})
 
     def _parse_restaurant(self, response):

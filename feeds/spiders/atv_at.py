@@ -31,10 +31,10 @@ class AtvAtSpider(FeedsSpider):
             yield scrapy.Request(url, self.parse_program)
 
     def parse_program(self, response):
-        if not response.css(".jsb_video\/FlashPlayer"):
+        if not response.css(r".jsb_video\/FlashPlayer"):
             return
         data = json.loads(
-            response.css(".jsb_video\/FlashPlayer").xpath("@data-jsb").extract()[0]
+            response.css(r".jsb_video\/FlashPlayer").xpath("@data-jsb").extract()[0]
         )
         data = data["config"]["initial_video"]["parts"][0]["tracking"]["nurago"]
         il = FeedEntryItemLoader(

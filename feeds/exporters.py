@@ -46,11 +46,13 @@ class AtomExporter(BaseItemExporter):
             child.text = self._feed_updated
             self._xml.insert(0, child)
 
-        def sort(self, field="updated", default=0, reverse=True):
+        def sort(self, fields=("updated", "id"), default=0, reverse=True):
             for item in sorted(
                 self._feed_items,
                 reverse=reverse,
-                key=lambda k: k.findtext(field, default=default),
+                key=lambda k: tuple(
+                    k.findtext(field, default=default) for field in fields
+                ),
             ):
                 self._xml.append(item)
 
@@ -188,12 +190,24 @@ class AtomExporter(BaseItemExporter):
             else:
                 feed.insert_updated()
                 feed.sort()
-                with open(path, "wb") as f:
-                    f.write(
-                        feed.tostring(
-                            encoding=self.encoding,
-                            pretty_print=self._pretty_print,
-                            xml_declaration=True,
+                feed = feed.tostring(
+                    encoding=self.encoding,
+                    pretty_print=self._pretty_print,
+                    xml_declaration=True,
+                )
+                try:
+                    with open(path, "rb") as f:
+                        logger.debug("Found existing feed at '{}'".format(path))
+                        old_feed = f.read()
+                except FileNotFoundError:
+                    old_feed = None
+                if feed != old_feed:
+                    with open(path, "wb") as f:
+                        f.write(feed)
+                else:
+                    logger.debug(
+                        "Feed content not changed, not overwriting feed '{}'".format(
+                            path
                         )
                     )
 

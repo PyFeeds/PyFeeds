@@ -128,13 +128,14 @@ class FalterAtSpider(FeedsSpider):
                 "content_html",
                 "<p>{} {}, {}</p>".format(entry["zip"], entry["city"], entry["street"]),
             )
-            il.add_value(
-                "content_html",
-                (
-                    '<p><a href="https://www.google.com/maps?q={lat},{lon}">'
-                    + "Google Maps</a></p>"
-                ).format(**entry["location"]),
-            )
+            if entry["location"]:
+                il.add_value(
+                    "content_html",
+                    (
+                        '<p><a href="https://www.google.com/maps?q={lat},{lon}">'
+                        + "Google Maps</a></p>"
+                    ).format(**entry["location"]),
+                )
             yield il.load_item()
 
     def parse_archive(self, response):

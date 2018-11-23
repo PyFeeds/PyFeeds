@@ -32,5 +32,5 @@ class PythonPatternsGuide(FeedsSpider):
         ).decode("ascii")
         il.add_value("updated", updated)
         il.add_css("title", "title::text")
-        il.add_css("content_html", "body > .section")
+        il.add_css("content_html", ".section")
         return il.load_item()

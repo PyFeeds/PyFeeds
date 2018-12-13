@@ -102,7 +102,7 @@ class AddendumOrgSpider(FeedsXMLFeedSpider):
                 (
                     video
                     for video in api_response["sources"]
-                    if "src" in video and video["container"] == "MP4"
+                    if "src" in video and video.get("container") == "MP4"
                 ),
                 key=lambda v: v["size"],
             )[-1]["src"]

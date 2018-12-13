@@ -77,12 +77,15 @@ class TvthekOrfAtSpider(FeedsSpider):
             # We use the first embedded segment instead.
             # This is also how mediathekviewweb.de works.
             item["sources"] = item["_embedded"]["segments"][0]["sources"]
-        video = next(
-            s
-            for s in item["sources"]["progressive_download"]
-            if s["quality_key"] == "Q8C"
-        )
-        il.add_value("enclosure", {"iri": video["src"], "type": "video/mp4"})
+        try:
+            video = next(
+                s
+                for s in item["sources"]["progressive_download"]
+                if s["quality_key"] == "Q8C"
+            )
+            il.add_value("enclosure", {"iri": video["src"], "type": "video/mp4"})
+        except StopIteration:
+            self.logger.error("Could not extract video for '{}'!".format(item["title"]))
         subtitle = item["_embedded"].get("subtitle")
         if subtitle:
             subtitle = subtitle["_embedded"]["srt_file"]["public_urls"]["reference"]

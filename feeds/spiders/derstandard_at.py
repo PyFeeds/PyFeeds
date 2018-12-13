@@ -1,5 +1,5 @@
 import html
-from datetime import timedelta
+from datetime import datetime, timedelta
 
 import scrapy
 
@@ -36,6 +36,25 @@ class DerStandardAtSpider(FeedsXMLFeedSpider):
                 meta={"dont_cache": True, "ressort": ressort},
             )
 
+        self._users = self.settings.get("FEEDS_SPIDER_DERSTANDARD_AT_USERS")
+        if self._users:
+            self._users = {user_id: None for user_id in self._users.split()}
+            for user_id in self._users.keys():
+                for page in range(3):
+                    yield scrapy.Request(
+                        (
+                            "https://{}/userprofil/postings/{}?"
+                            + "pageNumber={}&sortMode=1"
+                        ).format(self.name, user_id, page),
+                        self._parse_user_profile,
+                        meta={
+                            # Older pages should be cached longer.
+                            "cache_expires": timedelta(hours=page),
+                            "path": "userprofil/postings/{}".format(user_id),
+                            "user_id": user_id,
+                        },
+                    )
+
     def feed_headers(self):
         for ressort in self._ressorts:
             yield generate_feed_header(
@@ -46,6 +65,17 @@ class DerStandardAtSpider(FeedsXMLFeedSpider):
                 logo="https://at.staticfiles.at/sites/mainweb/img/icons/dst/"
                 "dst-228.png",
                 path=ressort,
+            )
+
+        for user_id, name in self._users.items():
+            yield generate_feed_header(
+                title="derStandard.at › Postings von {}".format(name),
+                subtitle="Nachrichten in Echtzeit",
+                link="https://{}/userprofil/postings/{}".format(self.name, user_id),
+                icon="https://at.staticfiles.at/sites/mainweb/img/icons/dst/dst-16.ico",
+                logo="https://at.staticfiles.at/sites/mainweb/img/icons/dst/"
+                "dst-228.png",
+                path="userprofil/postings/{}".format(user_id),
             )
 
     def parse_node(self, response, node):
@@ -161,3 +191,27 @@ class DerStandardAtSpider(FeedsXMLFeedSpider):
         il = response.meta["il"]
         il.add_value("content_html", response.text)
         return il.load_item()
+
+    def _parse_user_profile(self, response):
+        self._users[response.meta["user_id"]] = (
+            response.css("#up_user h2::text").extract_first().strip()
+        )
+        for posting in response.css(".posting"):
+            il = FeedEntryItemLoader(
+                selector=posting,
+                base_url="https://{}".format(self.name),
+                change_tags={"span": "p"},
+            )
+            il.add_css("title", ".text strong::text")
+            il.add_css("link", '.text a::attr("href")')
+            il.add_value(
+                "updated",
+                datetime.utcfromtimestamp(
+                    int(posting.css('.date::attr("data-timestamp")').extract_first())
+                    / 1000
+                ),
+            )
+            il.add_css("content_html", ".text span")
+            il.add_css("content_html", ".article h4")
+            il.add_value("path", response.meta["path"])
+            yield il.load_item()

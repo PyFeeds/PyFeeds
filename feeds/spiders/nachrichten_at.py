@@ -1,6 +1,8 @@
 from collections import OrderedDict
+from datetime import timedelta
 
 import scrapy
+from inline_requests import inline_requests
 
 from feeds.loaders import FeedEntryItemLoader
 from feeds.spiders import FeedsXMLFeedSpider
@@ -18,25 +20,19 @@ class NachrichtenAtSpider(FeedsXMLFeedSpider):
             self.logger.info("No ressorts given, falling back to general ressort!")
             self._ressorts = ["nachrichten"]
 
-        username = self.settings.get("FEEDS_SPIDER_NACHRICHTEN_AT_USERNAME")
-        password = self.settings.get("FEEDS_SPIDER_NACHRICHTEN_AT_PASSWORD")
-        if username and password:
-            yield scrapy.FormRequest(
-                "https://www.{}/login/".format(self.name),
-                formdata=OrderedDict(
-                    [
-                        ("user[control][login]", "true"),
-                        ("permanent", "checked"),
-                        ("username", username),
-                        ("password", password),
-                    ]
-                ),
-                callback=self._after_login,
-            )
+        self._username = self.settings.get("FEEDS_SPIDER_NACHRICHTEN_AT_USERNAME")
+        self._password = self.settings.get("FEEDS_SPIDER_NACHRICHTEN_AT_PASSWORD")
+        if self._username and self._password:
+            yield from self._login(None)
         else:
-            self.logger.info("Login failed: No username or password given")
             # We can still try to scrape the free articles.
-            yield from self._after_login()
+            self.logger.info("Login failed: No username or password given")
+
+        for ressort in self._ressorts:
+            yield scrapy.Request(
+                "https://www.{}/storage/rss/rss/{}.xml".format(self.name, ressort),
+                meta={"ressort": ressort, "dont_cache": True},
+            )
 
     def feed_headers(self):
         for ressort in self._ressorts:
@@ -51,16 +47,27 @@ class NachrichtenAtSpider(FeedsXMLFeedSpider):
                 "touchicon_180x180.png".format(self.name),
             )
 
-    def _after_login(self, response=None):
+    @inline_requests
+    def _login(self, response):
+        response = yield scrapy.Request(
+            "https://www.{}/login/".format(self.name),
+            meta={"cache_expires": timedelta(days=14)},
+        )
+        response = yield scrapy.FormRequest(
+            "https://www.{}/login/".format(self.name),
+            formdata=OrderedDict(
+                [
+                    ("user[control][login]", "true"),
+                    ("permanent", "checked"),
+                    ("username", self._username),
+                    ("password", self._password),
+                ]
+            ),
+            meta={"cache_expires": timedelta(days=14)},
+        )
         if response and response.css(".notloggedin"):
             # We tried to login but we failed.
             self.logger.error("Login failed: Username or password wrong")
-
-        for ressort in self._ressorts:
-            yield scrapy.Request(
-                "https://www.{}/storage/rss/rss/{}.xml".format(self.name, ressort),
-                meta={"ressort": ressort, "dont_cache": True},
-            )
 
     def parse_node(self, response, node):
         url = node.xpath("link/text()").extract_first()

@@ -17,6 +17,9 @@ Add ``derstandard.at`` to the list of spiders:
 derstandard.at supports different ressorts via the ``ressorts`` parameter
 (one per line). If no ressort is given, ``seite1`` is used.
 
+The spider also has support user postings via the ``users`` parameter
+(one per line).
+
 Example configuration:
 
 .. code-block:: ini
@@ -27,6 +30,9 @@ Example configuration:
        4748
        etat
        immobilien
+    users =
+        4894
+        571924
 
 
 .. _derStandard.at: https://derstandard.at

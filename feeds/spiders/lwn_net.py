@@ -70,7 +70,7 @@ class LwnNetSpider(FeedsXMLFeedSpider):
     # introduced rss namespace prefix.
     iterator = "xml"
     # lwn.net doesn't like it (i.e. blocks us) if we impose too much load.
-    custom_settings = {"DOWNLOAD_DELAY": 1.0}
+    custom_settings = {"DOWNLOAD_DELAY": 1.0, "COOKIES_ENABLED": True}
 
     _subscribed = False
 

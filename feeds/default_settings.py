@@ -46,6 +46,9 @@ HTTPCACHE_DIR = save_cache_path("feeds")
 HTTPCACHE_EXPIRATION_SECS = FEEDS_CONFIG_CACHE_EXPIRES * 24 * 60 * 60
 HTTPCACHE_IGNORE_HTTP_CODES = list(range(400, 600))
 
+# Do not enable cookies by default to make better use of the cache.
+COOKIES_ENABLED = False
+
 RETRY_ENABLED = True
 # equals 5 requests in total
 RETRY_TIMES = 4

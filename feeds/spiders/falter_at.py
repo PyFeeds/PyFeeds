@@ -14,7 +14,7 @@ from feeds.utils import generate_feed_header
 class FalterAtSpider(FeedsSpider):
     name = "falter.at"
     # Don't overwhelm the poor Wordpress with too many requests at once.
-    custom_settings = {"DOWNLOAD_DELAY": 1.0}
+    custom_settings = {"DOWNLOAD_DELAY": 1.0, "COOKIES_ENABLED": True}
 
     def start_requests(self):
         pages = self.settings.get("FEEDS_SPIDER_FALTER_AT_PAGES")

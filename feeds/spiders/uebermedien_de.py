@@ -15,6 +15,7 @@ class UebermedienDeSpider(FeedsXMLFeedSpider):
     name = "uebermedien.de"
     start_urls = ["https://uebermedien.de/feed/"]
     namespaces = [("dc", "http://purl.org/dc/elements/1.1/")]
+    custom_settings = {"COOKIES_ENABLED": True}
 
     feed_title = "uebermedien.de"
     feed_subtitle = "Medien besser kritisieren."

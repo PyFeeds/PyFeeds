@@ -11,6 +11,7 @@ from feeds.utils import generate_feed_header
 
 class NachrichtenAtSpider(FeedsXMLFeedSpider):
     name = "nachrichten.at"
+    custom_settings = {"COOKIES_ENABLED": True}
 
     def start_requests(self):
         self._ressorts = self.settings.get("FEEDS_SPIDER_NACHRICHTEN_AT_RESSORTS")

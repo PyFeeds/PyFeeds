@@ -31,9 +31,14 @@ class TuWienAcAtSpider(FeedsSpider):
 
         response = yield scrapy.Request(link, method="HEAD")
         mb_url = response.url
-        mb_id = re.search(
+        match = re.search(
             r"https://tiss.tuwien.ac.at/mbl/blatt_struktur/anzeigen/(\d+)", mb_url
-        ).group(1)
+        )
+        if not match:
+            self.logger.error("No Mitteilungsblätter found!")
+            return
+        else:
+            mb_id = match.group(1)
 
         url = "https://tiss.{}/api/mbl/v22/id/{}".format(self.name, mb_id)
         response = yield scrapy.Request(url)

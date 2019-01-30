@@ -6,7 +6,10 @@ from feeds.spiders import FeedsSpider
 
 class BibliowebAtSpider(FeedsSpider):
     name = "biblioweb.at"
-    custom_settings = {"DUPEFILTER_CLASS": "scrapy.dupefilters.RFPDupeFilter"}
+    custom_settings = {
+        "DUPEFILTER_CLASS": "scrapy.dupefilters.RFPDupeFilter",
+        "COOKIES_ENABLED": True,
+    }
 
     _days = 60
 

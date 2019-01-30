@@ -10,6 +10,7 @@ from feeds.spiders import FeedsSpider
 class KonsumentAtSpider(FeedsSpider):
     name = "konsument.at"
     start_urls = ["https://www.konsument.at/page/das-aktuelle-heft"]
+    custom_settings = {"COOKIES_ENABLED": True}
 
     feed_title = "KONSUMENT.AT"
     feed_subtitle = "Objektiv, unbestechlich, keine Werbung"

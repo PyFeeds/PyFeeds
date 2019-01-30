@@ -183,16 +183,12 @@ class FeedsCacheStorage(FilesystemCacheStorage):
         if meta is None:
             return
 
-        if remove_parents:
-            logger.debug(
-                "Removing parent cache entries for URL {}".format(meta["response_url"])
-            )
+        if remove_parents and "parents" in meta:
             spider_root = os.path.dirname(os.path.dirname(cache_entry_path))
             for fingerprint in meta["parents"]:
                 path = os.path.join(spider_root, fingerprint[0:2], fingerprint)
                 self.remove_cache_entry(path, remove_parents=False)
 
-        logger.debug("Removing cache entry for URL {}".format(meta["response_url"]))
         shutil.rmtree(cache_entry_path, ignore_errors=True)
 
 

@@ -168,7 +168,7 @@ class OrfAtSpider(FeedsXMLFeedSpider):
             ".video": "<p><em>Hinweis: Das eingebettete Video ist nur im Artikel "
             + "verfügbar.</em></p>"
         }
-        change_attribs = {"img": {"data-src": "src"}}
+        change_attribs = {"img": {"data-src": "src", "srcset": "src"}}
         change_tags = {".image": "figure", ".caption": "figcaption"}
         author, author_selector = self._extract_author(response)
         if author:

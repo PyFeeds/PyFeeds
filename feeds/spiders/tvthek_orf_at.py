@@ -4,6 +4,7 @@ from datetime import datetime, timedelta
 from dateutil.tz import gettz
 from scrapy import Request
 
+from feeds.exceptions import DropResponse
 from feeds.loaders import FeedEntryItemLoader
 from feeds.spiders import FeedsSpider
 
@@ -85,7 +86,14 @@ class TvthekOrfAtSpider(FeedsSpider):
             )
             il.add_value("enclosure", {"iri": video["src"], "type": "video/mp4"})
         except StopIteration:
-            self.logger.error("Could not extract video for '{}'!".format(item["title"]))
+            self.logger.warning(
+                "Could not extract video for '{}'!".format(item["title"])
+            )
+            raise DropResponse(
+                "Skipping {} because not downloadable yet".format(response.url),
+                transient=True
+            )
+
         subtitle = item["_embedded"].get("subtitle")
         if subtitle:
             subtitle = subtitle["_embedded"]["srt_file"]["public_urls"]["reference"]

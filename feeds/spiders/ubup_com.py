@@ -45,6 +45,11 @@ class UbupComSpider(FeedsSpider):
             image_url = item.css(".item-image::attr(data-bg)").re_first(
                 r"url\(([^)]+)\)"
             )
+            # Fix broken images.
+            if image_url.startswith("https://markenankauf.momox.de/pics/https://"):
+                image_url = image_url.replace(
+                    "https://markenankauf.momox.de/pics/https://", "https://"
+                )
             il.add_value("content_html", '<img src="{}">'.format(image_url))
             il.add_css("content_html", ".item-des-container")
             il.add_value("path", response.meta["path"])

@@ -22,9 +22,7 @@ from feeds.settings import get_feeds_settings
 
 logger = logging.getLogger(__name__)
 
-_lxml_cleaner = Cleaner(
-    scripts=True, javascript=True, comments=True, style=True, inline_style=True
-)
+_lxml_cleaner = Cleaner(style=True)
 
 # List of so-called empty elements in HTML.
 # Source: https://developer.mozilla.org/en-US/docs/Glossary/Empty_element

@@ -1,3 +1,5 @@
+import re
+
 import scrapy
 
 from feeds.loaders import FeedEntryItemLoader
@@ -53,10 +55,33 @@ class ArsTechnicaComSpider(FeedsXMLFeedSpider):
             meta={"il": il, "path": response.meta["path"], "first_page": True},
         )
 
+    @staticmethod
+    def _div_to_img(elem):
+        elem.tag = "img"
+        url = re.search(r"url\('([^']+)'\)", elem.attrib["style"]).group(1)
+        elem.attrib["src"] = url
+        elem.attrib["style"] = None
+        return elem
+
     def _parse_article(self, response):
-        remove_elems = [".caption-credit", ".gallery-image-credit"]
+        remove_elems = [
+            ".caption-credit",
+            ".gallery-image-credit",
+            "#social-left",
+            "ul.toc",
+            "h3:contains('Table of Contents')",
+            "br",
+            ".sidebar:contains('Further Reading')",
+            ".credit",
+        ]
+        change_tags = {".sidebar": "blockquote", "aside": "blockquote"}
+        replace_elems = {"div.image": self._div_to_img}
         il = FeedEntryItemLoader(
-            response=response, parent=response.meta["il"], remove_elems=remove_elems
+            response=response,
+            parent=response.meta["il"],
+            remove_elems=remove_elems,
+            replace_elems=replace_elems,
+            change_tags=change_tags,
         )
         if response.meta.get("first_page", False):
             il.add_value("link", response.url)

@@ -130,8 +130,13 @@ class DerStandardAtSpider(FeedsXMLFeedSpider):
             ".js-embed-output",
             "#mycountrytalks-embed",
             # Remove self-promotion for (other) ressorts.
-            '.js-embed-output-feeds > a[href^="/r"]',
-            '.js-embed-output-feeds > a[href^="https://derstandard.at/"]',
+            '.js-embed-output-feeds a[href^="/r"]',
+            '.js-embed-output-feeds a[href^="https://derstandard.at/"]',
+            (
+                ".js-embed-output-feeds "
+                + 'img[src="https://images.derstandard.at/2018/10/18/'
+                + 'Immobiliensuche202x122.png"]'
+            ),
         ]
         change_tags = {
             "#media-list li .description": "figcaption",

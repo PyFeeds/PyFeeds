@@ -36,24 +36,27 @@ class DerStandardAtSpider(FeedsXMLFeedSpider):
                 meta={"dont_cache": True, "ressort": ressort},
             )
 
-        self._users = self.settings.get("FEEDS_SPIDER_DERSTANDARD_AT_USERS")
-        if self._users:
-            self._users = {user_id: None for user_id in self._users.split()}
-            for user_id in self._users.keys():
-                for page in range(3):
-                    yield scrapy.Request(
-                        (
-                            "https://{}/userprofil/postings/{}?"
-                            + "pageNumber={}&sortMode=1"
-                        ).format(self.name, user_id, page),
-                        self._parse_user_profile,
-                        meta={
-                            # Older pages should be cached longer.
-                            "cache_expires": timedelta(hours=page),
-                            "path": "userprofil/postings/{}".format(user_id),
-                            "user_id": user_id,
-                        },
-                    )
+        self._users = {
+            user_id: None
+            for user_id in self.settings.get(
+                "FEEDS_SPIDER_DERSTANDARD_AT_USERS", ""
+            ).split()
+        }
+        for user_id in self._users.keys():
+            for page in range(3):
+                yield scrapy.Request(
+                    (
+                        "https://{}/userprofil/postings/{}?"
+                        + "pageNumber={}&sortMode=1"
+                    ).format(self.name, user_id, page),
+                    self._parse_user_profile,
+                    meta={
+                        # Older pages should be cached longer.
+                        "cache_expires": timedelta(hours=page),
+                        "path": "userprofil/postings/{}".format(user_id),
+                        "user_id": user_id,
+                    },
+                )
 
     def feed_headers(self):
         for ressort in self._ressorts:

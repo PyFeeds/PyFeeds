@@ -100,10 +100,12 @@ class UebermedienDeSpider(FeedsXMLFeedSpider):
         remove_elems = ["script"]
         convert_footnotes = [".footnoteContent"]
         pullup_elems = {".footnoteContent": 1}
+        change_tags = {".entry-content-info-box": "blockquote"}
         il = FeedEntryItemLoader(
             response=response,
             parent=response.meta["il"],
             remove_elems=remove_elems,
+            change_tags=change_tags,
             base_url="https://{}".format(self.name),
             convert_footnotes=convert_footnotes,
             pullup_elems=pullup_elems,

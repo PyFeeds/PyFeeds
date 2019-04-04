@@ -169,7 +169,11 @@ class OrfAtSpider(FeedsXMLFeedSpider):
             + "verfügbar.</em></p>"
         }
         change_attribs = {"img": {"data-src": "src", "srcset": "src"}}
-        change_tags = {".image": "figure", ".caption": "figcaption"}
+        change_tags = {
+            ".image": "figure",
+            ".caption": "figcaption",
+            ".fact": "blockquote",  # FM4
+        }
         author, author_selector = self._extract_author(response)
         if author:
             self.logger.debug("Extracted possible author '{}'".format(author))

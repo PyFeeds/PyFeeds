@@ -86,8 +86,8 @@ class KurierAtSpider(FeedsSpider):
         articles = json.loads(response.text)["items"]
         for article in articles:
             yield scrapy.Request(
-                "https://efs.kurier.at/api/v1/cfs/route?uri=/kurierat{}".format(
-                    article["url"]
+                "https://efs.kurier.at/api/v1/cfs/route?uri=/{}{}".format(
+                    article["portal"].replace(".", ""), article["url"]
                 ),
                 self._parse_article,
                 meta={
@@ -182,8 +182,8 @@ class KurierAtSpider(FeedsSpider):
         articles = json.loads(response.text)["articles"]
         for article in articles:
             yield scrapy.Request(
-                "https://efs.kurier.at/api/v1/cfs/route?uri=/kurierat{}".format(
-                    article["url"]
+                "https://efs.kurier.at/api/v1/cfs/route?uri=/{}{}".format(
+                    article["portal"].replace(".", ""), article["url"]
                 ),
                 self._parse_article,
                 meta={

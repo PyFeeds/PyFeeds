@@ -1,29 +1,32 @@
 import scrapy
-from scrapy.linkextractors import LinkExtractor
-from scrapy.spiders import Rule
 
 from feeds.loaders import FeedEntryItemLoader
-from feeds.spiders import FeedsCrawlSpider
+from feeds.spiders import FeedsSpider
 
 
-class OpenwrtOrgSpider(FeedsCrawlSpider):
+class OpenwrtOrgSpider(FeedsSpider):
     name = "openwrt.org"
     allowed_domains = ["openwrt.org"]
     start_urls = ["https://openwrt.org/releases/start"]
-    rules = (
-        Rule(LinkExtractor(allow=("releases/(.*)/start",)), callback="parse_release"),
-    )
 
-    feed_title = ("New OpenWRT Release Builds",)
-    feed_subtitle = "Newest release builds from OpenWRT."
+    feed_title = ("New OpenWrt Release Builds",)
+    feed_subtitle = "Newest release builds from OpenWrt."
     _base_url = "https://{}".format(name)
     feed_icon = "https://{}/lib/tpl/openwrt/images/apple-touch-icon.png".format(name)
     feed_logo = "https://{}/lib/tpl/openwrt/images/logo.png".format(name)
 
+    def parse(self, response):
+        # Page with all major releases
+        xpath = '//div[@class="page group"]//a[contains(@href, "/start")]/@href'
+        for href in response.xpath(xpath).extract():
+            yield scrapy.Request(
+                response.urljoin(href), self.parse_release, meta={"dont_cache": True}
+            )
+
     def parse_release(self, response):
-        for href in response.xpath(
-            '//a[contains(@href, "notes")][text()="Release Notes"]/@href'
-        ):
+        # All minor releases per major release
+        xpath = '//a[contains(@href, "notes")][text()="Release Notes"]/@href'
+        for href in response.xpath(xpath):
             prefix, latest = href.extract().split("-")
             major, minor, patch = latest.split(".")
             for m in range(int(patch), -1, -1):

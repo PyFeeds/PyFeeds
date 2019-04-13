@@ -11,7 +11,7 @@ setup(
     include_package_data=True,
     install_requires=[
         "Click>=6.6",
-        "Scrapy>=1.1",
+        "Scrapy>=1.6",
         "bleach>=1.4.3",
         "dateparser>=0.5.1",
         "feedparser",
@@ -39,6 +39,7 @@ setup(
         "Programming Language :: Python :: 3.4",
         "Programming Language :: Python :: 3.5",
         "Programming Language :: Python :: 3.6",
+        "Programming Language :: Python :: 3.7",
         "Topic :: Internet :: WWW/HTTP",
     ],
 )

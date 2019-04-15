@@ -106,7 +106,9 @@ class KurierAtSpider(FeedsSpider):
     def _parse_article(self, response):
         article = json.loads(response.text)["layout"]["center"][0]
         il = FeedEntryItemLoader()
-        il.add_value("link", urljoin("https://{}".format(self.name), article["url"]))
+        il.add_value(
+            "link", urljoin("https://{}".format(article["portal"]), article["url"])
+        )
         il.add_value("title", article["title"])
         if "teaser_img" in article:
             il.add_value(
@@ -158,6 +160,7 @@ class KurierAtSpider(FeedsSpider):
         if not article["authors"]:
             il.add_value("author_name", article["agency"])
         il.add_value("category", article["channel"]["name"])
+        il.add_value("category", article["portal"])
         il.add_value("path", response.meta["path"])
         if article["sponsored"]:
             il.add_value("category", "sponsored")

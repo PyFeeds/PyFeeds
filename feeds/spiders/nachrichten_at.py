@@ -73,7 +73,7 @@ class NachrichtenAtSpider(FeedsXMLFeedSpider):
     def parse_node(self, response, node):
         url = node.xpath("link/text()").extract_first()
         return scrapy.Request(
-            url.replace("#ref=rss", ",PRINT"),
+            url.replace("#ref=rss", ""),
             self._parse_article,
             meta={"handle_httpstatus_list": [410], "ressort": response.meta["ressort"]},
         )
@@ -83,24 +83,35 @@ class NachrichtenAtSpider(FeedsXMLFeedSpider):
             # Articles has been deleted.
             return
 
-        remove_elems = [".bildtext .author", "iframe"]
-        change_tags = {"h1": "h2", ".bildbox": "figure", ".bildtext": "figcaption"}
+        remove_elems = [
+            ".artDetail__header__container",
+            ".artDetail__extImage__copyright",
+            "#readspeaker_button1",
+            ".artDetail__userOptions",
+            ".container__col--hide",
+            ".container__col--mdHide",
+            ".artDetailMeineThemen__outer",
+            ".artDetailAutor__outer",
+            ".artDetailMehrZu",
+            "div[style='display: none;']",
+            ".artDetail__ooenplusOverlay",
+        ]
         il = FeedEntryItemLoader(
             response=response,
             timezone="Europe/Vienna",
             base_url="https://www.{}".format(self.name),
             remove_elems=remove_elems,
-            change_tags=change_tags,
             dayfirst=True,
             yearfirst=False,
         )
-        if response.css(".payment"):
+        if response.css(".mainLogin__linkToggle"):
             il.add_value("category", "paywalled")
         il.add_css("link", 'link[rel="canonical"]::attr(href)')
         il.add_css("title", 'meta[property="og:title"]::attr(content)')
-        il.add_css("author_name", ".druckheadline::text", re=r"·\s*(.*)\s*·")
+        il.add_css("author_name", ".artDetailAutor__headline::text")
         # Mon, 01 Oct 18 13:42:45 +0200
-        il.add_css("updated", 'meta[http-equiv="last-modified"]::attr(content)')
-        il.add_css("content_html", ".druckcontent")
+        il.add_css("updated", 'meta[name="date"]::attr(content)')
+        il.add_css("content_html", "article.artDetail")
+        il.add_css("category", ".artDetailOrt__linkText::text")
         il.add_value("path", response.meta["ressort"])
         return il.load_item()

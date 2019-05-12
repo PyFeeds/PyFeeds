@@ -140,24 +140,22 @@ class FalterAtSpider(FeedsSpider):
 
     def parse_archive(self, response):
         # The perks of having a JavaScript frontend ...
-        revisions = json.loads(
-            response.css(".content-main script ::text").re_first("revisions: (.*)"),
-            object_pairs_hook=OrderedDict,
-        )
+        issues = json.loads(
+            response.css("router-view").re_first("<router-view :data='([^']+)'>")
+        )["issues"]
         latest_issue_date = dateutil_parse(
-            revisions.popitem(last=False)[1][-1], ignoretz=True
+            issues[sorted(issues.keys())[-1]][-1], ignoretz=True
         )
         issuenr = latest_issue_date.strftime("%Y%W")
         return scrapy.Request(
-            response.urljoin(
-                "/archiv/ajax/search?count=1000&issuenr={}".format(issuenr)
-            ),
+            response.urljoin("/api/archive/{}?count=1000&from=0".format(issuenr)),
             self.parse_archive_search,
             meta={"issue_date": latest_issue_date},
         )
 
     def parse_archive_search(self, response):
-        for i, item in enumerate(json.loads(response.text)["result"]["hits"]):
+        articles = json.loads(response.text)["articles"]["hits"]
+        for i, item in enumerate(articles):
             il = FeedEntryItemLoader(
                 response=response,
                 base_url="https://{}".format(self.name),
@@ -178,18 +176,18 @@ class FalterAtSpider(FeedsSpider):
             # We add an offset so they are sorted in the right order.
             date = response.meta["issue_date"] + timedelta(seconds=i)
             il.add_value("updated", date)
+            il.add_value("category", item["ressort"])
             yield scrapy.Request(link, self.parse_item_text, meta={"il": il})
 
     def parse_item_text(self, response):
-        remove_elems = [".dachzeile", "h1", ".meta", "br", "form", ".button-container"]
+        remove_elems = [".ad-component", ".wp-caption-text"]
         il = FeedEntryItemLoader(
             response=response,
             parent=response.meta["il"],
             remove_elems=remove_elems,
             base_url="https://{}".format(self.name),
         )
-        content = response.xpath("//article").extract_first()
-        if "Lesen Sie diesen Artikel in voller Länge" in content:
+        if response.css(".bluebox"):
             il.add_value("category", "paywalled")
-        il.add_value("content_html", content)
+        il.add_css("content_html", "div.pR")
         return il.load_item()

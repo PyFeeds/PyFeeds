@@ -146,7 +146,9 @@ class FalterAtSpider(FeedsSpider):
         latest_issue_date = dateutil_parse(
             issues[sorted(issues.keys())[-1]][-1], ignoretz=True
         )
-        issuenr = latest_issue_date.strftime("%Y%W")
+        # The JS frontend calculates the issue number the same way, so this should be
+        # somewhat official.
+        issuenr = "{0[0]}{0[1]}".format(latest_issue_date.date().isocalendar())
         return scrapy.Request(
             response.urljoin("/api/archive/{}?count=1000&from=0".format(issuenr)),
             self.parse_archive_search,

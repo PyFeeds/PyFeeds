@@ -2,7 +2,9 @@ import json
 import re
 from urllib.parse import urlparse
 
+import lxml
 import scrapy
+from scrapy.selector import Selector
 from inline_requests import inline_requests
 
 from feeds.loaders import FeedEntryItemLoader
@@ -86,7 +88,25 @@ class OrfAtSpider(FeedsXMLFeedSpider):
         for author in self._authors:
             yield generate_feed_header(title="ORF.at: {}".format(author), path=author)
 
+    def parse(self, response):
+        selector = Selector(response, type="xml")
+
+        doc = lxml.etree.ElementTree(lxml.etree.fromstring(response.body))
+        if doc.getroot().nsmap:
+            self._register_namespaces(selector)
+            nodes = selector.xpath("//%s" % self.itertag)
+        else:
+            nodes = selector.xpath("//item")
+
+        return self.parse_nodes(response, nodes)
+
     def parse_node(self, response, node):
+        if "orfon" in node.namespaces:
+            return self._parse_extended_node(response, node)
+        else:
+            return self._parse_simple_node(response, node)
+
+    def _parse_extended_node(self, response, node):
         categories = [
             node.xpath("orfon:storyType/@rdf:resource").re_first("urn:orfon:type:(.*)"),
             node.xpath("dc:subject/text()").extract_first(),
@@ -115,6 +135,15 @@ class OrfAtSpider(FeedsXMLFeedSpider):
                 )
             else:
                 yield scrapy.Request(fixed_link, self._parse_article, meta=meta)
+
+    def _parse_simple_node(self, response, node):
+        meta = {
+            "path": response.meta["path"],
+            "categories": node.xpath("category/text()").extract(),
+            "updated": node.xpath("pubDate/text()").extract_first(),
+        }
+        link = node.xpath("link/text()").extract_first()
+        return scrapy.Request(link, self._parse_article, meta=meta)
 
     @staticmethod
     def _extract_link(link):

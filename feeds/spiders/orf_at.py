@@ -198,7 +198,7 @@ class OrfAtSpider(FeedsXMLFeedSpider):
             ".video": "<p><em>Hinweis: Das eingebettete Video ist nur im Artikel "
             + "verfügbar.</em></p>",
             ".slideshow": (
-                "<p><em>Alte Slideshows werden nicht mehr unterstützt.</em></p>",
+                "<p><em>Alte Slideshows werden nicht mehr unterstützt.</em></p>"
             ),
         }
         change_attribs = {"img": {"data-src": "src", "srcset": "src"}}

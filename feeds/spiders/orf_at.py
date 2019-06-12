@@ -155,6 +155,7 @@ class OrfAtSpider(FeedsXMLFeedSpider):
             ".social-buttons",
             ".story-horizontal-ad",
             ".linkcard",
+            ".geolocation",  # Bundesländer
         ]
         pullup_elems = {
             ".remote .slideshow": 1,
@@ -220,9 +221,6 @@ class OrfAtSpider(FeedsXMLFeedSpider):
 
     @staticmethod
     def _extract_author(response):
-        # Does nothing for Ö3 and Bundesländer. Bundesländer quite seldomly have an
-        # author and if they do it's pretty hard to extract reliably.
-
         domain = urlparse(response.url).netloc
         if domain == "fm4.orf.at":
             author = (
@@ -238,10 +236,6 @@ class OrfAtSpider(FeedsXMLFeedSpider):
             author_selector = "#ss-storyText > .socialButtons + p"
             if author:
                 return (author.strip(), author_selector)
-        elif domain == "orf.at":
-            author = response.css(".byline ::text").extract_first()
-            if author:
-                return (re.split(r"[/,]", author)[0].strip(), ".byline")
         elif domain in ["science.orf.at", "help.orf.at", "religion.orf.at"]:
             try:
                 author = (
@@ -262,6 +256,10 @@ class OrfAtSpider(FeedsXMLFeedSpider):
                     )
             except IndexError:
                 pass
+        else:
+            author = response.css(".byline ::text").extract_first()
+            if author:
+                return (re.split(r"[/,]", author)[0].strip(), ".byline")
 
         return (None, None)
 

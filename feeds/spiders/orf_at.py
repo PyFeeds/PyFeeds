@@ -166,7 +166,10 @@ class OrfAtSpider(FeedsXMLFeedSpider):
         }
         replace_elems = {
             ".video": "<p><em>Hinweis: Das eingebettete Video ist nur im Artikel "
-            + "verfügbar.</em></p>"
+            + "verfügbar.</em></p>",
+            ".slideshow": (
+                "<p><em>Alte Slideshows werden nicht mehr unterstützt.</em></p>",
+            ),
         }
         change_attribs = {"img": {"data-src": "src", "srcset": "src"}}
         change_tags = {
@@ -182,16 +185,6 @@ class OrfAtSpider(FeedsXMLFeedSpider):
         else:
             self.logger.debug("Could not extract author name")
             author = "{}.ORF.at".format(response.meta["path"])
-
-        for slideshow in response.css(".slideshow"):
-            link = response.urljoin(
-                slideshow.css('::attr("data-slideshow-json-href")').extract_first()
-            ).replace("jsonp", "json")
-            slideshow_id = slideshow.css('::attr("id")').extract_first()
-            slideshow_response = yield scrapy.Request(link)
-            replace_elems["#{}".format(slideshow_id)] = self._create_slideshow_html(
-                slideshow_response
-            )
 
         il = FeedEntryItemLoader(
             response=response,
@@ -224,21 +217,6 @@ class OrfAtSpider(FeedsXMLFeedSpider):
         il.add_value("path", response.meta["path"])
         il.add_value("category", response.meta["categories"])
         yield il.load_item()
-
-    @staticmethod
-    def _create_slideshow_html(response):
-        slideshow = json.loads(response.text)
-        figures = []
-        for photo in slideshow["photos"]:
-            url = photo["url"]
-            caption = photo.get("description") or ""
-            figures.append(
-                (
-                    '<figure><div><img src="{url}"></div>'
-                    + "<figcaption>{caption}</figcaption></figure>"
-                ).format(url=url, caption=caption)
-            )
-        return "<div>" + "".join(figures) + "</div>"
 
     @staticmethod
     def _extract_author(response):

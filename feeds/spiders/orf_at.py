@@ -1,8 +1,9 @@
-import json
 import re
 from urllib.parse import urlparse
 
+import lxml
 import scrapy
+from scrapy.selector import Selector
 from inline_requests import inline_requests
 
 from feeds.loaders import FeedEntryItemLoader
@@ -86,7 +87,25 @@ class OrfAtSpider(FeedsXMLFeedSpider):
         for author in self._authors:
             yield generate_feed_header(title="ORF.at: {}".format(author), path=author)
 
+    def parse(self, response):
+        selector = Selector(response, type="xml")
+
+        doc = lxml.etree.ElementTree(lxml.etree.fromstring(response.body))
+        if doc.getroot().nsmap:
+            self._register_namespaces(selector)
+            nodes = selector.xpath("//%s" % self.itertag)
+        else:
+            nodes = selector.xpath("//item")
+
+        return self.parse_nodes(response, nodes)
+
     def parse_node(self, response, node):
+        if "orfon" in node.namespaces:
+            return self._parse_extended_node(response, node)
+        else:
+            return self._parse_simple_node(response, node)
+
+    def _parse_extended_node(self, response, node):
         categories = [
             node.xpath("orfon:storyType/@rdf:resource").re_first("urn:orfon:type:(.*)"),
             node.xpath("dc:subject/text()").extract_first(),
@@ -115,6 +134,15 @@ class OrfAtSpider(FeedsXMLFeedSpider):
                 )
             else:
                 yield scrapy.Request(fixed_link, self._parse_article, meta=meta)
+
+    def _parse_simple_node(self, response, node):
+        meta = {
+            "path": response.meta["path"],
+            "categories": node.xpath("category/text()").extract(),
+            "updated": node.xpath("pubDate/text()").extract_first(),
+        }
+        link = node.xpath("link/text()").extract_first()
+        return scrapy.Request(link, self._parse_article, meta=meta)
 
     @staticmethod
     def _extract_link(link):
@@ -155,6 +183,7 @@ class OrfAtSpider(FeedsXMLFeedSpider):
             ".social-buttons",
             ".story-horizontal-ad",
             ".linkcard",
+            ".geolocation",  # Bundesländer
         ]
         pullup_elems = {
             ".remote .slideshow": 1,
@@ -166,7 +195,10 @@ class OrfAtSpider(FeedsXMLFeedSpider):
         }
         replace_elems = {
             ".video": "<p><em>Hinweis: Das eingebettete Video ist nur im Artikel "
-            + "verfügbar.</em></p>"
+            + "verfügbar.</em></p>",
+            ".slideshow": (
+                "<p><em>Alte Slideshows werden nicht mehr unterstützt.</em></p>"
+            ),
         }
         change_attribs = {"img": {"data-src": "src", "srcset": "src"}}
         change_tags = {
@@ -182,16 +214,6 @@ class OrfAtSpider(FeedsXMLFeedSpider):
         else:
             self.logger.debug("Could not extract author name")
             author = "{}.ORF.at".format(response.meta["path"])
-
-        for slideshow in response.css(".slideshow"):
-            link = response.urljoin(
-                slideshow.css('::attr("data-slideshow-json-href")').extract_first()
-            ).replace("jsonp", "json")
-            slideshow_id = slideshow.css('::attr("id")').extract_first()
-            slideshow_response = yield scrapy.Request(link)
-            replace_elems["#{}".format(slideshow_id)] = self._create_slideshow_html(
-                slideshow_response
-            )
 
         il = FeedEntryItemLoader(
             response=response,
@@ -226,25 +248,7 @@ class OrfAtSpider(FeedsXMLFeedSpider):
         yield il.load_item()
 
     @staticmethod
-    def _create_slideshow_html(response):
-        slideshow = json.loads(response.text)
-        figures = []
-        for photo in slideshow["photos"]:
-            url = photo["url"]
-            caption = photo.get("description") or ""
-            figures.append(
-                (
-                    '<figure><div><img src="{url}"></div>'
-                    + "<figcaption>{caption}</figcaption></figure>"
-                ).format(url=url, caption=caption)
-            )
-        return "<div>" + "".join(figures) + "</div>"
-
-    @staticmethod
     def _extract_author(response):
-        # Does nothing for Ö3 and Bundesländer. Bundesländer quite seldomly have an
-        # author and if they do it's pretty hard to extract reliably.
-
         domain = urlparse(response.url).netloc
         if domain == "fm4.orf.at":
             author = (
@@ -260,10 +264,6 @@ class OrfAtSpider(FeedsXMLFeedSpider):
             author_selector = "#ss-storyText > .socialButtons + p"
             if author:
                 return (author.strip(), author_selector)
-        elif domain == "orf.at":
-            author = response.css(".byline ::text").extract_first()
-            if author:
-                return (re.split(r"[/,]", author)[0].strip(), ".byline")
         elif domain in ["science.orf.at", "help.orf.at", "religion.orf.at"]:
             try:
                 author = (
@@ -284,6 +284,10 @@ class OrfAtSpider(FeedsXMLFeedSpider):
                     )
             except IndexError:
                 pass
+        else:
+            author = response.css(".byline ::text").extract_first()
+            if author:
+                return (re.split(r"[/,]", author)[0].strip(), ".byline")
 
         return (None, None)
 

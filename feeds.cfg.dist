@@ -117,8 +117,8 @@ useragent = feeds (+https://github.com/nblock/feeds)
 
 #[derstandard.at]
 #ressorts =
-#    47
-#    4748
+#    diskurs/kolumnen/rauscher
+#    inland/serienundblogs/standardabweichung
 #    etat
 #    immobilien
 #users =

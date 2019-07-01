@@ -180,36 +180,30 @@ class AtomExporter(BaseItemExporter):
     def finish_exporting(self):
         for path, feed in self._feeds.items():
             path = os.path.join(self._output_path, path)
-            os.makedirs(os.path.dirname(path), exist_ok=True)
             if len(feed) == 0:
                 logger.warning("Feed '{}' contains no items!".format(path))
-                try:
-                    os.remove(path)
-                except OSError:
-                    pass
+
+            feed.insert_updated()
+            feed.sort()
+            feed = feed.tostring(
+                encoding=self.encoding,
+                pretty_print=self._pretty_print,
+                xml_declaration=True,
+            )
+            os.makedirs(os.path.dirname(path), exist_ok=True)
+            try:
+                with open(path, "rb") as f:
+                    logger.debug("Found existing feed at '{}'".format(path))
+                    old_feed = f.read()
+            except FileNotFoundError:
+                old_feed = None
+            if feed != old_feed:
+                with open(path, "wb") as f:
+                    f.write(feed)
             else:
-                feed.insert_updated()
-                feed.sort()
-                feed = feed.tostring(
-                    encoding=self.encoding,
-                    pretty_print=self._pretty_print,
-                    xml_declaration=True,
+                logger.debug(
+                    "Feed content not changed, not overwriting feed '{}'".format(path)
                 )
-                try:
-                    with open(path, "rb") as f:
-                        logger.debug("Found existing feed at '{}'".format(path))
-                        old_feed = f.read()
-                except FileNotFoundError:
-                    old_feed = None
-                if feed != old_feed:
-                    with open(path, "wb") as f:
-                        f.write(feed)
-                else:
-                    logger.debug(
-                        "Feed content not changed, not overwriting feed '{}'".format(
-                            path
-                        )
-                    )
 
     def export_item(self, item):
         for path in item.pop("path", [""]):

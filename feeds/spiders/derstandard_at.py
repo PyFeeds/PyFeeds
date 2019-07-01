@@ -53,18 +53,16 @@ class DerStandardAtSpider(FeedsXMLFeedSpider):
 
     def feed_headers(self):
         for ressort in self._ressorts:
-            # Only generate feed header if page already scraped and title known.
-            if ressort in self._titles:
-                yield generate_feed_header(
-                    title="derStandard.at › {}".format(self._titles[ressort]),
-                    subtitle="Nachrichten in Echtzeit",
-                    link="https://www.{}".format(self.name),
-                    icon="https://at.staticfiles.at/sites/mainweb/img/icons/dst/"
-                    "dst-16.ico",
-                    logo="https://at.staticfiles.at/sites/mainweb/img/icons/dst/"
-                    "dst-228.png",
-                    path=ressort,
-                )
+            yield generate_feed_header(
+                title="derStandard.at › {}".format(self._titles.get(ressort, ressort)),
+                subtitle="Nachrichten in Echtzeit",
+                link="https://www.{}".format(self.name),
+                icon="https://at.staticfiles.at/sites/mainweb/img/icons/dst/"
+                "dst-16.ico",
+                logo="https://at.staticfiles.at/sites/mainweb/img/icons/dst/"
+                "dst-228.png",
+                path=ressort,
+            )
 
         for user_id, name in self._users.items():
             yield generate_feed_header(

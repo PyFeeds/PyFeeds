@@ -234,7 +234,8 @@ class OrfAtSpider(FeedsXMLFeedSpider):
             # other
             updated = response.meta["updated"]
         il.add_value("updated", updated)
-        il.add_css("title", "title::text", re=re.compile(r"(.*) - .*", flags=re.S))
+        il.add_css("title", ".story-lead-headline ::text")  # news
+        il.add_css("title", "#ss-storyText > h1 ::text")  # FM4, science
         il.add_value("link", response.url)
         il.add_css("content_html", ".opener img")  # FM4, news
         il.add_css("content_html", ".story-lead-text")  # news

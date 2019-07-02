@@ -3,11 +3,11 @@ from datetime import datetime, timedelta
 import scrapy
 
 from feeds.loaders import FeedEntryItemLoader
-from feeds.spiders import FeedsXMLFeedSpider
+from feeds.spiders import FeedsSpider
 from feeds.utils import generate_feed_header
 
 
-class DerStandardAtSpider(FeedsXMLFeedSpider):
+class DerStandardAtSpider(FeedsSpider):
     name = "derstandard.at"
     custom_settings = {"COOKIES_ENABLED": False}
 
@@ -18,14 +18,15 @@ class DerStandardAtSpider(FeedsXMLFeedSpider):
         if self._ressorts:
             self._ressorts = set(self._ressorts.split())
         else:
-            self._ressorts = set([""])
-            self.logger.info("No ressorts given, falling back to general feed!")
+            self.logger.error("No ressorts given!")
+            return
 
         for ressort in self._ressorts:
-            ressort = ressort.split("/")[0]
             yield scrapy.Request(
-                "https://www.{}/rss/{}".format(self.name, ressort),
+                "https://www.{}/{}".format(self.name, ressort),
                 meta={"dont_cache": True, "ressort": ressort},
+                # Cookie handling is disabled, so we have to send this as a header.
+                headers={"Cookie": "DSGVO_ZUSAGE_V1=true"},
             )
 
         self._users = {
@@ -77,19 +78,14 @@ class DerStandardAtSpider(FeedsXMLFeedSpider):
                 path="userprofil/postings/{}".format(user_id),
             )
 
-    def parse_node(self, response, node):
-        url = node.xpath("link/text()").extract_first()
-        if url.startswith("https://www.{}/jetzt/livebericht".format(self.name)):
-            return
-
-        updated = node.xpath("pubDate/text()").extract_first()
-        return scrapy.Request(
-            url,
-            self._parse_article,
-            meta={"updated": updated, "ressort": response.meta["ressort"]},
-            # Cookie handling is disabled, so we have to send this as a header.
-            headers={"Cookie": "DSGVO_ZUSAGE_V1=true"},
-        )
+    def parse(self, response):
+        for link in response.css("section[data-type='date'] a::attr('href')").extract():
+            yield scrapy.Request(
+                response.urljoin(link),
+                self._parse_article,
+                meta={"ressort": response.meta["ressort"]},
+                headers={"Cookie": "DSGVO_ZUSAGE_V1=true"},
+            )
 
     def _parse_article(self, response):
         def _fix_img_src(elem):
@@ -107,9 +103,7 @@ class DerStandardAtSpider(FeedsXMLFeedSpider):
         breadcrumbs = _parse_breadcrumbs(
             response.css(".site-contextnavigation-breadcrumbs-nav a")
         )
-        paths = self._ressorts.intersection(breadcrumbs.keys())
-        if not paths:
-            return
+        self._titles = {**self._titles, **breadcrumbs}
 
         remove_elems = [
             "ad-container",
@@ -126,14 +120,14 @@ class DerStandardAtSpider(FeedsXMLFeedSpider):
             remove_elems=remove_elems,
             change_tags=change_tags,
             replace_elems=replace_elems,
+            timezone="Europe/Vienna",
         )
         il.add_value("link", response.url)
         il.add_css("title", 'meta[property="og:title"]::attr(content)')
         il.add_css("author_name", ".article-origins ::text")
-        self._titles = {**self._titles, **breadcrumbs}
-        il.add_value("path", paths)
+        il.add_value("path", response.meta["ressort"])
         il.add_value("category", breadcrumbs.values())
-        il.add_value("updated", response.meta["updated"])
+        il.add_css("updated", "time::attr('datetime')")
         il.add_css("content_html", ".article-subtitle")
         il.add_css("content_html", ".article-body")
         return il.load_item()

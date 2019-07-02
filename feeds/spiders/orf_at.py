@@ -1,10 +1,11 @@
+import json
 import re
 from urllib.parse import urlparse
 
 import lxml
 import scrapy
-from scrapy.selector import Selector
 from inline_requests import inline_requests
+from scrapy.selector import Selector
 
 from feeds.loaders import FeedEntryItemLoader
 from feeds.spiders import FeedsXMLFeedSpider
@@ -215,6 +216,16 @@ class OrfAtSpider(FeedsXMLFeedSpider):
             self.logger.debug("Could not extract author name")
             author = "{}.ORF.at".format(response.meta["path"])
 
+        for slideshow in response.css(".slideshow"):
+            link = response.urljoin(
+                slideshow.css('::attr("data-slideshow-json-href")').extract_first()
+            ).replace("jsonp", "json")
+            slideshow_id = slideshow.css('::attr("id")').extract_first()
+            slideshow_response = yield scrapy.Request(link)
+            replace_elems["#{}".format(slideshow_id)] = self._create_slideshow_html(
+                slideshow_response
+            )
+
         il = FeedEntryItemLoader(
             response=response,
             remove_elems=remove_elems,
@@ -234,7 +245,8 @@ class OrfAtSpider(FeedsXMLFeedSpider):
             # other
             updated = response.meta["updated"]
         il.add_value("updated", updated)
-        il.add_css("title", "title::text", re=re.compile(r"(.*) - .*", flags=re.S))
+        il.add_css("title", ".story-lead-headline ::text")  # news
+        il.add_css("title", "#ss-storyText > h1 ::text")  # FM4, science
         il.add_value("link", response.url)
         il.add_css("content_html", ".opener img")  # FM4, news
         il.add_css("content_html", ".story-lead-text")  # news
@@ -246,6 +258,21 @@ class OrfAtSpider(FeedsXMLFeedSpider):
         il.add_value("path", response.meta["path"])
         il.add_value("category", response.meta["categories"])
         yield il.load_item()
+
+    @staticmethod
+    def _create_slideshow_html(response):
+        slideshow = json.loads(response.text)
+        figures = []
+        for photo in slideshow["photos"]:
+            url = photo["url"]
+            caption = photo.get("description") or ""
+            figures.append(
+                (
+                    '<figure><div><img src="{url}"></div>'
+                    + "<figcaption>{caption}</figcaption></figure>"
+                ).format(url=url, caption=caption)
+            )
+        return "<div>" + "".join(figures) + "</div>"
 
     @staticmethod
     def _extract_author(response):

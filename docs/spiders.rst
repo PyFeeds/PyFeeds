@@ -27,6 +27,7 @@ Most popular sites
    spiders/facebook.com
    spiders/indiehackers.com
    spiders/lwn.net
+   spiders/spotify.com
    spiders/vice.com
 
 Support for generic sites

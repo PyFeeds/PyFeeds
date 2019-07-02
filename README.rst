@@ -56,7 +56,7 @@ The easiest way to install Feeds is via ``pip`` in a virtual environment. Feeds
 does not provide any releases yet, so one might directly install the current
 master branch::
 
-    $ git clone https://github.com/nblock/feeds.git
+    $ git clone https://github.com/pyfeeds/pyfeeds.git
     $ cd feeds
     $ python3 -m venv venv
     $ source bin/activate
@@ -143,8 +143,8 @@ License
 AGPL3, see `LICENSE`_ for details.
 
 .. _LICENSE: LICENSE
-.. _issue tracker: https://github.com/nblock/feeds/issues
-.. _new issue: https://github.com/nblock/feeds/issues/new
+.. _issue tracker: https://github.com/pyfeeds/pyfeeds/issues
+.. _new issue: https://github.com/pyfeeds/pyfeeds/issues/new
 .. _Scrapy: https://www.scrapy.org
 .. _Falter: https://pyfeeds.readthedocs.io/en/latest/spiders/falter.at.html
 .. _Konsument: https://pyfeeds.readthedocs.io/en/latest/spiders/konsument.at.html

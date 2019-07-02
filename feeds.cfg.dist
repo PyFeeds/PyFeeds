@@ -2,7 +2,7 @@
 
 [feeds]
 # Useragent to use for crawling.
-useragent = feeds (+https://github.com/nblock/feeds)
+useragent = feeds (+https://github.com/pyfeeds/pyfeeds)
 
 ## List of spiders to run by default, one per line.
 # spiders =
@@ -164,3 +164,7 @@ useragent = feeds (+https://github.com/nblock/feeds)
 #    guido.tartarotti
 #    florian.holzer
 #    barbara.kaufmann
+
+#[spotify.com]
+#shows =
+#    6u7pI0o0CUBQq0T1fwPgbj

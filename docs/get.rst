@@ -9,7 +9,7 @@ master branch:
 
 .. code-block:: bash
 
-    $ git clone https://github.com/nblock/feeds.git
+    $ git clone https://github.com/pyfeeds/pyfeeds.git
     $ cd feeds
     $ python3 -m venv venv
     $ source bin/activate
@@ -17,4 +17,4 @@ master branch:
 
 After installation ``feeds`` is available in your virtual environment.
 
-Feeds supports Python 3.4+.
+Feeds supports Python 3.5+.

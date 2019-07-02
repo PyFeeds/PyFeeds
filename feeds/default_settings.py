@@ -58,7 +58,7 @@ RETRY_TIMES = 4
 DUPEFILTER_CLASS = "scrapy.dupefilters.BaseDupeFilter"
 
 # Default user agent. Can be overriden in feeds.cfg.
-USER_AGENT = "feeds (+https://github.com/nblock/feeds)"
+USER_AGENT = "feeds (+https://github.com/pyfeeds/pyfeeds)"
 
 # Set default level to info.
 # Can be overriden with --loglevel parameter.

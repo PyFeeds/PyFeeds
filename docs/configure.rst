@@ -15,7 +15,7 @@ The Useragent used for crawling.
 .. code-block:: ini
 
    [feeds]
-   useragent = feeds (+https://github.com/nblock/feeds)
+   useragent = feeds (+https://github.com/pyfeeds/pyfeeds)
 
 spiders
 ~~~~~~~

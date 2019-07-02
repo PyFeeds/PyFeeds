@@ -127,6 +127,7 @@ class DerStandardAtSpider(FeedsSpider):
         il.add_css("author_name", ".article-origins ::text")
         il.add_value("path", response.meta["ressort"])
         il.add_value("category", breadcrumbs.values())
+        il.add_css("category", ".storylabels span ::text")
         il.add_css("updated", "time::attr('datetime')")
         il.add_css("content_html", ".article-subtitle")
         il.add_css("content_html", ".article-body")

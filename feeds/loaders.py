@@ -273,6 +273,7 @@ def flatten_tree(tree):
         return None
     elif (
         only_child is not None
+        and (tree.text is None or tree.text.strip() == "")
         and only_child.tag == tree.tag
         and tree.getparent() is not None
     ):

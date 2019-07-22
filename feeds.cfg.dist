@@ -168,3 +168,10 @@ useragent = feeds (+https://github.com/pyfeeds/pyfeeds)
 #[spotify.com]
 #shows =
 #    6u7pI0o0CUBQq0T1fwPgbj
+
+#[wienerzeitung.at]
+#ressorts =
+#    nachrichten/politik/wien
+#    nachrichten/politik
+#    nachrichten/wirtschaft
+#    meinung

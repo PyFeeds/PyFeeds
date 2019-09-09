@@ -28,7 +28,7 @@ class FalterAtSpider(FeedsSpider):
             password = self.settings.get("FEEDS_SPIDER_FALTER_AT_PASSWORD")
             if abonr and password:
                 yield scrapy.FormRequest(
-                    url="https://www.{}/falter/e-paper/login".format(self.name),
+                    url="https://www.{}/login".format(self.name),
                     formdata=OrderedDict(
                         [
                             ("login[abonr]", abonr),

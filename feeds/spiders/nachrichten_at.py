@@ -79,6 +79,11 @@ class NachrichtenAtSpider(FeedsXMLFeedSpider):
         )
 
     def _parse_article(self, response):
+        def _fix_img_src(elem):
+            if "data-src" in elem.attrib:
+                elem.attrib["src"] = elem.attrib["data-src"]
+            return elem
+
         if response.status == 410:
             # Articles has been deleted.
             return
@@ -96,11 +101,13 @@ class NachrichtenAtSpider(FeedsXMLFeedSpider):
             "div[style='display: none;']",
             ".artDetail__ooenplusOverlay",
         ]
+        replace_elems = {"img": _fix_img_src}
         il = FeedEntryItemLoader(
             response=response,
             timezone="Europe/Vienna",
             base_url="https://www.{}".format(self.name),
             remove_elems=remove_elems,
+            replace_elems=replace_elems,
             dayfirst=True,
             yearfirst=False,
         )

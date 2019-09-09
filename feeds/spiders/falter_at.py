@@ -114,11 +114,11 @@ class FalterAtSpider(FeedsSpider):
                 il.add_value("updated", review["post_date"])
             else:
                 il.add_value("title", entry["name"])
-            if "pictures" in entry and entry["pictures"]:
+            for picture in (entry["pictures"] or []):
                 il.add_value(
                     "content_html",
-                    '<img src="https://fcc.at/ef/img720/{}">'.format(
-                        entry["pictures"][0]["filename"]
+                    '<img src="https://faltercdn2.falter.at/wwei/1080/{}">'.format(
+                        picture["filename"]
                     ),
                 )
             if review:

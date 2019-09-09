@@ -54,7 +54,7 @@ class FalterAtSpider(FeedsSpider):
         if "lokalfuehrer_reviews" in self.pages:
             yield scrapy.Request(
                 (
-                    "https://wwei-api.{}/api/v1/simple_search?v=true&"
+                    "https://www.{}/api/lokalfuehrer/search?v=true&"
                     + "sort_pos=front&sort=review.post_date:desc&c=10"
                 ).format(self.name),
                 self.parse_lokalfuehrer,
@@ -64,7 +64,7 @@ class FalterAtSpider(FeedsSpider):
         if "lokalfuehrer_newest" in self.pages:
             yield scrapy.Request(
                 (
-                    "https://wwei-api.{}/api/v1/simple_search?"
+                    "https://www.{}/api/lokalfuehrer/search?"
                     + "sort_pos=front&sort=id:desc&c=20"
                 ).format(self.name),
                 self.parse_lokalfuehrer,
@@ -91,7 +91,7 @@ class FalterAtSpider(FeedsSpider):
             )
 
     def parse_lokalfuehrer(self, response):
-        entries = json.loads(response.text)[0]["hits"]
+        entries = json.loads(response.text)["hits"]
         for entry in entries:
             il = FeedEntryItemLoader(
                 response=response, base_url="https://{}".format(self.name)

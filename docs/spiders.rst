@@ -24,7 +24,6 @@ Most popular sites
    :maxdepth: 1
 
    spiders/arstechnica.com
-   spiders/facebook.com
    spiders/indiehackers.com
    spiders/lwn.net
    spiders/spotify.com

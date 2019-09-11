@@ -28,7 +28,7 @@ class FalterAtSpider(FeedsSpider):
             password = self.settings.get("FEEDS_SPIDER_FALTER_AT_PASSWORD")
             if abonr and password:
                 yield scrapy.FormRequest(
-                    url="https://www.{}/falter/e-paper/login".format(self.name),
+                    url="https://www.{}/login".format(self.name),
                     formdata=OrderedDict(
                         [
                             ("login[abonr]", abonr),
@@ -54,7 +54,7 @@ class FalterAtSpider(FeedsSpider):
         if "lokalfuehrer_reviews" in self.pages:
             yield scrapy.Request(
                 (
-                    "https://wwei-api.{}/api/v1/simple_search?v=true&"
+                    "https://www.{}/api/lokalfuehrer/search?v=true&"
                     + "sort_pos=front&sort=review.post_date:desc&c=10"
                 ).format(self.name),
                 self.parse_lokalfuehrer,
@@ -64,7 +64,7 @@ class FalterAtSpider(FeedsSpider):
         if "lokalfuehrer_newest" in self.pages:
             yield scrapy.Request(
                 (
-                    "https://wwei-api.{}/api/v1/simple_search?"
+                    "https://www.{}/api/lokalfuehrer/search?"
                     + "sort_pos=front&sort=id:desc&c=20"
                 ).format(self.name),
                 self.parse_lokalfuehrer,
@@ -91,7 +91,7 @@ class FalterAtSpider(FeedsSpider):
             )
 
     def parse_lokalfuehrer(self, response):
-        entries = json.loads(response.text)[0]["hits"]
+        entries = json.loads(response.text)["hits"]
         for entry in entries:
             il = FeedEntryItemLoader(
                 response=response, base_url="https://{}".format(self.name)
@@ -114,11 +114,11 @@ class FalterAtSpider(FeedsSpider):
                 il.add_value("updated", review["post_date"])
             else:
                 il.add_value("title", entry["name"])
-            if "pictures" in entry and entry["pictures"]:
+            for picture in (entry["pictures"] or []):
                 il.add_value(
                     "content_html",
-                    '<img src="https://fcc.at/ef/img720/{}">'.format(
-                        entry["pictures"][0]["filename"]
+                    '<img src="https://faltercdn2.falter.at/wwei/1080/{}">'.format(
+                        picture["filename"]
                     ),
                 )
             if review:

@@ -108,7 +108,6 @@ Utilizing an API
 ~~~~~~~~~~~~~~~~
 Some use a REST API which we can use to fetch the content.
 
-  * :ref:`spider_facebook.com`
   * :ref:`spider_falter.at`
   * :ref:`spider_kurier.at`
   * :ref:`spider_oe1.orf.at`

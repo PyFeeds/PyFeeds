@@ -278,7 +278,13 @@ def flatten_tree(tree):
         and tree.getparent() is not None
     ):
         # Replace tree with child if there is only one child and it has the same tag.
-        only_child.tail = tree.tail
+
+        # Preserve both tails.
+        new_tail = (only_child.tail or "") + (tree.tail or "")
+        if not new_tail:
+            new_tail = None
+        only_child.tail = new_tail
+
         tree.getparent().replace(tree, only_child)
 
     return [tree]

@@ -128,7 +128,12 @@ class DerStandardAtSpider(FeedsSpider):
         )
         il.add_value("link", response.url)
         il.add_css("title", 'meta[property="og:title"]::attr(content)')
-        il.add_css("author_name", ".article-origins ::text")
+        if response.css(".article-origins .article-author-avatar"):
+            # Blog posts.
+            il.add_css("author_name", ".article-author-avatar > span ::text")
+        else:
+            # Normal articles.
+            il.add_css("author_name", ".article-origins ::text")
         il.add_value("path", response.meta["ressort"])
         il.add_value("category", breadcrumbs.values())
         il.add_css("category", ".storylabels span ::text")

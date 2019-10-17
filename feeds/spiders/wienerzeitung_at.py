@@ -70,6 +70,7 @@ class WienerZeitungAtSpider(FeedsSpider):
             "h1",
             ".article-meta",
             ".article-header > span.tag",
+            ".article-toolbar-head",
             ".figure-copyright",
             ".new-pictures",
             ".author-item",

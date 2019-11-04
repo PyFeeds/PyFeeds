@@ -5,6 +5,7 @@ from datetime import timedelta
 
 import scrapy
 from dateutil.parser import parse as dateutil_parse
+from scrapy.loader.processors import MapCompose
 
 from feeds.loaders import FeedEntryItemLoader
 from feeds.spiders import FeedsSpider
@@ -71,6 +72,19 @@ class FalterAtSpider(FeedsSpider):
                 meta={"dont_cache": True, "lokalfuehrer": "newest"},
             )
 
+        blogs = self.settings.get("FEEDS_SPIDER_FALTER_AT_BLOGS")
+        if blogs:
+            self.blogs = blogs.split()
+        else:
+            self.blogs = []
+
+        for blog in self.blogs:
+            yield scrapy.Request(
+                "https://cms.falter.at/blogs/author/" + blog + "/",
+                self.parse_blog_overview,
+                meta={"dont_cache": True, "blog": blog},
+            )
+
     def request_archive(self, response=None):
         if response and response.status != 302:
             self.logger.error("Login failed: Username or password wrong!")
@@ -114,7 +128,7 @@ class FalterAtSpider(FeedsSpider):
                 il.add_value("updated", review["post_date"])
             else:
                 il.add_value("title", entry["name"])
-            for picture in (entry["pictures"] or []):
+            for picture in entry["pictures"] or []:
                 il.add_value(
                     "content_html",
                     '<img src="https://faltercdn2.falter.at/wwei/1080/{}">'.format(
@@ -192,4 +206,38 @@ class FalterAtSpider(FeedsSpider):
         if response.css(".bluebox"):
             il.add_value("category", "paywalled")
         il.add_css("content_html", "div.pR")
+        return il.load_item()
+
+    def parse_blog_overview(self, response):
+        yield generate_feed_header(
+            title=response.css("article > h1 ::text").extract_first(),
+            link="https://www.falter.at",
+            path="blog_{}".format(response.meta["blog"]),
+        )
+
+        for link in response.css("div[id^=post-] a::attr(href)").extract():
+            yield scrapy.Request(
+                link, self.parse_blog_article, meta={"blog": response.meta["blog"]}
+            )
+
+    def parse_blog_article(self, response):
+        remove_elems = [".ad-component", ".wp-caption-text"]
+        il = FeedEntryItemLoader(
+            response=response,
+            remove_elems=remove_elems,
+            base_url="https://cms.{}".format(self.name),
+            timezone="Europe/Vienna",
+            dayfirst=True,
+            yearfirst=False,
+        )
+        il.add_css("content_html", "article > h2")
+        il.add_css("content_html", ".storycontent-article")
+        il.add_css("author_name", ".falter-heading ::text", MapCompose(str.title))
+        il.add_css(
+            "author_name", ".thinktank-meta > span ::text", MapCompose(str.title)
+        )
+        il.add_css("updated", ".post > .text-label ::text", re=r"(\d{2}\.\d{2}\.\d{4})")
+        il.add_value("link", response.url)
+        il.add_value("path", "blog_{}".format(response.meta["blog"]))
+        il.add_css("title", "article > h1 ::text")
         return il.load_item()

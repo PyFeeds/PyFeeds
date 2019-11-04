@@ -21,6 +21,8 @@ please provide ``abonr`` (subscription number) and ``password``.
 ``lokalfuehrer_reviews`` for the restaurant reviews. By default both are
 scraped.
 
+``blogs`` accepts slugs for the blogs from https://cms.falter.at/blogs/.
+
 .. code-block:: ini
 
    [falter.at]
@@ -30,5 +32,8 @@ scraped.
        magazine
        lokalfuehrer_reviews
        lokalfuehrer_newest
+   blogs =
+       lingens
+       thinktank
 
 .. _Falter: https://www.falter.at

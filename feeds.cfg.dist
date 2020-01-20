@@ -43,6 +43,9 @@ useragent = feeds (+https://github.com/pyfeeds/pyfeeds)
 ## number) and password.
 # abonr =
 # password =
+# blogs =
+#     lingens
+#     thinktank
 
 #[konsument.at]
 ## KONSUMENT.AT has a paywall for certain articles.

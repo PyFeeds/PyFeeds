@@ -100,6 +100,8 @@ class NachrichtenAtSpider(FeedsXMLFeedSpider):
             ".artDetailMehrZu",
             "div[style='display: none;']",
             ".artDetail__ooenplusOverlay",
+            "#mehrRessort",
+            "#morePlus",
         ]
         replace_elems = {"img": _fix_img_src}
         il = FeedEntryItemLoader(

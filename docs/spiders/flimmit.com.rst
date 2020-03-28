@@ -2,7 +2,7 @@
 
 flimmit.com
 -----------
-Newly added movies, TV show at `flimmit.com <https://www.flimmit.com>`_.
+Newly added movies, TV shows at `flimmit.com <https://www.flimmit.com>`_.
 
 Configuration
 ~~~~~~~~~~~~~

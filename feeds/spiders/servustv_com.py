@@ -1,6 +1,5 @@
-import json
 import re
-from datetime import datetime, timedelta
+from datetime import datetime
 
 from dateutil import rrule
 from dateutil.tz import gettz

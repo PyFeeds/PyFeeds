@@ -102,6 +102,7 @@ class NachrichtenAtSpider(FeedsXMLFeedSpider):
             ".artDetail__ooenplusOverlay",
             "#mehrRessort",
             "#morePlus",
+            "#widgetFreeEpaper",
         ]
         replace_elems = {"img": _fix_img_src}
         il = FeedEntryItemLoader(

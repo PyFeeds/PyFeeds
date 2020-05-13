@@ -22,7 +22,12 @@ class FalterAtSpider(FeedsSpider):
         if pages:
             self.pages = pages.split()
         else:
-            self.pages = ["lokalfuehrer_reviews", "lokalfuehrer_newest", "magazine"]
+            self.pages = [
+                "lokalfuehrer_reviews",
+                "lokalfuehrer_newest",
+                "magazine",
+                "streams",
+            ]
 
         if "magazine" in self.pages:
             abonr = self.settings.get("FEEDS_SPIDER_FALTER_AT_ABONR")
@@ -70,6 +75,15 @@ class FalterAtSpider(FeedsSpider):
                 ).format(self.name),
                 self.parse_lokalfuehrer,
                 meta={"dont_cache": True, "lokalfuehrer": "newest"},
+            )
+
+        if "streams" in self.pages:
+            yield scrapy.Request(
+                (
+                    "https://www.{}/api/kino?has_stream=true&mode=movie&c=100"
+                ).format(self.name),
+                self.parse_movies,
+                meta={"dont_cache": True, "movies": "streams"},
             )
 
         blogs = self.settings.get("FEEDS_SPIDER_FALTER_AT_BLOGS")
@@ -150,6 +164,37 @@ class FalterAtSpider(FeedsSpider):
                         + "Google Maps</a></p>"
                     ).format(**entry["location"]),
                 )
+            yield il.load_item()
+
+    def parse_movies(self, response):
+        entries = json.loads(response.text)["hits"]
+        for entry in entries:
+            il = FeedEntryItemLoader(
+                response=response, base_url="https://{}".format(self.name)
+            )
+            il.add_value("path", "{}".format(response.meta["movies"]))
+            il.add_value(
+                "link", "https://www.{}/kino/{}".format(self.name, entry["prod_id"])
+            )
+            il.add_value("title", entry["prod"])
+            il.add_value("content_html", entry["comment"])
+            for image in entry["images"] or []:
+                il.add_value(
+                    "content_html",
+                    '<img src="https://faltercdn2.falter.at/events/1080/{}">'.format(
+                        image["filename"]
+                    ),
+                )
+            if "stream" in entry:
+                il.add_value(
+                    "content_html", '<a href="{s}">{s}</a>'.format(s=entry["stream"])
+                )
+            for key, value in entry.items():
+                if key.startswith("has_") and value:
+                    il.add_value("category", key.replace("has_", ""))
+                elif key.startswith("is_") and value:
+                    il.add_value("category", key.replace("is_", ""))
+            il.add_value("updated", entry["index_date"])
             yield il.load_item()
 
     def parse_archive(self, response):

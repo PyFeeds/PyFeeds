@@ -18,8 +18,8 @@ Falter_ has a paywall for certain articles. If you want to crawl paid articles,
 please provide ``abonr`` (subscription number) and ``password``.
 
 ``pages`` accepts ``magazine`` for the Falter newspaper and
-``lokalfuehrer_reviews`` for the restaurant reviews. By default both are
-scraped.
+``lokalfuehrer_reviews``, ``lokalfuehrer_newest`` for restaurant and ``streams``
+for movie streams. By default all are scraped.
 
 ``blogs`` accepts slugs for the blogs from https://cms.falter.at/blogs/.
 
@@ -32,6 +32,7 @@ scraped.
        magazine
        lokalfuehrer_reviews
        lokalfuehrer_newest
+       streams
    blogs =
        lingens
        thinktank

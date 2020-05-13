@@ -137,6 +137,7 @@ scraping from there.
   * :ref:`spider_openwrt.org`
   * :ref:`spider_puls4.com`
   * :ref:`spider_python-patterns.guide`
+  * :ref:`spider_servustv.com`
   * :ref:`spider_tuwien.ac.at`
   * :ref:`spider_ubup.com`
   * :ref:`spider_usenix.org`

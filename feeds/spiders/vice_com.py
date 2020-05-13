@@ -51,7 +51,14 @@ class ViceComSpider(FeedsSpider):
         for article in articles:
             il = FeedEntryItemLoader(timezone="UTC", remove_elems=remove_elems)
             il.add_value("title", article["title"])
-            il.add_value("link", article["url"])
+            link = article["url"]
+            if not link:
+                link = "https://www.vice.com/{locale}/article/{web_id}/{slug}".format(
+                    locale=response.meta["locale"],
+                    web_id=article["web_id"],
+                    slug=article["slug"],
+                )
+            il.add_value("link", link)
             if "thumbnail_url_1_1" in article:
                 il.add_value(
                     "content_html",

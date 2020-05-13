@@ -167,3 +167,8 @@ useragent = feeds (+https://github.com/pyfeeds/pyfeeds)
 #    nachrichten/politik
 #    nachrichten/wirtschaft
 #    meinung
+
+#[ft.com]
+#ressorts =
+#    homepage
+#    the-big-read

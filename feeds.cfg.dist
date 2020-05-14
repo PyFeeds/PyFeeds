@@ -172,3 +172,9 @@ useragent = feeds (+https://github.com/pyfeeds/pyfeeds)
 #ressorts =
 #    homepage
 #    the-big-read
+
+#[economist.com]
+#ressorts =
+#    finance-and-economics
+#    special-report
+#    leaders

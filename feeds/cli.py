@@ -55,7 +55,6 @@ def cli(ctx, loglevel, config, pdb):
     """
     if pdb:
         failure.startDebugMode()
-    os.chdir(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
 
     # Specify Scrapy's default settings via SCRAPY_SETTINGS_MODULE in case it
     # is not set by the user. Override with our settings afterwards.

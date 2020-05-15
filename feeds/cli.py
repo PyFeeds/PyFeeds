@@ -56,10 +56,8 @@ def cli(ctx, loglevel, config, pdb):
     if pdb:
         failure.startDebugMode()
 
-    # Specify Scrapy's default settings via SCRAPY_SETTINGS_MODULE in case it
-    # is not set by the user. Override with our settings afterwards.
-    feeds_environment = os.getenv("SCRAPY_SETTINGS_MODULE", "feeds.default_settings")
-    os.environ["SCRAPY_SETTINGS_MODULE"] = feeds_environment
+    # A pip-installed Feeds does not have a scrapy.cfg in its project root.
+    os.environ["SCRAPY_SETTINGS_MODULE"] = "feeds.default_settings"
 
     settings = load_feeds_settings(config)
     settings.set("LOG_LEVEL", loglevel.upper())

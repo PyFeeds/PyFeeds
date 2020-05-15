@@ -57,6 +57,11 @@ def cli(ctx, loglevel, config, pdb):
         failure.startDebugMode()
     os.chdir(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
 
+    # Specify Scrapy's default settings via SCRAPY_SETTINGS_MODULE in case it
+    # is not set by the user. Override with our settings afterwards.
+    feeds_environment = os.getenv('SCRAPY_SETTINGS_MODULE', "feeds.default_settings")
+    os.environ['SCRAPY_SETTINGS_MODULE'] = feeds_environment
+
     settings = load_feeds_settings(config)
     settings.set("LOG_LEVEL", loglevel.upper())
     ctx.obj["settings"] = settings

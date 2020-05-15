@@ -22,8 +22,15 @@ setup(
         "scrapy-inline-requests",
     ],
     extras_require={
-        "docs": ["doc8", "restructuredtext_lint", "sphinx", "sphinx_rtd_theme"],
-        "style": ["black", "flake8", "isort"],
+        "docs": ["sphinx", "sphinx_rtd_theme"],
+        "style": [
+            "black",
+            "doc8",
+            "flake8",
+            "isort",
+            "pygments",
+            "restructuredtext_lint",
+        ],
         "test": ["pytest"],
     },
     entry_points={"console_scripts": ["feeds=feeds.cli:main"]},

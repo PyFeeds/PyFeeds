@@ -13,8 +13,8 @@ class FeedsSpider(Spider):
             link=getattr(self, "feed_link", None),
             path=getattr(self, "path", None),
             author_name=getattr(self, "author_name", None),
-            icon=getattr(self, "icon", None),
-            logo=getattr(self, "logo", None),
+            icon=getattr(self, "feed_icon", None),
+            logo=getattr(self, "feed_logo", None),
         )
 
     def start_requests(self):

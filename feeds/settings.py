@@ -1,5 +1,6 @@
 import configparser
 import logging
+import os
 
 from scrapy.utils.project import get_project_settings
 
@@ -41,7 +42,7 @@ def load_feeds_settings(file_):
         "USER_AGENT": (config.get, "useragent", str),
         "LOG_LEVEL": (config.get, "loglevel", str),
         "HTTPCACHE_ENABLED": (config.getboolean, "cache_enabled", bool),
-        "HTTPCACHE_DIR": (config.get, "cache_dir", str),
+        "HTTPCACHE_DIR": (config.get, "cache_dir", os.path.expanduser),
         "HTTPCACHE_EXPIRATION_SECS": (
             config.getint,
             "cache_expires",

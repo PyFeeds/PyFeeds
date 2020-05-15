@@ -28,7 +28,9 @@ def spiders_to_crawl(process, argument_spiders):
         # Spider(s) given in configuration file.
         spiders = process.settings.get("FEEDS_CONFIG_SPIDERS")
         logger.debug("Using configuration file to decide what spiders to run.")
-        return spiders.split()
+        if spiders:
+            return spiders.split()
+        return None
     except KeyError:
         # Load all available spiders.
         logger.debug("All available spiders will be run.")

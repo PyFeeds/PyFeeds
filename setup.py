@@ -26,10 +26,7 @@ setup(
         "style": ["black", "flake8", "isort"],
         "test": ["pytest"],
     },
-    entry_points="""
-        [console_scripts]
-        feeds=feeds.cli:main
-    """,
+    entry_points={"console_scripts": ["feeds=feeds.cli:main"]},
     classifiers=[
         "Development Status :: 4 - Beta",
         "Environment :: Console",

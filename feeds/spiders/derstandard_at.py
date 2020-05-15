@@ -9,7 +9,6 @@ from feeds.utils import generate_feed_header
 
 class DerStandardAtSpider(FeedsSpider):
     name = "derstandard.at"
-    custom_settings = {"COOKIES_ENABLED": False}
 
     _users = {}
     _titles = {}

@@ -11,7 +11,6 @@ from feeds.utils import generate_feed_header
 
 class SpotifyComSpider(FeedsSpider):
     name = "spotify.com"
-    custom_settings = {"COOKIES_ENABLED": False}
 
     def start_requests(self):
         self._shows = self.settings.get("FEEDS_SPIDER_SPOTIFY_COM_SHOWS")

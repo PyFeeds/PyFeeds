@@ -1,7 +1,11 @@
 Feeds
 =====
 
-|build-status| |docs|
+|pypi| |support| |licence|
+
+|readthedocs|
+
+|travis|
 
 Once upon a time every website offered an RSS feed to keep readers updated
 about new articles/blog posts via the users' feed readers. These times are
@@ -155,12 +159,22 @@ AGPL3, see `LICENSE`_ for details.
 .. _Oberösterreichische Nachrichten: https://pyfeeds.readthedocs.io/en/latest/spiders/nachrichten.at.html
 .. _Übermedien: https://pyfeeds.readthedocs.io/en/latest/spiders/uebermedien.de.html
 
-.. |build-status| image:: https://travis-ci.org/PyFeeds/PyFeeds.svg?branch=master
-    :alt: build status
-    :scale: 100%
-    :target: https://travis-ci.org/PyFeeds/PyFeeds
+.. |pypi| image:: https://img.shields.io/pypi/v/pyfeeds.svg?style=flat-square
+    :target: https://pypi.org/project/pyfeeds/
+    :alt: pypi version
 
-.. |docs| image:: https://readthedocs.org/projects/pyfeeds/badge/?version=latest
-    :alt: documentation status
-    :scale: 100%
-    :target: https://pyfeeds.readthedocs.io/en/latest/?badge=latest
+.. |support| image:: https://img.shields.io/pypi/pyversions/pyfeeds.svg?style=flat-square
+    :target: https://pypi.org/project/pyfeeds/
+    :alt: supported Python version
+
+.. |licence| image:: https://img.shields.io/pypi/l/pyfeeds.svg?style=flat-square
+    :target: https://pypi.org/project/pyfeeds/
+    :alt: licence
+
+.. |readthedocs| image:: https://img.shields.io/readthedocs/pyfeeds/latest.svg?style=flat-square&label=Read%20the%20Docs
+   :alt: Read the documentation at https://pyfeeds.readthedocs.io/en/latest/
+   :target: https://pyfeeds.readthedocs.io/en/latest/
+
+.. |travis| image:: https://img.shields.io/travis/pyfeeds/pyfeeds/master.svg?style=flat-square&label=Travis%20Build
+    :target: https://travis-ci.org/PyFeeds/PyFeeds
+    :alt: travis build status

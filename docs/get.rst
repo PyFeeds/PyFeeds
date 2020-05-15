@@ -1,19 +1,20 @@
 Get Feeds
 =========
 Feeds is meant to be installed on your server and run periodically in a cron
-job or similar job scheduler.
+job or similar job scheduler. We recommend to install Feeds inside a virtual
+environment.
 
-The easiest way to install Feeds is via ``pip`` in a virtual environment. Feeds
-does not provide any releases yet, so one might directly install the current
-master branch:
+Feeds can be installed from PyPI using ``pip``:
 
 .. code-block:: bash
 
-    $ git clone https://github.com/pyfeeds/pyfeeds.git
-    $ cd feeds
-    $ python3 -m venv venv
-    $ source bin/activate
-    $ pip install -e .
+  pip install PyFeeds
+
+You may also install the current development version:
+
+.. code-block:: bash
+
+    $ pip install https://github.com/pyfeeds/pyfeeds/archive/master.tar.gz
 
 After installation ``feeds`` is available in your virtual environment.
 

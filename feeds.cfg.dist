@@ -154,6 +154,7 @@ useragent = feeds (+https://github.com/pyfeeds/pyfeeds)
 #    barbara.kaufmann
 
 #[spotify.com]
+#market = AT
 #shows =
 #    6u7pI0o0CUBQq0T1fwPgbj
 

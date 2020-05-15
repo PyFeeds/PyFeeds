@@ -1,12 +1,12 @@
 from setuptools import find_packages, setup
 
 setup(
-    name="feeds",
+    name="PyFeeds",
     version="2018.7.30",
     # Author details
     author="Florian Preinstorfer, Lukas Anzinger",
     author_email="florian@nblock.org, lukas@lukasanzinger.at",
-    url="https://github.com/nblock/feeds",
+    url="https://github.com/PyFeeds/PyFeeds",
     packages=find_packages(),
     include_package_data=True,
     install_requires=[

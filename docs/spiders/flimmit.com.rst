@@ -14,8 +14,8 @@ Add ``flimmit.com`` to the list of spiders:
    spiders =
      flimmit.com
 
-By default, all categories (Filme, Serien, Europa, Kinder) will be included. You
-can provide a list of categories.
+By default, all categories (Filme, Serien, Europa, Kinder) will be included.
+You can provide a list of categories.
 
 .. code-block:: ini
 

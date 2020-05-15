@@ -1,7 +1,7 @@
 .. _spider_wienerzeitung.at:
 
 wienerzeitung.at
---------------
+----------------
 Newest articles from `Wiener Zeitung`_.
 
 Configuration

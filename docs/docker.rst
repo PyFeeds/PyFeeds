@@ -21,7 +21,9 @@ A ``docker-compose.yaml`` could look like this:
       pyfeeds-output:
         name: pyfeeds-output
 
-It mounts the ``config`` folder next to the ``docker-compose.yaml`` and uses the contained ``feeds.cfg`` as config for PyFeeds. The feeds are stored in a volume which could be picked up by a webserver:
+It mounts the ``config`` folder next to the ``docker-compose.yaml`` and uses
+the contained ``feeds.cfg`` as config for PyFeeds. The feeds are stored in a
+volume which could be picked up by a webserver:
 
 .. code-block:: yaml
 

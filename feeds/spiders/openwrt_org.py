@@ -27,11 +27,8 @@ class OpenwrtOrgSpider(FeedsSpider):
         # All minor releases per major release
         xpath = '//a[contains(@href, "notes")][text()="Release Notes"]/@href'
         for href in response.xpath(xpath):
-            prefix, latest = href.extract().split("-")
-            major, minor, patch = latest.split(".")
-            for m in range(int(patch), -1, -1):
-                url = response.urljoin("{}-{}.{}.{}".format(prefix, major, minor, m))
-                yield scrapy.Request(url, self.parse_release_notes)
+            url = "/".join((self._base_url, href.extract().lstrip("/")))
+            yield scrapy.Request(url, self.parse_release_notes)
 
     def parse_release_notes(self, response):
         il = FeedEntryItemLoader(

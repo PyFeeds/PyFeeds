@@ -15,7 +15,7 @@ Add ``economist.com`` to the list of spiders:
      economist.com
 
 economist.com supports different ressorts via the ``ressorts`` parameter (one
-per line).
+per line). See https://www.economist.com/rss for a list of ressorts.
 
 Example configuration:
 

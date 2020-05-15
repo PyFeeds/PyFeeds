@@ -15,7 +15,10 @@ Add ``ft.com`` to the list of spiders:
      ft.com
 
 ft.com supports different ressorts via the ``ressorts`` parameter (one per
-line).
+line). The ressort is the path in the URL (e. g. for
+https://www.ft.com/companies/technology the ressort is
+``companies/technology``). For the homepage the special ressort ``homepage``
+can be used.
 
 Example configuration:
 

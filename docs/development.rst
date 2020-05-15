@@ -134,7 +134,6 @@ scraping from there.
   * :ref:`spider_cbird.at`
   * :ref:`spider_delinski.at`
   * :ref:`spider_flimmit.com`
-  * :ref:`spider_help.gv.at`
   * :ref:`spider_indiehackers.com`
   * :ref:`spider_openwrt.org`
   * :ref:`spider_puls4.com`

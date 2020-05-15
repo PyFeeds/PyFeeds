@@ -22,14 +22,18 @@ setup(
         "scrapy-inline-requests",
     ],
     extras_require={
-        "docs": ["doc8", "restructuredtext_lint", "sphinx", "sphinx_rtd_theme"],
-        "style": ["black", "flake8", "isort"],
+        "docs": ["sphinx", "sphinx_rtd_theme"],
+        "style": [
+            "black",
+            "doc8",
+            "flake8",
+            "isort",
+            "pygments",
+            "restructuredtext_lint",
+        ],
         "test": ["pytest"],
     },
-    entry_points="""
-        [console_scripts]
-        feeds=feeds.cli:main
-    """,
+    entry_points={"console_scripts": ["feeds=feeds.cli:main"]},
     classifiers=[
         "Development Status :: 4 - Beta",
         "Environment :: Console",
@@ -37,7 +41,6 @@ setup(
         "Intended Audience :: Developers",
         "License :: OSI Approved :: GNU Affero General Public License v3",
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.5",
         "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",

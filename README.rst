@@ -147,9 +147,9 @@ Feeds is written and maintained by `Florian Preinstorfer
 License
 -------
 
-AGPL3, see `LICENSE`_ for details.
+AGPL3, see `LICENSEFILE`_ for details.
 
-.. _LICENSE: LICENSE
+.. _LICENSEFILE: LICENSE
 .. _issue tracker: https://github.com/pyfeeds/pyfeeds/issues
 .. _new issue: https://github.com/pyfeeds/pyfeeds/issues/new
 .. _Scrapy: https://www.scrapy.org

@@ -24,6 +24,7 @@ setup(
     extras_require={
         "docs": ["doc8", "restructuredtext_lint", "sphinx", "sphinx_rtd_theme"],
         "style": ["black", "flake8", "isort"],
+        "test": ["pytest"],
     },
     entry_points="""
         [console_scripts]

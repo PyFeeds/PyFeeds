@@ -1,15 +1,21 @@
 ---
-# Configuration for travis
 language: python
 
-python:
-  - "3.5"
-  - "3.6"
-  - "3.7"
-  - "3.8"
+# Run tests against each supported version while docs and style are only
+# considered on the latest supported version.
+matrix:
+  include:
+    - python: 3.5
+      env: TOXENV=py35
+    - python: 3.6
+      env: TOXENV=py36
+    - python: 3.7
+      env: TOXENV=py37
+    - python: 3.8
+      env: TOXENV=py38,docs,style
 
 install:
-  - pip install flake8
+  - pip install tox
 
 script:
-  - flake8 .
+  - tox

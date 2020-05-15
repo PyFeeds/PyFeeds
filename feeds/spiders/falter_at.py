@@ -79,9 +79,9 @@ class FalterAtSpider(FeedsSpider):
 
         if "streams" in self.pages:
             yield scrapy.Request(
-                (
-                    "https://www.{}/api/kino?has_stream=true&mode=movie&c=100"
-                ).format(self.name),
+                ("https://www.{}/api/kino?has_stream=true&mode=movie&c=100").format(
+                    self.name
+                ),
                 self.parse_movies,
                 meta={"dont_cache": True, "movies": "streams"},
             )

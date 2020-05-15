@@ -5,28 +5,28 @@ set -e
 set -u
 
 # Version information.
-FEEDS_VERSION="2018.7.30"
-FEEDS_YEAR="$(date +%Y)"
+VERSION="${1}"
+YEAR="$(date +%Y)"
 
 update_docs() {
   local conffile="docs/conf.py"
 
   # Version and year
-  sed -i -E "/^version = /s/\".*\"/\"$FEEDS_VERSION\"/" "$conffile"
-  sed -i -E "/^release = /s/\".*\"/\"$FEEDS_VERSION\"/" "$conffile"
-  sed -i -E "/^copyright = /s/[0-9]{4}/$FEEDS_YEAR/" "$conffile"
+  sed -i -E "/^version = /s/\".*\"/\"${VERSION}\"/" "${conffile}"
+  sed -i -E "/^release = /s/\".*\"/\"${VERSION}\"/" "${conffile}"
+  sed -i -E "/^copyright = /s/[0-9]{4}/${YEAR}/" "${conffile}"
 }
 
 update_setup() {
   local conffile="setup.py"
 
-  sed -i -E "/version=/s/\".*\"/\"$FEEDS_VERSION\"/" "$conffile"
+  sed -i -E "/version=/s/\".*\"/\"${VERSION}\"/" "${conffile}"
 }
 
 update_init() {
   local conffile="feeds/__init__.py"
 
-  sed -i -E "/^__version__ = /s/\".*\"/\"$FEEDS_VERSION\"/" "$conffile"
+  sed -i -E "/^__version__ = /s/\".*\"/\"${VERSION}\"/" "${conffile}"
 }
 
 main() {

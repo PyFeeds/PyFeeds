@@ -55,7 +55,9 @@ def cli(ctx, loglevel, config, pdb):
     """
     if pdb:
         failure.startDebugMode()
-    os.chdir(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
+
+    # A pip-installed Feeds does not have a scrapy.cfg in its project root.
+    os.environ["SCRAPY_SETTINGS_MODULE"] = "feeds.default_settings"
 
     settings = load_feeds_settings(config)
     settings.set("LOG_LEVEL", loglevel.upper())

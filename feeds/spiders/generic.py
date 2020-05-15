@@ -73,7 +73,16 @@ class GenericSpider(FeedsSpider):
 
     def _parse_article(self, response):
         feed_entry = response.meta["feed_entry"]
+
         il = FeedEntryItemLoader(parent=response.meta["il"])
+        try:
+            response.text
+        except AttributeError:
+            # Response is not text (e.g. PDF, ...).
+            il.add_value("title", feed_entry.get("title"))
+            il.add_value("content_html", feed_entry.get("summary"))
+            return il.load_item()
+
         doc = Document(response.text, url=response.url)
         il.add_value("title", doc.short_title() or feed_entry.get("title"))
         summary = feed_entry.get("summary")
@@ -86,4 +95,5 @@ class GenericSpider(FeedsSpider):
         except Unparseable:
             content = summary
         il.add_value("content_html", content)
+
         return il.load_item()

@@ -36,7 +36,7 @@ class IndieHackersComSpider(FeedsSpider):
         interviews = response["results"][0]["hits"]
         for interview in interviews:
             yield scrapy.Request(
-                f"https://www.{self.name}/interview/{interview['interviewId']}",
+                f"{self.feed_link}/interview/{interview['interviewId']}",
                 self._parse_interview,
                 meta={
                     "categories": interview["_tags"],

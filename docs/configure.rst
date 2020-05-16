@@ -29,9 +29,12 @@ List one spider per line.
      tvthek.orf.at
      oe1.orf.at
 
+Use ``feeds list`` to get a list of all available spiders.
+
 output_path
 ~~~~~~~~~~~
-This is the path where the generated Atom feeds will be saved.
+This is the path where the generated Atom feeds will be saved. You may server
+this directory with any webserver.
 
 .. code-block:: ini
 
@@ -49,6 +52,26 @@ https://validator.w3.org/feed/docs/warning/MissingSelf.html
 
    [feeds]
    output_url = https://example.com/feeds
+
+truncate_words
+~~~~~~~~~~~~~~
+Truncate content to 10 words instead of including the full text. This can be
+useful if generated feeds should be made publicly available.
+
+.. code-block:: ini
+
+   [feeds]
+   truncate_words = 10
+
+remove_images
+~~~~~~~~~~~~~
+Remove images from output. This can be useful if generated feeds should be made
+publicly available.
+
+.. code-block:: ini
+
+   [feeds]
+   remove_images = 1
 
 cache_enabled
 ~~~~~~~~~~~~~
@@ -68,7 +91,7 @@ The path where cache data is stored.
 .. code-block:: ini
 
    [feeds]
-   cache_dir = .cache
+   cache_dir = ~/.cache/feeds
 
 cache_expires
 ~~~~~~~~~~~~~
@@ -81,8 +104,8 @@ Expire (remove) entries from cache after 90 days.
 
 Spider specific settings
 ------------------------
-Some spiders support additional settings. Head over to the Supported Websites
-section for more information on spider specific settings.
+Some spiders support additional settings. Head over to the :ref:`Supported
+Websites` section for more information on spider specific settings.
 
 .. _example configuration:
 

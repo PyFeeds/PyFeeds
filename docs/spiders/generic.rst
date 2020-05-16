@@ -13,7 +13,7 @@ your feed reader. E.g. feeds created by Wordpress usually have the full
 content in the "encoded" tag. In such cases it's best to add the URL to the
 ``fulltext_urls`` entry which extracts the content directly from the feed
 without Readability_. There is a little helper script in
-``scripts/check-for-fulltext-content`` to detect if a feed contains full-text
+`scripts/check-for-fulltext-content`_ to detect if a feed contains full-text
 content.
 
 Configuration
@@ -40,3 +40,4 @@ Add the feed URLs (Atom or XML) to the config file.
 
 .. _Readability: https://github.com/mozilla/readability
 .. _`Full-Text RSS`: http://fivefilters.org/content-only/
+.. _`scripts/check-for-fulltext-content`: https://github.com/PyFeeds/PyFeeds/blob/master/scripts/check-for-fulltext-content

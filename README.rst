@@ -60,13 +60,13 @@ Feeds can be installed from PyPI using ``pip``:
 
 .. code-block:: bash
 
-  pip install PyFeeds
+   $ pip install PyFeeds
 
 You may also install the current development version:
 
 .. code-block:: bash
 
-    $ pip install https://github.com/pyfeeds/pyfeeds/archive/master.tar.gz
+   $ pip install https://github.com/pyfeeds/pyfeeds/archive/master.tar.gz
 
 After installation ``feeds`` is available in your virtual environment.
 

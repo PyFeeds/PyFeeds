@@ -1,3 +1,4 @@
+import os
 import uuid
 from datetime import datetime, timezone
 
@@ -68,7 +69,7 @@ class AtomExportPipeline(object):
     """Export items as atom feeds."""
 
     def __init__(self, output_path, output_url):
-        self._output_path = output_path
+        self._output_path = os.path.expanduser(output_path)
         self._output_url = output_url
         self._exporters = {}
 

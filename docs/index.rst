@@ -28,10 +28,13 @@ websites that don't offer them (anymore). It allows you to read new articles of
 your favorite websites in your feed reader (e.g. TinyTinyRSS_) even if this is
 not officially supported by the website.
 
+Furthermore it can also enhance existing feeds by inlining the actual content
+into the feed entry so it can be read without leaving the feed reader.
+
 Feeds is based on Scrapy_, a framework for extracting data from websites and it
 has support for a few websites already, see :ref:`Supported Websites`. It's
-easy to add support for new websites. Just take a look at the existing spiders
-in ``feeds/spiders`` and feel free to open a :ref:`pull request <Contribute>`!
+easy to add support for new websites. Just take a look at the existing spiders_
+and feel free to open a :ref:`pull request <Contribute>`!
 
 Related work
 ------------
@@ -49,8 +52,8 @@ Related work
 Authors
 -------
 Feeds is written and maintained by `Florian Preinstorfer <https://nblock.org>`_
-and `Lukas Anzinger <https://www.notinventedhere.org>`_ (`@LukasAnzinger`_).
+and `Lukas Anzinger <https://www.notinventedhere.org>`_.
 
 .. _Scrapy: https://www.scrapy.org
 .. _TinyTinyRSS: https://tt-rss.org
-.. _@LukasAnzinger: https://twitter.com/LukasAnzinger
+.. _spiders: https://github.com/PyFeeds/PyFeeds/tree/master/feeds/spiders

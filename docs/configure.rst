@@ -33,7 +33,7 @@ Use ``feeds list`` to get a list of all available spiders.
 
 output_path
 ~~~~~~~~~~~
-This is the path where the generated Atom feeds will be saved. You may server
+This is the path where the generated Atom feeds will be saved. You may serve
 this directory with any webserver.
 
 .. code-block:: ini

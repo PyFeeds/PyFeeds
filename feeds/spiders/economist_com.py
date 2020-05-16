@@ -9,7 +9,7 @@ from feeds.utils import generate_feed_header
 class EconomistComSpider(FeedsXMLFeedSpider):
     name = "economist.com"
     # Don't send too many requests to not trigger the bot detection.
-    custom_settings = {"COOKIES_ENABLED": False, "DOWNLOAD_DELAY": 5.0}
+    custom_settings = {"DOWNLOAD_DELAY": 5.0}
 
     _titles = {}
 

@@ -142,10 +142,6 @@ useragent = feeds (+https://github.com/pyfeeds/pyfeeds)
 #links =
 #   /katalog?sortiertnach=neueste
 
-#[diepresse.com]
-#sections =
-#   Meinung/Pizzicato
-
 #[kurier.at]
 #channels =
 #    /chronik/wien
@@ -158,6 +154,7 @@ useragent = feeds (+https://github.com/pyfeeds/pyfeeds)
 #    barbara.kaufmann
 
 #[spotify.com]
+#market = AT
 #shows =
 #    6u7pI0o0CUBQq0T1fwPgbj
 

@@ -9,12 +9,12 @@ from feeds.utils import generate_feed_header
 
 class DerStandardAtSpider(FeedsSpider):
     name = "derstandard.at"
-    custom_settings = {"COOKIES_ENABLED": False}
 
+    _users = {}
     _titles = {}
 
     def start_requests(self):
-        self._ressorts = self.settings.get("FEEDS_SPIDER_DERSTANDARD_AT_RESSORTS")
+        self._ressorts = self.settings.get("FEEDS_SPIDER_DERSTANDARD_AT_RESSORTS", [])
         if self._ressorts:
             self._ressorts = set(self._ressorts.split())
         else:

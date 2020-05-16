@@ -7,7 +7,7 @@ from feeds.utils import generate_feed_header
 
 class FtComSpider(FeedsXMLFeedSpider):
     name = "ft.com"
-    custom_settings = {"COOKIES_ENABLED": False, "REFERER_ENABLED": False}
+    custom_settings = {"REFERER_ENABLED": False}
 
     _titles = {}
 

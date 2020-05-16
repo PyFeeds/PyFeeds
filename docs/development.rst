@@ -111,6 +111,7 @@ Utilizing an API
 Some use a REST API which we can use to fetch the content.
 
   * :ref:`spider_falter.at`
+  * :ref:`spider_indiehackers.com`
   * :ref:`spider_kurier.at`
   * :ref:`spider_oe1.orf.at`
   * :ref:`spider_tvthek.orf.at`
@@ -120,7 +121,6 @@ Utilizing the sitemap
 ~~~~~~~~~~~~~~~~~~~~~
 Others provide a sitemap_ which we can parse:
 
-  * :ref:`spider_diepresse.com`
   * :ref:`spider_profil.at`
 
 Custom extraction
@@ -134,8 +134,6 @@ scraping from there.
   * :ref:`spider_cbird.at`
   * :ref:`spider_delinski.at`
   * :ref:`spider_flimmit.com`
-  * :ref:`spider_help.gv.at`
-  * :ref:`spider_indiehackers.com`
   * :ref:`spider_openwrt.org`
   * :ref:`spider_puls4.com`
   * :ref:`spider_python-patterns.guide`

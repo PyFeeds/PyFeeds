@@ -262,4 +262,4 @@ class LwnNetSpider(FeedsXMLFeedSpider):
         il.add_css("title", "h1::text")
         il.add_value("content_html", text)
         il.add_value("link", response.url)
-        return il.load_item()
+        yield il.load_item()

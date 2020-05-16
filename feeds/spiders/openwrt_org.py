@@ -9,11 +9,11 @@ class OpenwrtOrgSpider(FeedsSpider):
     allowed_domains = ["openwrt.org"]
     start_urls = ["https://openwrt.org/releases/start"]
 
-    feed_title = ("New OpenWrt Release Builds",)
+    feed_title = "New OpenWrt Release Builds"
     feed_subtitle = "Newest release builds from OpenWrt."
-    _base_url = "https://{}".format(name)
-    feed_icon = "https://{}/lib/tpl/openwrt/images/apple-touch-icon.png".format(name)
-    feed_logo = "https://{}/lib/tpl/openwrt/images/logo.png".format(name)
+    feed_link = f"https://{name}"
+    feed_icon = f"{feed_link}/lib/tpl/openwrt/images/apple-touch-icon.png"
+    feed_logo = f"{feed_link}/lib/tpl/openwrt/images/logo.png"
 
     def parse(self, response):
         # Page with all major releases
@@ -27,28 +27,19 @@ class OpenwrtOrgSpider(FeedsSpider):
         # All minor releases per major release
         xpath = '//a[contains(@href, "notes")][text()="Release Notes"]/@href'
         for href in response.xpath(xpath):
-            url = "/".join((self._base_url, href.extract().lstrip("/")))
+            url = f"{self.feed_link}/{href.extract().lstrip('/')}"
             yield scrapy.Request(url, self.parse_release_notes)
 
     def parse_release_notes(self, response):
         il = FeedEntryItemLoader(
-            response=response, timezone="Europe/Berlin", base_url=self._base_url
+            response=response,
+            timezone="Europe/Berlin",
+            base_url=self.feed_link,
+            remove_elems=[".cookielaw-banner"],
         )
         il.add_xpath("title", "//h1/text()")
         il.add_value("link", response.url)
         il.add_xpath("updated", '//div[@class="docInfo"]', re="Last modified: (.*) by")
         il.add_value("content_html", "<h1>Release Notes</h1>")
-        il.add_xpath("content_html", "//h1/following-sibling::*")
-        return scrapy.Request(
-            response.url.replace("notes-", "changelog-"),
-            self.parse_release_changelog,
-            meta={"il": il},
-        )
-
-    def parse_release_changelog(self, response):
-        il = FeedEntryItemLoader(
-            response=response, parent=response.meta["il"], base_url=self._base_url
-        )
-        il.add_value("content_html", "<h1>Detailed Changelog</h1>")
         il.add_xpath("content_html", "//h1/following-sibling::*")
         return il.load_item()

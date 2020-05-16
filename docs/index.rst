@@ -11,8 +11,9 @@ Feeds provides DIY Atom feeds in times of social media and paywall.
    quickstart
    configure
    spiders
-   docker
    development
+   docker
+   api
    contribute
    license
 

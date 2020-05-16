@@ -12,7 +12,7 @@ setup(
     author="Florian Preinstorfer, Lukas Anzinger",
     author_email="florian@nblock.org, lukas@lukasanzinger.at",
     url="https://github.com/PyFeeds/PyFeeds",
-    packages=find_packages(),
+    packages=find_packages(exclude=["tests"]),
     include_package_data=True,
     install_requires=[
         "Click>=6.6",

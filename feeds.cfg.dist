@@ -175,3 +175,7 @@ useragent = feeds (+https://github.com/pyfeeds/pyfeeds)
 #    finance-and-economics
 #    special-report
 #    leaders
+
+#[tinyletter.com]
+#accounts =
+#    dabeaz

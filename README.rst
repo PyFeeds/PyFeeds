@@ -62,7 +62,8 @@ Feeds can be installed from PyPI using ``pip``:
 
    $ pip install PyFeeds
 
-You may also install the current development version:
+You may also install the current development version. The master branch is
+considered stable enough for daily use:
 
 .. code-block:: bash
 

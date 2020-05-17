@@ -140,6 +140,7 @@ Utilizing the sitemap
 Others provide a sitemap_ which we can parse:
 
   * :ref:`spider_profil.at`
+  * :ref:`spider_trend.at`
 
 Custom extraction
 ~~~~~~~~~~~~~~~~~

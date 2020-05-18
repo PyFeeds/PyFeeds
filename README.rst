@@ -62,7 +62,8 @@ Feeds can be installed from PyPI using ``pip``:
 
    $ pip install PyFeeds
 
-You may also install the current development version:
+You may also install the current development version. The master branch is
+considered stable enough for daily use:
 
 .. code-block:: bash
 
@@ -144,9 +145,8 @@ and `Lukas Anzinger <https://www.notinventedhere.org>`_.
 License
 -------
 
-AGPL3, see `LICENSEFILE`_ for details.
+AGPL3, see https://pyfeeds.readthedocs.io/en/latest/license.html for details.
 
-.. _LICENSEFILE: LICENSE
 .. _issue tracker: https://github.com/pyfeeds/pyfeeds/issues
 .. _new issue: https://github.com/pyfeeds/pyfeeds/issues/new
 .. _Scrapy: https://www.scrapy.org

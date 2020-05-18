@@ -1,7 +1,7 @@
 import pytest
 
 from feeds.loaders import build_tree, flatten_tree, serialize_tree
-from feeds.tests.utils import load_file, load_fixtures
+from .utils import load_file, load_fixtures
 
 
 @pytest.mark.parametrize("in_html_file,out_html_file", load_fixtures("flatten_tree"))

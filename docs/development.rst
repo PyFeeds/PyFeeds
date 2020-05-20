@@ -101,7 +101,6 @@ Custom extraction
 These spiders take an existing RSS feed and inline the article content while
 cleaning up the content (removing share buttons, etc.):
 
-  * :ref:`spider_addendum.org`
   * :ref:`spider_arstechnica.com`
   * :ref:`spider_derstandard.at`
   * :ref:`spider_dietiwag.org`
@@ -128,6 +127,7 @@ Utilizing an API
 ~~~~~~~~~~~~~~~~
 Some use a REST API which we can use to fetch the content.
 
+  * :ref:`spider_addendum.org`
   * :ref:`spider_falter.at`
   * :ref:`spider_indiehackers.com`
   * :ref:`spider_kurier.at`

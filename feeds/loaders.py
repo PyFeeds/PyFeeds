@@ -22,8 +22,6 @@ from feeds.settings import get_feeds_settings
 
 logger = logging.getLogger(__name__)
 
-_lxml_cleaner = Cleaner(style=True)
-
 # List of so-called empty elements in HTML.
 # Source: https://developer.mozilla.org/en-US/docs/Glossary/Empty_element
 EMPTY_ELEMENTS = [
@@ -217,7 +215,13 @@ def cleanup_html(tree, loader_context):
 
 
 def lxml_cleaner(tree):
-    _lxml_cleaner(tree)
+    cleaner = Cleaner(style=True)
+    # Allow "srcset" and "sizes" attributes which are standardized for <img>.
+    safe_attrs = set(cleaner.safe_attrs)
+    safe_attrs.add("srcset")
+    safe_attrs.add("sizes")
+    cleaner.safe_attrs = frozenset(safe_attrs)
+    cleaner(tree)
     return [tree]
 
 

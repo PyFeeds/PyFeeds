@@ -116,12 +116,13 @@ class NachrichtenAtSpider(FeedsXMLFeedSpider):
         )
         if response.css(".mainLogin__linkToggle"):
             il.add_value("category", "paywalled")
-        il.add_css("link", 'link[rel="canonical"]::attr(href)')
+        il.add_value("link", response.url.replace("#ref=rss", ""))
         il.add_css("title", 'meta[property="og:title"]::attr(content)')
         il.add_css("author_name", ".artDetailAutor__headline::text")
         # Mon, 01 Oct 18 13:42:45 +0200
         il.add_css("updated", 'meta[name="date"]::attr(content)')
         il.add_css("content_html", "article.artDetail")
         il.add_css("category", ".artDetailOrt__linkText::text")
+        il.add_css("category", ".artDetail__topline ::text")
         il.add_value("path", response.meta["ressort"])
         return il.load_item()

@@ -36,7 +36,6 @@ class LbgAtSpider(FeedsSpider):
         )
         il.add_value("link", response.url.replace("/index_ger.html", ""))
         il.add_css("title", "h1::text")
-        il.add_value("author_name", "LBG")
         il.add_css("updated", "p.date::text")
         il.add_css("content_html", "article.news_article")
         yield il.load_item()

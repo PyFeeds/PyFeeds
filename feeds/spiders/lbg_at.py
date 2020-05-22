@@ -32,6 +32,8 @@ class LbgAtSpider(FeedsSpider):
                 "//strong[starts-with(text(), 'Kontakt ')]/ancestor::p",
                 "//strong[starts-with(text(), 'LBG - ')]/ancestor::p",
                 "//strong[starts-with(text(), '© LBG')]/ancestor::p",
+                "//p[starts-with(text(), 'Wir beraten eine große Vielfalt an Branch')]",
+                "//p[starts-with(text(), 'Im Beratungsfeld „Personalverrechnung, Lo')]",
             ],
         )
         il.add_value("link", response.url.replace("/index_ger.html", ""))

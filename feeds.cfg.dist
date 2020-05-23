@@ -179,3 +179,8 @@ useragent = feeds (+https://github.com/pyfeeds/pyfeeds)
 #[tinyletter.com]
 #accounts =
 #    dabeaz
+
+#[riskommunal]
+#urls =
+#    http://yourlocalcommunity.tld/News
+#    https://mytown.tld/BUeRGERSERVICE/Neuigkeiten

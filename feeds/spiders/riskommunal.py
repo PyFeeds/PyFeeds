@@ -66,6 +66,10 @@ class RisKommunalSpider(FeedsSpider):
                 continue
 
             url = selector.css("a::attr('href')").get()
+            if not url:
+                # Ignore articles without a link
+                continue
+
             if url.startswith("/"):
                 url = f"{self._links[site]}{url}"
 

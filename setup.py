@@ -32,7 +32,7 @@ setup(
             "black",
             "doc8",
             "flake8",
-            "isort",
+            "isort>=5",
             "pygments",
             "restructuredtext_lint",
         ],

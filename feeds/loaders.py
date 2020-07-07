@@ -104,6 +104,23 @@ def make_links_absolute(tree):
     return [tree]
 
 
+def make_srcset_absolute(tree):
+    # Also make URLs in srcset attributes absolute (not part of make_links_absolute()).
+    if tree.base_url:
+        # https://html.spec.whatwg.org/multipage/images.html#srcset-attributes
+        srcset_regex = re.compile(
+            r"(?:\s*(?P<url>[^\s,]+)\s*(?P<dimension> \d+w| \d+x)\s*(?:,|$))"
+        )
+        selector = CSSSelector("img[srcset]")
+        for elem in selector(tree):
+            srcset = []
+            for url, dimension in srcset_regex.findall(elem.attrib["srcset"]):
+                srcset.append(urljoin(tree.base_url, url) + dimension)
+            elem.attrib["srcset"] = ",".join(srcset)
+
+    return [tree]
+
+
 def pullup_elems(tree, loader_context):
     for elem_child, parent_dist in loader_context.get("pullup_elems", {}).items():
         selector = CSSSelector(elem_child)
@@ -432,6 +449,7 @@ class FeedEntryItemLoader(BaseItemLoader):
         flatten_tree,
         skip_empty_tree,
         make_links_absolute,
+        make_srcset_absolute,
         serialize_tree,
     )
     content_html_out = Compose(Join(), truncate_text)

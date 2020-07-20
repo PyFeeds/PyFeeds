@@ -11,10 +11,10 @@ import dateparser
 import lxml
 from dateutil.parser import parse as dateutil_parse
 from dateutil.tz import gettz
+from itemloaders.processors import Compose, Identity, Join, MapCompose, TakeFirst
 from lxml.cssselect import CSSSelector
 from lxml.html.clean import Cleaner
 from scrapy.loader import ItemLoader
-from scrapy.loader.processors import Compose, Identity, Join, MapCompose, TakeFirst
 from w3lib.html import remove_tags
 
 from feeds.items import FeedEntryItem, FeedItem

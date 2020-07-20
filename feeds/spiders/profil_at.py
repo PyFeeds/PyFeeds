@@ -1,9 +1,5 @@
-from datetime import datetime, timedelta
-
 import scrapy
-from dateutil.tz import gettz
 
-from feeds.loaders import FeedEntryItemLoader
 from feeds.spiders import FeedsXMLFeedSpider
 from feeds.spiders import kurier_at
 

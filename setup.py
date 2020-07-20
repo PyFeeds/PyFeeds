@@ -25,6 +25,7 @@ setup(
         "pyxdg>=0.26",
         "readability-lxml>=0.7",
         "scrapy-inline-requests",
+        "itemloaders",  # explicit dependency of Scrapy > 2.2.1
     ],
     extras_require={
         "docs": ["sphinx", "sphinx_rtd_theme"],

@@ -16,7 +16,7 @@ setup(
     include_package_data=True,
     install_requires=[
         "Click>=6.6",
-        "Scrapy>=1.6",
+        "Scrapy>=2.2",
         "bleach>=1.4.3",
         "dateparser>=0.5.1",
         "feedparser",

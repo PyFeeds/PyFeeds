@@ -8,6 +8,82 @@ from feeds.spiders import FeedsSpider
 from feeds.utils import generate_feed_header
 
 
+def parse_article(response):
+    article = json.loads(response.text)["layout"]["center"][0]
+    il = FeedEntryItemLoader()
+    il.add_value(
+        "link", urljoin("https://{}".format(article["portal"]), article["url"])
+    )
+    il.add_value("title", article["title"])
+    if "teaser_img" in article:
+        il.add_value(
+            "content_html",
+            _create_figure(
+                article["portal"],
+                article["teaser_img"]["url"],
+                article["teaser_img"].get("description"),
+            ),
+        )
+    il.add_value(
+        "content_html", "<p><strong>{}</strong></p>".format(article["teaser_text"])
+    )
+    for paragraph in article["paragraphs"]:
+        if paragraph["type"] == "text":
+            il.add_value("content_html", paragraph["data"]["html"])
+        elif paragraph["type"] == "youtube":
+            url = "https://www.youtube.com/watch?v={}".format(
+                paragraph["data"]["videoid"]
+            )
+            il.add_value(
+                "content_html", '<div><a href="{url}">{url}</a></div>'.format(url=url),
+            )
+        elif paragraph["type"] == "image":
+            il.add_value(
+                "content_html",
+                _create_figure(
+                    article["portal"],
+                    paragraph["data"]["url"].replace("large", "original"),
+                    paragraph["data"].get("description"),
+                ),
+            )
+        elif paragraph["type"] == "gallery":
+            # Only include 1 image (the latest) if the feed type is article.
+            # This is is a special case for comic articles where a new image is
+            # added to the article once a day and it doesn't make sense to always
+            # include all the old ones in the feed.
+            max_images = 1 if response.meta["feed_type"] == "article" else None
+            for image in paragraph["data"]["images"][:max_images]:
+                il.add_value(
+                    "content_html",
+                    _create_figure(
+                        article["portal"],
+                        image["url"].replace("large", "original"),
+                        image.get("description"),
+                    ),
+                )
+    il.add_value("updated", article["updated_date"])
+    for author in article["authors"]:
+        il.add_value("author_name", "{firstname} {lastname}".format(**author))
+    if not article["authors"]:
+        il.add_value("author_name", article["agency"])
+    il.add_value("category", article["channel"]["name"])
+    il.add_value("category", article["portal"])
+    if "path" in response.meta:
+        il.add_value("path", response.meta["path"])
+    if article["sponsored"]:
+        il.add_value("category", "sponsored")
+    il.add_value("category", article.get("pretitle"))
+    return il.load_item()
+
+
+def _create_figure(name, src, caption=None):
+    src = urljoin("https://image.{}".format(name), src)
+    return (
+        '<figure><div><img src="{src}"></div>'
+        + "<figcaption>{caption}</figcaption></figure>"
+    ).format(src=src, caption=caption or "")
+
+
 class KurierAtSpider(FeedsSpider):
     name = "kurier.at"
 
@@ -52,7 +128,7 @@ class KurierAtSpider(FeedsSpider):
                 "https://efs.kurier.at/api/v1/cfs/route?uri=/kurierat{}".format(
                     article
                 ),
-                self._parse_article,
+                parse_article,
                 meta={"path": article, "dont_cache": True, "feed_type": "article"},
             )
 
@@ -96,77 +172,6 @@ class KurierAtSpider(FeedsSpider):
                 },
             )
 
-    def _create_figure(self, src, caption=None):
-        src = urljoin("https://image.{}".format(self.name), src)
-        return (
-            '<figure><div><img src="{src}"></div>'
-            + "<figcaption>{caption}</figcaption></figure>"
-        ).format(src=src, caption=caption or "")
-
-    def _parse_article(self, response):
-        article = json.loads(response.text)["layout"]["center"][0]
-        il = FeedEntryItemLoader()
-        il.add_value(
-            "link", urljoin("https://{}".format(article["portal"]), article["url"])
-        )
-        il.add_value("title", article["title"])
-        if "teaser_img" in article:
-            il.add_value(
-                "content_html",
-                self._create_figure(
-                    article["teaser_img"]["url"],
-                    article["teaser_img"].get("description"),
-                ),
-            )
-        il.add_value(
-            "content_html", "<p><strong>{}</strong></p>".format(article["teaser_text"])
-        )
-        for paragraph in article["paragraphs"]:
-            if paragraph["type"] == "text":
-                il.add_value("content_html", paragraph["data"]["html"])
-            elif paragraph["type"] == "youtube":
-                url = "https://www.youtube.com/watch?v={}".format(
-                    paragraph["data"]["videoid"]
-                )
-                il.add_value(
-                    "content_html",
-                    '<div><a href="{url}">{url}</a></div>'.format(url=url),
-                )
-            elif paragraph["type"] == "image":
-                il.add_value(
-                    "content_html",
-                    self._create_figure(
-                        paragraph["data"]["url"].replace("large", "original"),
-                        paragraph["data"].get("description"),
-                    ),
-                )
-            elif paragraph["type"] == "gallery":
-                # Only include 1 image (the latest) if the feed type is article.
-                # This is is a special case for comic articles where a new image is
-                # added to the article once a day and it doesn't make sense to always
-                # include all the old ones in the feed.
-                max_images = 1 if response.meta["feed_type"] == "article" else None
-                for image in paragraph["data"]["images"][:max_images]:
-                    il.add_value(
-                        "content_html",
-                        self._create_figure(
-                            image["url"].replace("large", "original"),
-                            image.get("description"),
-                        ),
-                    )
-        il.add_value("updated", article["updated_date"])
-        for author in article["authors"]:
-            il.add_value("author_name", "{firstname} {lastname}".format(**author))
-        if not article["authors"]:
-            il.add_value("author_name", article["agency"])
-        il.add_value("category", article["channel"]["name"])
-        il.add_value("category", article["portal"])
-        il.add_value("path", response.meta["path"])
-        if article["sponsored"]:
-            il.add_value("category", "sponsored")
-        il.add_value("category", article.get("pretitle"))
-        return il.load_item()
-
     def _parse_author(self, response):
         query = json.loads(response.text)["layout"]["center"][0]["query"]
         return scrapy.Request(
@@ -188,7 +193,7 @@ class KurierAtSpider(FeedsSpider):
                 "https://efs.kurier.at/api/v1/cfs/route?uri=/{}{}".format(
                     article["portal"].replace(".", ""), article["url"]
                 ),
-                self._parse_article,
+                parse_article,
                 meta={
                     "path": response.meta["path"],
                     "feed_type": response.meta["feed_type"],

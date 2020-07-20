@@ -161,16 +161,17 @@ class KurierAtSpider(FeedsSpider):
     def _parse_collection(self, response):
         articles = json.loads(response.text)["items"]
         for article in articles:
-            yield scrapy.Request(
-                "https://efs.kurier.at/api/v1/cfs/route?uri=/{}{}".format(
-                    article["portal"].replace(".", ""), article["url"]
-                ),
-                self._parse_article,
-                meta={
-                    "path": response.meta["path"],
-                    "feed_type": response.meta["feed_type"],
-                },
-            )
+            if article["type"] != "empty":
+                yield scrapy.Request(
+                    "https://efs.kurier.at/api/v1/cfs/route?uri=/{}{}".format(
+                        article["portal"].replace(".", ""), article["url"]
+                    ),
+                    parse_article,
+                    meta={
+                        "path": response.meta["path"],
+                        "feed_type": response.meta["feed_type"],
+                    },
+                )
 
     def _parse_author(self, response):
         query = json.loads(response.text)["layout"]["center"][0]["query"]

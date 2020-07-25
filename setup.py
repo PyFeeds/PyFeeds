@@ -16,7 +16,7 @@ setup(
     include_package_data=True,
     install_requires=[
         "Click>=6.6",
-        "Scrapy>=1.6",
+        "Scrapy>=2.2",
         "bleach>=1.4.3",
         "dateparser>=0.5.1",
         "feedparser",
@@ -25,6 +25,7 @@ setup(
         "pyxdg>=0.26",
         "readability-lxml>=0.7",
         "scrapy-inline-requests",
+        "itemloaders",  # explicit dependency of Scrapy > 2.2.1
     ],
     extras_require={
         "docs": ["sphinx", "sphinx_rtd_theme"],

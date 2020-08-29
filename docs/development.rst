@@ -108,6 +108,7 @@ cleaning up the content (removing share buttons, etc.):
   * :ref:`spider_ft.com`
   * :ref:`spider_lwn.net`
   * :ref:`spider_orf.at`
+  * :ref:`spider_profil.at`
 
 Paywalled content
 ~~~~~~~~~~~~~~~~~
@@ -139,7 +140,6 @@ Utilizing the sitemap
 ~~~~~~~~~~~~~~~~~~~~~
 Others provide a sitemap_ which we can parse:
 
-  * :ref:`spider_profil.at`
   * :ref:`spider_trend.at`
 
 Custom extraction
@@ -154,6 +154,7 @@ scraping from there.
   * :ref:`spider_delinski.at`
   * :ref:`spider_flimmit.com`
   * :ref:`spider_lbg.at`
+  * :ref:`spider_npr.org`
   * :ref:`spider_openwrt.org`
   * :ref:`spider_puls4.com`
   * :ref:`spider_python-patterns.guide`

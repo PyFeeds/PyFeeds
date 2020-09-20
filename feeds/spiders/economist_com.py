@@ -2,11 +2,11 @@ import scrapy
 
 from feeds.exceptions import DropResponse
 from feeds.loaders import FeedEntryItemLoader
-from feeds.spiders import FeedsXMLFeedSpider
+from feeds.spiders import FeedsSpider
 from feeds.utils import generate_feed_header
 
 
-class EconomistComSpider(FeedsXMLFeedSpider):
+class EconomistComSpider(FeedsSpider):
     name = "economist.com"
     # Don't send too many requests to not trigger the bot detection.
     custom_settings = {"DOWNLOAD_DELAY": 5.0}
@@ -24,20 +24,21 @@ class EconomistComSpider(FeedsXMLFeedSpider):
 
         for ressort in self._ressorts:
             yield scrapy.Request(
-                "https://www.{}/{}/rss.xml".format(self.name, ressort),
+                "https://www.{}/{}/".format(self.name, ressort),
                 meta={"dont_cache": True, "ressort": ressort},
             )
 
-    def parse_node(self, response, node):
+    def parse(self, response):
         if not self._titles.get(response.meta["ressort"]):
-            self._titles[response.meta["ressort"]] = response.xpath(
-                "//channel/title/text()"
+            self._titles[response.meta["ressort"]] = response.css(
+                "h1.section-collection-headline ::text"
             ).extract_first()
 
-        url = node.xpath("link/text()").extract_first()
-        return scrapy.Request(
-            url, self._parse_article, meta={"ressort": response.meta["ressort"]}
-        )
+        for path in response.css(".headline-link::attr('href')").extract():
+            url = response.urljoin(path)
+            yield scrapy.Request(
+                url, self._parse_article, meta={"ressort": response.meta["ressort"]}
+            )
 
     def feed_headers(self):
         for ressort in self._ressorts:

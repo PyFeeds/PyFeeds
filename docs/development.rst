@@ -104,7 +104,6 @@ cleaning up the content (removing share buttons, etc.):
   * :ref:`spider_arstechnica.com`
   * :ref:`spider_derstandard.at`
   * :ref:`spider_dietiwag.org`
-  * :ref:`spider_economist.com`
   * :ref:`spider_ft.com`
   * :ref:`spider_lwn.net`
   * :ref:`spider_orf.at`
@@ -152,6 +151,7 @@ scraping from there.
   * :ref:`spider_biblioweb.at`
   * :ref:`spider_cbird.at`
   * :ref:`spider_delinski.at`
+  * :ref:`spider_economist.com`
   * :ref:`spider_flimmit.com`
   * :ref:`spider_lbg.at`
   * :ref:`spider_npr.org`

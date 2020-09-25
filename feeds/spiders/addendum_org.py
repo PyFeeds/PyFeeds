@@ -24,7 +24,9 @@ class AddendumOrgSpider(FeedsSpider):
             il.add_value("link", post["link"])
             il.add_value("updated", post["modified"])
             yield scrapy.Request(
-                post["link"], self._parse_article, meta={"il": il},
+                post["link"],
+                self._parse_article,
+                meta={"il": il},
             )
 
     def _parse_article(self, response):

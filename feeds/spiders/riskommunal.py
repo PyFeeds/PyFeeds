@@ -44,7 +44,9 @@ class RisKommunalSpider(FeedsSpider):
             self._links[site] = f"{parsed.scheme}://{parsed.netloc}"
 
             yield scrapy.Request(
-                url, cookies=self.cookies, meta={"dont_cache": True, "site": site},
+                url,
+                cookies=self.cookies,
+                meta={"dont_cache": True, "site": site},
             )
 
     def parse(self, response):

@@ -49,7 +49,9 @@ class TinyletterComSpider(FeedsSpider):
 
         for u in response.css("ul.message-list a.message-link::attr('href')").getall():
             yield scrapy.Request(
-                u, self.parse_letter, meta={"account": account},
+                u,
+                self.parse_letter,
+                meta={"account": account},
             )
 
     def parse_letter(self, response):

@@ -35,7 +35,8 @@ def parse_article(response):
                 paragraph["data"]["videoid"]
             )
             il.add_value(
-                "content_html", '<div><a href="{url}">{url}</a></div>'.format(url=url),
+                "content_html",
+                '<div><a href="{url}">{url}</a></div>'.format(url=url),
             )
         elif paragraph["type"] == "image":
             il.add_value(

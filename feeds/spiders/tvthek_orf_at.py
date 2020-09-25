@@ -111,13 +111,13 @@ class TvthekOrfAtSpider(FeedsSpider):
     def _categories_from_oewa_base_path(self, oewa_base_path):
         """Parse ÖWA Base Path into a list of categories.
 
-         Base paths look like this:
+        Base paths look like this:
 
-           * RedCont/KulturUndFreizeit/FilmUndKino
-           * RedCont/KulturUndFreizeit/Sonstiges
-           * RedCont/Lifestyle/EssenUndTrinken
-           * RedCont/Nachrichten/Nachrichtenueberblick
-           * RedCont/Sport/Sonstiges
+          * RedCont/KulturUndFreizeit/FilmUndKino
+          * RedCont/KulturUndFreizeit/Sonstiges
+          * RedCont/Lifestyle/EssenUndTrinken
+          * RedCont/Nachrichten/Nachrichtenueberblick
+          * RedCont/Sport/Sonstiges
         """
         old_new = {
             "RedCont": "",

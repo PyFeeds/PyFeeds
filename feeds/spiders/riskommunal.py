@@ -11,7 +11,7 @@ class RisKommunalSpider(FeedsSpider):
     name = "riskommunal"
     custom_settings = {"COOKIES_ENABLED": True}
     allowed_domains = []
-    cookies = {"ris-cookie": "g7750"}
+    cookies = {"ris-cookie": "g7750", "ris_cookie_setting": "g7750"}
 
     _sites = []
     _titles = {}

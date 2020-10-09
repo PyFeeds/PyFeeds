@@ -115,7 +115,6 @@ class DerStandardAtSpider(FeedsSpider):
         change_tags = {
             ".article-subtitle": "strong",
             "aside": "blockquote",
-            "p strong:only-child": "h3",
         }
         replace_elems = {"img": _fix_img_src}
         il = FeedEntryItemLoader(

@@ -82,6 +82,7 @@ class WienerZeitungAtSpider(FeedsSpider):
             ".caption-text > small.d-block",
             "h2 > br",
             "h3 > br",
+            ".article-socials",
         ]
         change_tags = {
             ".article-subtitle": "strong",

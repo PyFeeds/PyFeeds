@@ -5,7 +5,7 @@ Feeds
 
 |readthedocs|
 
-|travis|
+|pyfeedsci|
 
 Once upon a time every website offered an RSS feed to keep readers updated
 about new articles/blog posts via the users' feed readers. These times are
@@ -135,7 +135,7 @@ Pull requests
 
 * Fork the project to your private repository.
 * Create a topic branch and make your desired changes.
-* Open a pull request. Make sure the travis checks are passing.
+* Open a pull request. Make sure the CI checks are passing.
 
 Authors
 -------
@@ -175,6 +175,6 @@ AGPL3, see https://pyfeeds.readthedocs.io/en/latest/license.html for details.
    :alt: Read the documentation at https://pyfeeds.readthedocs.io/en/latest/
    :target: https://pyfeeds.readthedocs.io/en/latest/
 
-.. |travis| image:: https://img.shields.io/travis/pyfeeds/pyfeeds/master.svg?style=flat-square&label=Travis%20Build
-    :target: https://travis-ci.org/PyFeeds/PyFeeds
-    :alt: travis build status
+.. |pyfeedsci| image:: https://github.com/PyFeeds/PyFeeds/workflows/PyFeeds%20CI/badge.svg
+    :target: https://github.com/PyFeeds/PyFeeds/actions?query=workflow%3A%22PyFeeds+CI%22
+    :alt: GitHub PyFeeds CI

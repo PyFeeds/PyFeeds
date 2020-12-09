@@ -1,0 +1,38 @@
+---
+
+name: PyFeeds CI
+on: [push]
+
+# Run tests against each supported version while docs and style are only
+# considered on the latest supported version.
+jobs:
+
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python:
+          - version: 3.6
+            toxenv: py36
+          - version: 3.7
+            toxenv: py37
+          - version: 3.8
+            toxenv: py38
+          - version: 3.9
+            toxenv: py39,docs,style
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up Python ${{ matrix.python.version }} and tox ${{ matrix.python.toxenv }}
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python.version }}
+
+      - name: Install Tox
+        run: |
+          pip install tox
+
+      - name: Run Tox
+        run: |
+          tox -e ${{ matrix.python.toxenv }}

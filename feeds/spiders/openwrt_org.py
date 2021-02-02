@@ -17,7 +17,7 @@ class OpenwrtOrgSpider(FeedsSpider):
 
     def parse(self, response):
         # Page with all major releases
-        xpath = '//div[@class="page group"]//a[contains(@href, "/start")]/@href'
+        xpath = '//div[@class="dw-content"]//a[contains(@href, "/start")]/@href'
         for href in response.xpath(xpath).extract():
             yield scrapy.Request(
                 response.urljoin(href), self.parse_release, meta={"dont_cache": True}

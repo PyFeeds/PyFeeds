@@ -78,7 +78,7 @@ def parse_article(response):
 
 
 def _create_figure(name, src, caption=None):
-    src = urljoin("https://image.{}".format(name), src)
+    src = urljoin(f"https://image.{name}", src)
     return (
         '<figure><div><img src="{src}"></div>'
         + "<figcaption>{caption}</figcaption></figure>"
@@ -96,8 +96,8 @@ class KurierAtSpider(FeedsSpider):
                 + "kurier.at - die österreichische Nachrichten-Plattform im Internet. "
                 + "24 hour news from Austria's biggest quality newspaper.",
                 path=medium,
-                link="https://www.{}".format(self.name),
-                logo="https://{}/assets/logos/logo.png".format(self.name),
+                link=f"https://www.{self.name}",
+                logo=f"https://{self.name}/assets/logos/logo.png",
             )
 
     def start_requests(self):
@@ -136,7 +136,7 @@ class KurierAtSpider(FeedsSpider):
         for author in authors:
             yield scrapy.Request(
                 "https://efs.kurier.at/api/v1/cfs/route?uri=/kurierat"
-                + "/author/{}".format(author),
+                + f"/author/{author}",
                 self._parse_author,
                 # The response should be stable since we only want to get the ID for the
                 # author so we allow caching.

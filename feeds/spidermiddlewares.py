@@ -75,7 +75,7 @@ class FeedsHttpCacheMiddleware:
             fingerprint = request_fingerprint(request, include_headers=["Cookie"])
             request.meta["fingerprints"].append(fingerprint)
         else:
-            logger.debug("Skipping fingerprinting uncached request {}".format(request))
+            logger.debug(f"Skipping fingerprinting uncached request {request}")
 
     def process_spider_exception(self, response, exception, spider):
         # Note that due to Scrapy bug #220 this is *not* called if DropResponse is

@@ -17,9 +17,9 @@ class ViceComSpider(FeedsSpider):
 
         for locale in self._locales:
             yield generate_feed_header(
-                title="VICE {}".format(locale.title()),
+                title=f"VICE {locale.title()}",
                 path=locale,
-                link="https://www.{}".format(self.name),
+                link=f"https://www.{self.name}",
                 logo="https://www.{}/favicons/"
                 "apple-touch-icon-60x60.png".format(self.name),
                 icon="https://www.{}/favicons/"
@@ -36,7 +36,7 @@ class ViceComSpider(FeedsSpider):
 
         for locale in self._locales:
             yield scrapy.Request(
-                "https://www.{}/api/v1/articles?locale={}".format(self.name, locale),
+                f"https://www.{self.name}/api/v1/articles?locale={locale}",
                 meta={"locale": locale, "dont_cache": True},
             )
 

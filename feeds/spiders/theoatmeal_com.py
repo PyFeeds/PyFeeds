@@ -21,8 +21,8 @@ class TheOatmealComSpider(FeedsXMLFeedSpider):
     feed_subtitle = (
         "The oatmeal tastes better than stale skittles found under the couch cushions"
     )
-    _base_url = "https://{}".format(name)
-    feed_icon = "https://{}/favicon.ico".format(name)
+    _base_url = f"https://{name}"
+    feed_icon = f"https://{name}/favicon.ico"
     feed_logo = (
         "http://s3.amazonaws.com/theoatmeal-img/default/header2016/logo_rainbow.png"
     )

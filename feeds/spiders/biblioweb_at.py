@@ -19,11 +19,11 @@ class BibliowebAtSpider(FeedsSpider):
         ).lower()
         if self._library:
             self.feed_path = self._library
-            self.feed_title = "Bibliothek {}".format(self._library.title())
-            self.feed_subtitle = "Neue Titel in der {}".format(self.feed_title)
-            self.feed_link = "https://www.biblioweb.at/{}/".format(self._library)
+            self.feed_title = f"Bibliothek {self._library.title()}"
+            self.feed_subtitle = f"Neue Titel in der {self.feed_title}"
+            self.feed_link = f"https://www.biblioweb.at/{self._library}/"
             yield scrapy.Request(
-                "https://www.biblioweb.at/{}/start.asp".format(self._library),
+                f"https://www.biblioweb.at/{self._library}/start.asp",
                 callback=self.parse,
                 meta={"dont_cache": True},
             )
@@ -75,7 +75,7 @@ class BibliowebAtSpider(FeedsSpider):
 
         _content = ["<ul>"]
         for part in parts:
-            _content.append("<li>{}</li>".format(part))
+            _content.append(f"<li>{part}</li>")
         _content.append("</ul>")
         il.add_value("content_html", "".join(_content))
         return il.load_item()

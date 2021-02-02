@@ -76,7 +76,7 @@ class UebermedienDeSpider(FeedsXMLFeedSpider):
 
     def parse_node(self, response, node):
         il = FeedEntryItemLoader(
-            response=response, base_url="https://{}".format(self.name), dayfirst=True
+            response=response, base_url=f"https://{self.name}", dayfirst=True
         )
         il.add_value("updated", node.xpath("//pubDate/text()").extract_first())
         il.add_value("author_name", node.xpath("//dc:creator/text()").extract_first())
@@ -106,7 +106,7 @@ class UebermedienDeSpider(FeedsXMLFeedSpider):
             parent=response.meta["il"],
             remove_elems=remove_elems,
             change_tags=change_tags,
-            base_url="https://{}".format(self.name),
+            base_url=f"https://{self.name}",
             convert_footnotes=convert_footnotes,
             pullup_elems=pullup_elems,
         )

@@ -90,7 +90,7 @@ class TvthekOrfAtSpider(FeedsSpider):
                 "Could not extract video for '{}'!".format(item["title"])
             )
             raise DropResponse(
-                "Skipping {} because not downloadable yet".format(response.url),
+                f"Skipping {response.url} because not downloadable yet",
                 transient=True,
             )
 

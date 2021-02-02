@@ -13,7 +13,7 @@ class Oe1OrfAtSpider(FeedsSpider):
     feed_title = "oe1.ORF.at"
     feed_subtitle = "Ö1 Webradio"
     feed_link = "https://oe1.orf.at"
-    feed_logo = "https://{}/static/img/logo_oe1.png".format(name)
+    feed_logo = f"https://{name}/static/img/logo_oe1.png"
 
     def parse(self, response):
         for day in json.loads(response.text)[-2:]:

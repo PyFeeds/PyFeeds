@@ -31,7 +31,7 @@ class WienerLinienAtSpider(FeedsSpider):
                 response=response,
                 timezone="Europe/Vienna",
                 ignoretz=True,
-                base_url="https://www.{}".format(self.name),
+                base_url=f"https://www.{self.name}",
             )
             link = response.urljoin(item.css("a::attr(href)").extract_first())
             il.add_value("link", link)
@@ -47,7 +47,7 @@ class WienerLinienAtSpider(FeedsSpider):
             parent=response.meta["il"],
             remove_elems=remove_elems,
             change_tags=change_tags,
-            base_url="https://www.{}".format(self.name),
+            base_url=f"https://www.{self.name}",
         )
         il.add_xpath("content_html", '//div[@id="main-inner"]')
         return il.load_item()

@@ -12,8 +12,8 @@ class DieTiwagOrgSpider(FeedsXMLFeedSpider):
 
     feed_title = "dietiwag.org"
     feed_subtitle = "die andere seite der tiroler wasser kraft"
-    feed_link = "http://www.{}".format(name)
-    feed_icon = "http://www.{}/favicon.ico".format(name)
+    feed_link = f"http://www.{name}"
+    feed_icon = f"http://www.{name}/favicon.ico"
 
     def parse_node(self, response, node):
         il = FeedEntryItemLoader(selector=node)

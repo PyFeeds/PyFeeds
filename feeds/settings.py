@@ -15,12 +15,12 @@ def load_feeds_settings(file_):
     if not file_:
         config_file_path = settings.get("FEEDS_CONFIG_FILE")
         try:
-            file_ = open(config_file_path, "r")
-        except IOError:
-            logger.info("Could not load config file from {}!".format(config_file_path))
+            file_ = open(config_file_path)
+        except OSError:
+            logger.info(f"Could not load config file from {config_file_path}!")
             return settings
 
-    logger.debug("Parsing configuration file {} ...".format(file_.name))
+    logger.debug(f"Parsing configuration file {file_.name} ...")
     # Parse configuration file and store result under FEEDS_CONFIG of scrapy's
     # settings API.
     config = configparser.ConfigParser()
@@ -28,14 +28,14 @@ def load_feeds_settings(file_):
     feeds_config = {s: dict(config.items(s)) for s in config.sections()}
 
     for key, value in feeds_config["feeds"].items():
-        settings.set("FEEDS_CONFIG_{}".format(key.upper()), value)
+        settings.set(f"FEEDS_CONFIG_{key.upper()}", value)
 
     del feeds_config["feeds"]
 
     for spider in feeds_config.keys():
         spider_key = spider.replace(".", "_").upper()
         for key, value in feeds_config[spider].items():
-            settings.set("FEEDS_SPIDER_{}_{}".format(spider_key, key.upper()), value)
+            settings.set(f"FEEDS_SPIDER_{spider_key}_{key.upper()}", value)
 
     # Mapping of feeds config section to setting names.
     feeds_cfgfile_mapping = {

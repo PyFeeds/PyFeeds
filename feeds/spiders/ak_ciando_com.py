@@ -13,7 +13,7 @@ class AkCiandoComSpider(FeedsSpider):
 
     feed_title = "AK Digitale Bibliothek"
     feed_subtitle = "Neue Titel in der digitalen AK Bibliothek"
-    feed_link = "https://{}".format(name)
+    feed_link = f"https://{name}"
 
     def parse(self, response):
         for link in response.xpath('//p[@class="p_blr_title"]//a/@href').extract():

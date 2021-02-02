@@ -10,8 +10,8 @@ class ZeitdiebinAtSpider(FeedsSpider):
 
     feed_title = "zeitdiebin"
     feed_subtitle = "irgendwas ist immer ..."
-    feed_link = "https://{}".format(name)
-    feed_logo = "https://{}/favicon.ico".format(name)
+    feed_link = f"https://{name}"
+    feed_logo = f"https://{name}/favicon.ico"
 
     def parse(self, response):
         for link in response.css("a[href*=events]::attr(href)").re(r"events/\d+"):
@@ -20,7 +20,7 @@ class ZeitdiebinAtSpider(FeedsSpider):
     def parse_item(self, response):
         il = FeedEntryItemLoader(
             response=response,
-            base_url="{}/".format(self.feed_link),
+            base_url=f"{self.feed_link}/",
             timezone="Europe/Vienna",
             dayfirst=True,
             remove_elems=[".ruler", "h1"],

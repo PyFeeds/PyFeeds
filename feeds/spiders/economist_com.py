@@ -24,7 +24,7 @@ class EconomistComSpider(FeedsSpider):
 
         for ressort in self._ressorts:
             yield scrapy.Request(
-                "https://www.{}/{}/".format(self.name, ressort),
+                f"https://www.{self.name}/{ressort}/",
                 meta={"dont_cache": True, "ressort": ressort},
             )
 
@@ -44,7 +44,7 @@ class EconomistComSpider(FeedsSpider):
         for ressort in self._ressorts:
             yield generate_feed_header(
                 title="The Economist › {}".format(self._titles.get(ressort, ressort)),
-                link="https://www.{}".format(self.name),
+                link=f"https://www.{self.name}",
                 icon="https://www.{}/engassets/ico/favicon.f1ea9088.ico".format(
                     self.name
                 ),
@@ -58,7 +58,7 @@ class EconomistComSpider(FeedsSpider):
         title = response.css('meta[property="og:title"]::attr(content)').extract_first()
         if not title:
             raise DropResponse(
-                "Skipping {} because ran into bot detection".format(response.url),
+                f"Skipping {response.url} because ran into bot detection",
                 transient=True,
             )
 
@@ -77,7 +77,7 @@ class EconomistComSpider(FeedsSpider):
         }
         il = FeedEntryItemLoader(
             response=response,
-            base_url="https://{}".format(self.name),
+            base_url=f"https://{self.name}",
             remove_elems=remove_elems,
             change_tags=change_tags,
         )

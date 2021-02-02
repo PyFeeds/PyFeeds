@@ -12,8 +12,8 @@ class DelinskiAtSpider(FeedsSpider):
     name = "delinski.at"
 
     feed_title = "Delinski"
-    feed_link = "https://{}".format(name)
-    feed_logo = "https://{}/favicon.ico".format(name)
+    feed_link = f"https://{name}"
+    feed_logo = f"https://{name}/favicon.ico"
 
     def start_requests(self):
         yield scrapy.Request(

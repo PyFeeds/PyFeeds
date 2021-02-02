@@ -11,8 +11,8 @@ class VerbraucherrechtAtSpider(FeedsSpider):
     feed_title = "Verbraucherrecht"
     feed_subtitle = "Neuigkeiten rund um Konsumentenschutz und Verbraucherrechte"
     feed_author_name = "Verein für Konsumenteninformation"
-    feed_link = "https://{}".format(name)
-    feed_logo = "https://{}/cms/fileadmin/imag/logo.gif".format(name)
+    feed_link = f"https://{name}"
+    feed_logo = f"https://{name}/cms/fileadmin/imag/logo.gif"
 
     def parse(self, response):
         # Fetch only the current news page and deliberately ignore old news.
@@ -24,7 +24,7 @@ class VerbraucherrechtAtSpider(FeedsSpider):
     def parse_item(self, response):
         il = FeedEntryItemLoader(
             response=response,
-            base_url="{}/cms/".format(self.feed_link),
+            base_url=f"{self.feed_link}/cms/",
             timezone="Europe/Vienna",
             remove_elems=[".news-latest-date", ".news-single-rightbox", "hr", "h7"],
             remove_elems_xpath=[

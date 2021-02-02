@@ -12,7 +12,7 @@ logger = logging.getLogger(__name__)
 
 
 class AtomExporter(BaseItemExporter):
-    class AtomFeed(object):
+    class AtomFeed:
         def __init__(self, exporter, link_self=None):
             self._exporter = exporter
             self._link_self = link_self
@@ -181,7 +181,7 @@ class AtomExporter(BaseItemExporter):
         for path, feed in self._feeds.items():
             path = os.path.join(self._output_path, path)
             if len(feed) == 0:
-                logger.warning("Feed '{}' contains no items!".format(path))
+                logger.warning(f"Feed '{path}' contains no items!")
 
             feed.insert_updated()
             feed.sort()
@@ -193,7 +193,7 @@ class AtomExporter(BaseItemExporter):
             os.makedirs(os.path.dirname(path), exist_ok=True)
             try:
                 with open(path, "rb") as f:
-                    logger.debug("Found existing feed at '{}'".format(path))
+                    logger.debug(f"Found existing feed at '{path}'")
                     old_feed = f.read()
             except FileNotFoundError:
                 old_feed = None
@@ -201,9 +201,7 @@ class AtomExporter(BaseItemExporter):
                 with open(path, "wb") as f:
                     f.write(feed)
             else:
-                logger.debug(
-                    "Feed content not changed, not overwriting feed '{}'".format(path)
-                )
+                logger.debug(f"Feed content not changed, not overwriting feed '{path}'")
 
     def export_item(self, item):
         for path in item.pop("path", [""]):

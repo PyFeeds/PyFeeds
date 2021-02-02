@@ -10,7 +10,7 @@ from feeds.utils import generate_feed_header
 class UbupComSpider(FeedsSpider):
     name = "ubup.com"
 
-    _base_url = "https://www.{}".format(name)
+    _base_url = f"https://www.{name}"
     _scrape_pages = 3
 
     def start_requests(self):
@@ -50,7 +50,7 @@ class UbupComSpider(FeedsSpider):
                 image_url = image_url.replace(
                     "https://markenankauf.momox.de/pics/https://", "https://"
                 )
-            il.add_value("content_html", '<img src="{}">'.format(image_url))
+            il.add_value("content_html", f'<img src="{image_url}">')
             il.add_css("content_html", ".item-des-container")
             il.add_value("path", response.meta["path"])
             yield il.load_item()
@@ -63,7 +63,7 @@ class UbupComSpider(FeedsSpider):
                 ),
                 subtitle="Deutschlands größter Second Hand-Onlineshop für "
                 "Mode & Accessoires",
-                icon="https://www.{}/images/favicon.ico".format(self.name),
+                icon=f"https://www.{self.name}/images/favicon.ico",
                 link=response.url,
                 path=response.meta["path"],
             )

@@ -53,7 +53,7 @@ class Pusl4ComSpider(FeedsSpider):
     def _parse_episode(self, response):
         il = FeedEntryItemLoader(
             response=response,
-            base_url="https://{}".format(self.name),
+            base_url=f"https://{self.name}",
             timezone="Europe/Vienna",
             dayfirst=True,
         )

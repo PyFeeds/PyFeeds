@@ -61,7 +61,7 @@ class OrfAtSpider(FeedsXMLFeedSpider):
 
         for channel in channels:
             yield scrapy.Request(
-                "https://rss.orf.at/{}.xml".format(channel),
+                f"https://rss.orf.at/{channel}.xml",
                 meta={"path": channel, "dont_cache": True},
             )
 
@@ -77,16 +77,16 @@ class OrfAtSpider(FeedsXMLFeedSpider):
 
     def feed_headers(self):
         for channel in self._channels:
-            channel_url = "{}.ORF.at".format(channel)
+            channel_url = f"{channel}.ORF.at"
             yield generate_feed_header(
                 title=channel_url,
-                link="https://{}".format(channel_url.lower()),
+                link=f"https://{channel_url.lower()}",
                 path=channel,
                 logo=self._get_logo(channel),
             )
 
         for author in self._authors:
-            yield generate_feed_header(title="ORF.at: {}".format(author), path=author)
+            yield generate_feed_header(title=f"ORF.at: {author}", path=author)
 
     def parse(self, response):
         selector = Selector(response, type="xml")
@@ -130,9 +130,7 @@ class OrfAtSpider(FeedsXMLFeedSpider):
                 fixed_link.startswith(url)
                 for url in ["https://debatte.orf.at", "https://iptv.orf.at"]
             ):
-                self.logger.debug(
-                    "Ignoring link to '{}' ('{}')".format(link, fixed_link)
-                )
+                self.logger.debug(f"Ignoring link to '{link}' ('{fixed_link}')")
             else:
                 yield scrapy.Request(fixed_link, self._parse_article, meta=meta)
 
@@ -163,7 +161,7 @@ class OrfAtSpider(FeedsXMLFeedSpider):
             ).extract_first()
         )
         if more and more != response.url:
-            self.logger.debug("Detected teaser article, redirecting to {}".format(more))
+            self.logger.debug(f"Detected teaser article, redirecting to {more}")
             response = yield scrapy.Request(more, meta=response.meta)
 
         remove_elems = [
@@ -209,7 +207,7 @@ class OrfAtSpider(FeedsXMLFeedSpider):
         }
         author, author_selector = self._extract_author(response)
         if author:
-            self.logger.debug("Extracted possible author '{}'".format(author))
+            self.logger.debug(f"Extracted possible author '{author}'")
             # Remove the paragraph that contains the author.
             remove_elems.insert(0, author_selector)
         else:
@@ -222,7 +220,7 @@ class OrfAtSpider(FeedsXMLFeedSpider):
             ).replace("jsonp", "json")
             slideshow_id = slideshow.css('::attr("id")').extract_first()
             slideshow_response = yield scrapy.Request(link)
-            replace_elems["#{}".format(slideshow_id)] = self._create_slideshow_html(
+            replace_elems[f"#{slideshow_id}"] = self._create_slideshow_html(
                 slideshow_response
             )
 

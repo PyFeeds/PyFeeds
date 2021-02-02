@@ -23,7 +23,7 @@ class WienerZeitungAtSpider(FeedsSpider):
 
         for ressort in self._ressorts:
             yield scrapy.Request(
-                "https://www.{}/{}".format(self.name, ressort),
+                f"https://www.{self.name}/{ressort}",
                 meta={"dont_cache": True, "ressort": ressort},
             )
 
@@ -31,8 +31,8 @@ class WienerZeitungAtSpider(FeedsSpider):
         for ressort in self._ressorts:
             yield generate_feed_header(
                 title="Wiener Zeitung › {}".format(self._titles.get(ressort, ressort)),
-                link="https://www.{}".format(self.name),
-                icon="https://www.{}/_em_daten/wzo/favicon.ico".format(self.name),
+                link=f"https://www.{self.name}",
+                icon=f"https://www.{self.name}/_em_daten/wzo/favicon.ico",
                 logo="https://www.{}/_em_daten/wzo/_layout/logo_rss.png".format(
                     self.name
                 ),
@@ -94,7 +94,7 @@ class WienerZeitungAtSpider(FeedsSpider):
         replace_elems = {"img": _fix_img_src}
         il = FeedEntryItemLoader(
             response=response,
-            base_url="https://www.{}".format(self.name),
+            base_url=f"https://www.{self.name}",
             remove_elems=remove_elems,
             change_tags=change_tags,
             replace_elems=replace_elems,

@@ -9,7 +9,7 @@ from feeds.exporters import AtomExporter
 from feeds.items import FeedEntryItem
 
 
-class AtomAutogenerateFieldsPipeline(object):
+class AtomAutogenerateFieldsPipeline:
     """Autogenerate missing fields in case they are missing."""
 
     def process_item(self, item, spider):
@@ -43,15 +43,13 @@ class AtomAutogenerateFieldsPipeline(object):
         return item
 
 
-class AtomCheckRequiredFieldsPipeline(object):
+class AtomCheckRequiredFieldsPipeline:
     """Check presence of required fields."""
 
     def process_item(self, item, spider):
         def raise_if_missing(name, item):
             if name not in item:
-                raise DropItem(
-                    'The required field "{}" is missing in: {}.'.format(name, item)
-                )
+                raise DropItem(f'The required field "{name}" is missing in: {item}.')
 
         # Required fields for all items
         for required in ("id", "title", "link"):
@@ -65,7 +63,7 @@ class AtomCheckRequiredFieldsPipeline(object):
         return item
 
 
-class AtomExportPipeline(object):
+class AtomExportPipeline:
     """Export items as atom feeds."""
 
     def __init__(self, output_path, output_url):

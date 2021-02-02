@@ -20,7 +20,7 @@ class ArsTechnicaComSpider(FeedsXMLFeedSpider):
 
         for channel in channels:
             yield scrapy.Request(
-                "http://feeds.{}/arstechnica/{}".format(self.name, channel),
+                f"http://feeds.{self.name}/arstechnica/{channel}",
                 meta={"path": channel, "dont_cache": True},
             )
 
@@ -29,8 +29,8 @@ class ArsTechnicaComSpider(FeedsXMLFeedSpider):
     def feed_headers(self):
         for channel in self._channels:
             yield generate_feed_header(
-                title="Ars Technica: {}".format(channel.title()),
-                link="https://{}".format(self.name),
+                title=f"Ars Technica: {channel.title()}",
+                link=f"https://{self.name}",
                 path=channel,
                 icon=(
                     "https://cdn.arstechnica.net/wp-content/uploads/2016/10/"

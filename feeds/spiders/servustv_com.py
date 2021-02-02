@@ -51,7 +51,7 @@ class ServusTvComSpider(FeedsSpider):
         image_url = response.css(
             "meta[property='og:image']::attr('content')"
         ).extract_first()
-        il.add_value("content_html", '<img src="{}">'.format(image_url))
+        il.add_value("content_html", f'<img src="{image_url}">')
         il.add_css("content_html", "meta[property='og:description']::attr('content')")
         il.add_css("content_html", "#media-asset-content-container")
 
@@ -69,7 +69,7 @@ class ServusTvComSpider(FeedsSpider):
         if response.status != 200:
             url = il.get_output_value("link")
             raise DropResponse(
-                "Skipping {} because not downloadable yet".format(url), transient=True
+                f"Skipping {url} because not downloadable yet", transient=True
             )
 
         yield il.load_item()

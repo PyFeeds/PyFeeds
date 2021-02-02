@@ -249,7 +249,7 @@ def convert_footnotes(tree, loader_context):
         for elem in selector(tree):
             if elem.text is not None:
                 elem.tag = "small"
-                elem.text = " ({})".format(elem.text.strip())
+                elem.text = f" ({elem.text.strip()})"
 
     return [tree]
 

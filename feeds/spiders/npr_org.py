@@ -10,7 +10,7 @@ from feeds.utils import generate_feed_header
 class NprOrgSpider(FeedsSpider):
     name = "npr.org"
 
-    _base_url = "https://www.{}".format(name)
+    _base_url = f"https://www.{name}"
 
     def start_requests(self):
         # Only Planet Money seems to have a public archive.
@@ -18,7 +18,7 @@ class NprOrgSpider(FeedsSpider):
 
         for newsletter in newsletters:
             yield scrapy.Request(
-                urljoin(self._base_url, "sections/{}/newsletter".format(newsletter)),
+                urljoin(self._base_url, f"sections/{newsletter}/newsletter"),
                 headers={"Cookie": "trackingChoice=true; choiceVersion=1"},
                 meta={"dont_cache": True, "path": newsletter},
             )

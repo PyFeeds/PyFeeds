@@ -16,7 +16,7 @@ class FtComSpider(FeedsXMLFeedSpider):
         if self._ressorts:
             self._ressorts = set(self._ressorts.split())
         else:
-            self._ressorts = set(["homepage"])
+            self._ressorts = {"homepage"}
 
         for ressort in self._ressorts:
             if ressort == "homepage":
@@ -24,7 +24,7 @@ class FtComSpider(FeedsXMLFeedSpider):
             else:
                 path = ressort
             yield scrapy.Request(
-                "https://www.{}/{}?format=rss".format(self.name, path),
+                f"https://www.{self.name}/{path}?format=rss",
                 meta={"dont_cache": True, "ressort": ressort},
             )
 
@@ -46,7 +46,7 @@ class FtComSpider(FeedsXMLFeedSpider):
         for ressort in self._ressorts:
             yield generate_feed_header(
                 title="Financial Times › {}".format(self._titles.get(ressort, ressort)),
-                link="https://www.{}".format(self.name),
+                link=f"https://www.{self.name}",
                 icon=(
                     "https://www.{}/__origami/service/image/v2/images/raw/"
                     + "ftlogo-v1%3Abrand-ft-logo-square-coloured?source=update-logos"
@@ -65,7 +65,7 @@ class FtComSpider(FeedsXMLFeedSpider):
         change_tags = {".topper__standfirst": "h2"}
         il = FeedEntryItemLoader(
             response=response,
-            base_url="https://{}".format(self.name),
+            base_url=f"https://{self.name}",
             remove_elems=remove_elems,
             change_tags=change_tags,
         )

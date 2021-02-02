@@ -10,7 +10,7 @@ from feeds.utils import generate_feed_header
 class FlimmitComSpider(FeedsSpider):
     name = "flimmit.com"
 
-    _base_url = "https://www.{}".format(name)
+    _base_url = f"https://www.{name}"
     _categories = ["filme", "serien", "europa", "kinder"]
 
     def start_requests(self):
@@ -32,9 +32,9 @@ class FlimmitComSpider(FeedsSpider):
     def feed_headers(self):
         for category in self._categories:
             yield generate_feed_header(
-                title="Flimmit.com: {}".format(category.title()),
-                link="https://www.{}".format(self.name),
-                icon="https://www.{}/favicon.ico".format(self.name),
+                title=f"Flimmit.com: {category.title()}",
+                link=f"https://www.{self.name}",
+                icon=f"https://www.{self.name}/favicon.ico",
                 path=category,
             )
 

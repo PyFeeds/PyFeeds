@@ -39,7 +39,7 @@ class AtvAtSpider(FeedsSpider):
         data = data["config"]["initial_video"]["parts"][0]["tracking"]["nurago"]
         il = FeedEntryItemLoader(
             response=response,
-            base_url="https://{}".format(self.name),
+            base_url=f"https://{self.name}",
             timezone="Europe/Vienna",
             dayfirst=True,
         )

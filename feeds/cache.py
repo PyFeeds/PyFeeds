@@ -60,13 +60,13 @@ class FeedsCacheStorage(FilesystemCacheStorage):
         metadata = self._read_meta(spider, request)
         if metadata is not None and metadata["status"] in self.ignore_http_codes:
             # ignore cache entry for error responses
-            logger.debug("Response for {} not cached".format(request))
+            logger.debug(f"Response for {request} not cached")
             return
         # Retrieve response from cache.
         try:
             return super().retrieve_response(spider, request)
         finally:
-            logger.debug("Retrieved response for {} from cache".format(request))
+            logger.debug(f"Retrieved response for {request} from cache")
 
     def store_response(self, spider, request, response):
         """Store the given response in the cache."""
@@ -150,7 +150,7 @@ class FeedsCacheStorage(FilesystemCacheStorage):
           - Timestamp of entry and expires exceeds now.
         """
 
-        logger.debug("Cleaning cache entries from {} ...".format(self.cachedir))
+        logger.debug(f"Cleaning cache entries from {self.cachedir} ...")
 
         now = int(datetime.now(timezone.utc).timestamp())
         for cache_entry_path, _dirs, files in os.walk(self.cachedir, topdown=False):

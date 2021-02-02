@@ -65,7 +65,7 @@ class TrendAtSpider(FeedsXMLFeedSpider):
         ]
         il = FeedEntryItemLoader(
             response=response,
-            base_url="https://{}".format(self.name),
+            base_url=f"https://{self.name}",
             remove_elems=remove_elems,
         )
         il.add_value("link", response.url)

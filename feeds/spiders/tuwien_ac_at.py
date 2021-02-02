@@ -12,11 +12,11 @@ class TuWienAcAtSpider(FeedsSpider):
     name = "tuwien.ac.at"
 
     feed_title = "TU Wien: Mitteilungsblätter"
-    feed_icon = "https://{}/favicon.ico".format(name)
+    feed_icon = f"https://{name}/favicon.ico"
 
     def start_requests(self):
         yield scrapy.Request(
-            "https://tiss.{}/mbl/main/uebersicht".format(self.name),
+            f"https://tiss.{self.name}/mbl/main/uebersicht",
             headers={"Accept-Language": "de-DE,de"},
             meta={"dont_cache": True},
         )
@@ -40,7 +40,7 @@ class TuWienAcAtSpider(FeedsSpider):
         else:
             mb_id = match.group(1)
 
-        url = "https://tiss.{}/api/mbl/v22/id/{}".format(self.name, mb_id)
+        url = f"https://tiss.{self.name}/api/mbl/v22/id/{mb_id}"
         response = yield scrapy.Request(url)
 
         last_entry = None
@@ -53,7 +53,7 @@ class TuWienAcAtSpider(FeedsSpider):
                 entry["inhalt"] += last_entry["inhalt"]
             if entry["sub"] == "":
                 il = FeedEntryItemLoader(
-                    base_url="https://tiss.{}".format(self.name),
+                    base_url=f"https://tiss.{self.name}",
                     timezone="Europe/Vienna",
                     dayfirst=True,
                 )

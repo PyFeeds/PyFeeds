@@ -38,7 +38,7 @@ class UsenixOrgSpider(FeedsSpider):
         ]
         il = FeedEntryItemLoader(
             response=response,
-            base_url="https://www.{}".format(self.name),
+            base_url=f"https://www.{self.name}",
             remove_elems=remove_elems,
         )
         il.add_value("link", response.url)
@@ -66,4 +66,4 @@ class UsenixOrgSpider(FeedsSpider):
             date_free = datetime(day=1, month=month, year=year + 1)
             return date_free if date_free < date.utcnow() else date
         else:
-            self.logger.warning('Could not extract date from title "{}"!'.format(issue))
+            self.logger.warning(f'Could not extract date from title "{issue}"!')

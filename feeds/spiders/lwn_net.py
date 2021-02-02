@@ -17,7 +17,7 @@ def _remove_empty_headings(text, level=1):
     if not text:
         return
 
-    heading = '<p class="Cat{}HL">'.format(level)
+    heading = f'<p class="Cat{level}HL">'
     # Include text of current heading.
     text_new = [text.split(heading)[0]]
     for content in _split_categories(text, heading):
@@ -83,7 +83,7 @@ class LwnNetSpider(FeedsXMLFeedSpider):
         password = self.settings.get("FEEDS_SPIDER_LWN_NET_PASSWORD")
         if username and password:
             yield scrapy.FormRequest(
-                url="https://{}/login".format(self.name),
+                url=f"https://{self.name}/login",
                 formdata=OrderedDict(
                     [
                         ("Username", username),
@@ -107,7 +107,7 @@ class LwnNetSpider(FeedsXMLFeedSpider):
     def _after_login(self, response):
         error = response.css(".ErrorMessage::text").extract_first()
         if error:
-            self.logger.error("Login failed: {}".format(error))
+            self.logger.error(f"Login failed: {error}")
         else:
             text = "".join(response.css(".ArticleText ::text").extract())
             self._subscribed = "You are currently subscribed" in text
@@ -117,15 +117,13 @@ class LwnNetSpider(FeedsXMLFeedSpider):
 
     def _start_requests(self):
         return scrapy.Request(
-            "https://{}/headlines/rss".format(self.name),
+            f"https://{self.name}/headlines/rss",
             self.parse,
             meta={"dont_cache": True},
         )
 
     def parse_node(self, response, node):
-        il = FeedEntryItemLoader(
-            response=response, base_url="https://{}".format(self.name)
-        )
+        il = FeedEntryItemLoader(response=response, base_url=f"https://{self.name}")
         updated = dateutil_parse(node.xpath("dc:date/text()").extract_first())
         il.add_value("updated", updated)
         title = node.xpath("rss:title/text()").extract_first()
@@ -172,7 +170,7 @@ class LwnNetSpider(FeedsXMLFeedSpider):
             parent=response.meta["il"],
             remove_elems=remove_elems,
             change_tags=change_tags,
-            base_url="https://{}".format(self.name),
+            base_url=f"https://{self.name}",
         )
         text = response.css(".ArticleText").extract_first()
         # Remove 'Log in to post comments'.
@@ -228,7 +226,7 @@ class LwnNetSpider(FeedsXMLFeedSpider):
             parent=response.meta["il"],
             change_tags=change_tags,
             remove_elems=remove_elems,
-            base_url="https://{}".format(self.name),
+            base_url=f"https://{self.name}",
         )
 
         for url in response.css("h2.SummaryHL a::attr(href)").extract():

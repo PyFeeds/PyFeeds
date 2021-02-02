@@ -45,12 +45,12 @@ class KonsumentAtSpider(FeedsSpider):
     def _parse_article_url(self, response):
         if not response.css("#content"):
             raise DropResponse(
-                "Skipping {} since it is empty".format(response.url), transient=True
+                f"Skipping {response.url} since it is empty", transient=True
             )
 
         if "Fehler" in response.css("h2 ::text").extract_first():
             raise DropResponse(
-                "Skipping {} since it returned an error".format(response.url),
+                f"Skipping {response.url} since it returned an error",
                 transient=True,
             )
 
@@ -58,7 +58,7 @@ class KonsumentAtSpider(FeedsSpider):
         il = FeedEntryItemLoader(
             response=response,
             timezone="Europe/Vienna",
-            base_url="https://{}".format(self.name),
+            base_url=f"https://{self.name}",
             dayfirst=True,
             remove_elems=remove_elems,
         )
@@ -87,7 +87,7 @@ class KonsumentAtSpider(FeedsSpider):
         il = FeedEntryItemLoader(
             response=response,
             parent=response.meta["il"],
-            base_url="https://{}".format(self.name),
+            base_url=f"https://{self.name}",
             remove_elems=remove_elems,
         )
         il.add_css("content_html", "#page")

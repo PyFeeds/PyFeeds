@@ -23,7 +23,7 @@ class DerStandardAtSpider(FeedsSpider):
 
         for ressort in self._ressorts:
             yield scrapy.Request(
-                "https://www.{}/{}".format(self.name, ressort),
+                f"https://www.{self.name}/{ressort}",
                 meta={"dont_cache": True, "ressort": ressort},
                 # Cookie handling is disabled, so we have to send this as a header.
                 headers={"Cookie": "DSGVO_ZUSAGE_V1=true"},
@@ -46,7 +46,7 @@ class DerStandardAtSpider(FeedsSpider):
                     meta={
                         # Older pages should be cached longer.
                         "cache_expires": timedelta(hours=page),
-                        "path": "userprofil/postings/{}".format(user_id),
+                        "path": f"userprofil/postings/{user_id}",
                         "user_id": user_id,
                     },
                     headers={"Cookie": "DSGVO_ZUSAGE_V1=true"},
@@ -57,7 +57,7 @@ class DerStandardAtSpider(FeedsSpider):
             yield generate_feed_header(
                 title="derStandard.at › {}".format(self._titles.get(ressort, ressort)),
                 subtitle="Nachrichten in Echtzeit",
-                link="https://www.{}".format(self.name),
+                link=f"https://www.{self.name}",
                 icon="https://at.staticfiles.at/sites/mainweb/img/icons/dst/"
                 "dst-16.ico",
                 logo="https://at.staticfiles.at/sites/mainweb/img/icons/dst/"
@@ -67,7 +67,7 @@ class DerStandardAtSpider(FeedsSpider):
 
         for user_id, name in self._users.items():
             yield generate_feed_header(
-                title="derStandard.at › Postings von {}".format(name),
+                title=f"derStandard.at › Postings von {name}",
                 subtitle="Nachrichten in Echtzeit",
                 link="https://apps.{}/userprofil/postings/{}".format(
                     self.name, user_id
@@ -75,7 +75,7 @@ class DerStandardAtSpider(FeedsSpider):
                 icon="https://at.staticfiles.at/sites/mainweb/img/icons/dst/dst-16.ico",
                 logo="https://at.staticfiles.at/sites/mainweb/img/icons/dst/"
                 "dst-228.png",
-                path="userprofil/postings/{}".format(user_id),
+                path=f"userprofil/postings/{user_id}",
             )
 
     def parse(self, response):
@@ -119,7 +119,7 @@ class DerStandardAtSpider(FeedsSpider):
         replace_elems = {"img": _fix_img_src}
         il = FeedEntryItemLoader(
             response=response,
-            base_url="https://{}".format(self.name),
+            base_url=f"https://{self.name}",
             remove_elems=remove_elems,
             change_tags=change_tags,
             replace_elems=replace_elems,
@@ -148,7 +148,7 @@ class DerStandardAtSpider(FeedsSpider):
         for posting in response.css(".posting"):
             il = FeedEntryItemLoader(
                 selector=posting,
-                base_url="https://www.{}".format(self.name),
+                base_url=f"https://www.{self.name}",
                 change_tags={"span": "p"},
             )
             il.add_css("title", ".text strong::text")

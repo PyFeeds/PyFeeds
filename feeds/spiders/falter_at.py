@@ -34,7 +34,7 @@ class FalterAtSpider(FeedsSpider):
             password = self.settings.get("FEEDS_SPIDER_FALTER_AT_PASSWORD")
             if abonr and password:
                 yield scrapy.FormRequest(
-                    url="https://www.{}/login".format(self.name),
+                    url=f"https://www.{self.name}/login",
                     formdata=OrderedDict(
                         [
                             ("login[abonr]", abonr),
@@ -104,7 +104,7 @@ class FalterAtSpider(FeedsSpider):
             self.logger.error("Login failed: Username or password wrong!")
         else:
             return scrapy.Request(
-                "https://www.{}/archiv/".format(self.name),
+                f"https://www.{self.name}/archiv/",
                 self.parse_archive,
                 meta={"dont_cache": True},
             )
@@ -121,9 +121,7 @@ class FalterAtSpider(FeedsSpider):
     def parse_lokalfuehrer(self, response):
         entries = json.loads(response.text)["hits"]
         for entry in entries:
-            il = FeedEntryItemLoader(
-                response=response, base_url="https://{}".format(self.name)
-            )
+            il = FeedEntryItemLoader(response=response, base_url=f"https://{self.name}")
             il.add_value(
                 "path", "lokalfuehrer_{}".format(response.meta["lokalfuehrer"])
             )
@@ -169,9 +167,7 @@ class FalterAtSpider(FeedsSpider):
     def parse_movies(self, response):
         entries = json.loads(response.text)["hits"]
         for entry in entries:
-            il = FeedEntryItemLoader(
-                response=response, base_url="https://{}".format(self.name)
-            )
+            il = FeedEntryItemLoader(response=response, base_url=f"https://{self.name}")
             il.add_value("path", "{}".format(response.meta["movies"]))
             il.add_value(
                 "link", "https://www.{}/kino/{}".format(self.name, entry["prod_id"])
@@ -209,7 +205,7 @@ class FalterAtSpider(FeedsSpider):
         # somewhat official.
         issuenr = "{0[0]}{0[1]}".format(latest_issue_date.date().isocalendar())
         return scrapy.Request(
-            response.urljoin("/api/archive/{}?count=1000&from=0".format(issuenr)),
+            response.urljoin(f"/api/archive/{issuenr}?count=1000&from=0"),
             self.parse_archive_search,
             meta={"issue_date": latest_issue_date},
         )
@@ -219,7 +215,7 @@ class FalterAtSpider(FeedsSpider):
         for i, item in enumerate(articles):
             il = FeedEntryItemLoader(
                 response=response,
-                base_url="https://{}".format(self.name),
+                base_url=f"https://{self.name}",
                 timezone="Europe/Vienna",
             )
             il.add_value("path", "magazine")
@@ -246,7 +242,7 @@ class FalterAtSpider(FeedsSpider):
             response=response,
             parent=response.meta["il"],
             remove_elems=remove_elems,
-            base_url="https://{}".format(self.name),
+            base_url=f"https://{self.name}",
         )
         if response.css(".bluebox"):
             il.add_value("category", "paywalled")
@@ -270,7 +266,7 @@ class FalterAtSpider(FeedsSpider):
         il = FeedEntryItemLoader(
             response=response,
             remove_elems=remove_elems,
-            base_url="https://cms.{}".format(self.name),
+            base_url=f"https://cms.{self.name}",
             timezone="Europe/Vienna",
             dayfirst=True,
             yearfirst=False,

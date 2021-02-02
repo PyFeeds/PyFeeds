@@ -39,7 +39,7 @@ class GenericSpider(FeedsSpider):
     def parse(self, response):
         feed = feedparser.parse(io.BytesIO(response.body))
         if "entries" not in feed or not feed["entries"]:
-            self.logger.error("Feed {} contains no entries!".format(response.url))
+            self.logger.error(f"Feed {response.url} contains no entries!")
             return
         feed_entries = feed["entries"]
         feed = feed["feed"]

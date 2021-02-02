@@ -93,7 +93,7 @@ def crawl(ctx, spiders, stats):
         logger.error("Please specify what spiders you want to run!")
     else:
         for spider in spiders:
-            logger.info("Starting crawl of {} ...".format(spider))
+            logger.info(f"Starting crawl of {spider} ...")
             process.crawl(spider)
 
     process.start()

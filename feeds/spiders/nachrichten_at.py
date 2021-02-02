@@ -31,17 +31,17 @@ class NachrichtenAtSpider(FeedsXMLFeedSpider):
 
         for ressort in self._ressorts:
             yield scrapy.Request(
-                "https://www.{}/storage/rss/rss/{}.xml".format(self.name, ressort),
+                f"https://www.{self.name}/storage/rss/rss/{ressort}.xml",
                 meta={"ressort": ressort, "dont_cache": True},
             )
 
     def feed_headers(self):
         for ressort in self._ressorts:
             yield generate_feed_header(
-                title="Oberösterreichische Nachrichten {}".format(ressort.title()),
+                title=f"Oberösterreichische Nachrichten {ressort.title()}",
                 path=ressort,
                 subtitle="OÖN",
-                link="https://www.{}".format(self.name),
+                link=f"https://www.{self.name}",
                 icon="https://static1.{}.at/oonup/images/"
                 "apple-touch-icon.png".format(self.name),
                 logo="https://www.{}/pics/webapp/"
@@ -51,11 +51,11 @@ class NachrichtenAtSpider(FeedsXMLFeedSpider):
     @inline_requests
     def _login(self, response):
         response = yield scrapy.Request(
-            "https://www.{}/login/".format(self.name),
+            f"https://www.{self.name}/login/",
             meta={"cache_expires": timedelta(days=14)},
         )
         response = yield scrapy.FormRequest(
-            "https://www.{}/login/".format(self.name),
+            f"https://www.{self.name}/login/",
             formdata=OrderedDict(
                 [
                     ("user[control][login]", "true"),
@@ -108,7 +108,7 @@ class NachrichtenAtSpider(FeedsXMLFeedSpider):
         il = FeedEntryItemLoader(
             response=response,
             timezone="Europe/Vienna",
-            base_url="https://www.{}".format(self.name),
+            base_url=f"https://www.{self.name}",
             remove_elems=remove_elems,
             replace_elems=replace_elems,
             dayfirst=True,

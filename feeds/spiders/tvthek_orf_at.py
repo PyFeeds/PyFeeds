@@ -11,8 +11,8 @@ from feeds.spiders import FeedsSpider
 
 class TvthekOrfAtSpider(FeedsSpider):
     name = "tvthek.orf.at"
-    http_user = "ps_android_v3"
-    http_pass = "6a63d4da29c721d4a986fdd31edc9e41"
+    http_user = "ps_android_v3_new"
+    http_pass = "0652e466d1990d1fdf40da08e7933e06"
 
     feed_title = "TVthek.ORF.at"
     feed_subtitle = "ORF TVTHEK"

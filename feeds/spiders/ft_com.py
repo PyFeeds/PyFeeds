@@ -45,7 +45,7 @@ class FtComSpider(FeedsXMLFeedSpider):
     def feed_headers(self):
         for ressort in self._ressorts:
             yield generate_feed_header(
-                title="Financial Times › {}".format(self._titles.get(ressort, ressort)),
+                title=f"Financial Times › {self._titles.get(ressort, ressort)}",
                 link=f"https://www.{self.name}",
                 icon=(
                     "https://www.{}/__origami/service/image/v2/images/raw/"

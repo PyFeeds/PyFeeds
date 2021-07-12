@@ -43,7 +43,7 @@ class EconomistComSpider(FeedsSpider):
     def feed_headers(self):
         for ressort in self._ressorts:
             yield generate_feed_header(
-                title="The Economist › {}".format(self._titles.get(ressort, ressort)),
+                title=f"The Economist › {self._titles.get(ressort, ressort)}",
                 link=f"https://www.{self.name}",
                 icon="https://www.{}/engassets/ico/favicon.f1ea9088.ico".format(
                     self.name

@@ -55,7 +55,7 @@ class DerStandardAtSpider(FeedsSpider):
     def feed_headers(self):
         for ressort in self._ressorts:
             yield generate_feed_header(
-                title="derStandard.at › {}".format(self._titles.get(ressort, ressort)),
+                title=f"derStandard.at › {self._titles.get(ressort, ressort)}",
                 subtitle="Nachrichten in Echtzeit",
                 link=f"https://www.{self.name}",
                 icon="https://at.staticfiles.at/sites/mainweb/img/icons/dst/"

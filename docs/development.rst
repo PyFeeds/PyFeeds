@@ -153,7 +153,6 @@ scraping from there.
   * :ref:`spider_economist.com`
   * :ref:`spider_lbg.at`
   * :ref:`spider_npr.org`
-  * :ref:`spider_openwrt.org`
   * :ref:`spider_puls4.com`
   * :ref:`spider_python-patterns.guide`
   * :ref:`spider_riskommunal`

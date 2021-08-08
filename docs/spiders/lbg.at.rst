@@ -2,7 +2,7 @@
 
 lbg.at
 ------
-Latest articles from `LBG <https://www.lbg.at>`.
+Latest articles from `LBG <https://www.lbg.at>`_.
 
 Configuration
 ~~~~~~~~~~~~~

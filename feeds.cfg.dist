@@ -138,9 +138,9 @@ useragent = feeds (+https://github.com/pyfeeds/pyfeeds)
 #  telecom
 #  web
 
-#[ubup.com]
+#[momoxfashion.com]
 #links =
-#   /katalog?sortiertnach=neueste
+#   /de/herren?sortiertnach=neueste
 
 #[kurier.at]
 #channels =

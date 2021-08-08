@@ -160,7 +160,7 @@ scraping from there.
   * :ref:`spider_servustv.com`
   * :ref:`spider_tinyletter.com`
   * :ref:`spider_tuwien.ac.at`
-  * :ref:`spider_ubup.com`
+  * :ref:`spider_momoxfashion.com`
   * :ref:`spider_usenix.org`
   * :ref:`spider_verbraucherrecht.at`
   * :ref:`spider_wienerlinien.at`

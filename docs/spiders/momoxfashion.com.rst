@@ -1,7 +1,7 @@
 .. _spider_momoxfashion.com:
 
 momoxfashion.com
---------
+----------------
 Items available for buying at `momoxfashion <https://www.momoxfashion.com>`_.
 
 Configuration

@@ -78,21 +78,25 @@ class TvthekOrfAtSpider(FeedsSpider):
             # We use the first embedded segment instead.
             # This is also how mediathekviewweb.de works.
             item["sources"] = item["_embedded"]["segments"][0]["sources"]
-        try:
-            video = next(
-                s
-                for s in item["sources"]["progressive_download"]
-                if s["quality_key"] == "Q8C"
-            )
-            il.add_value("enclosure", {"iri": video["src"], "type": "video/mp4"})
-        except StopIteration:
-            self.logger.warning(
-                "Could not extract video for '{}'!".format(item["title"])
-            )
-            raise DropResponse(
-                f"Skipping {response.url} because not downloadable yet",
-                transient=True,
-            )
+
+        if item["sources"]["dash"][0]["quality_description"] == "Kein DRM":
+            self.logger.debug(f'Video for {item["title"]} is DRM protected')
+        else:
+            try:
+                video = next(
+                    s
+                    for s in item["sources"]["progressive_download"]
+                    if s["quality_key"] == "Q8C"
+                )
+                il.add_value("enclosure", {"iri": video["src"], "type": "video/mp4"})
+            except StopIteration:
+                self.logger.warning(
+                    "Could not extract video for '{}'!".format(item["title"])
+                )
+                raise DropResponse(
+                    f"Skipping {response.url} because not downloadable yet",
+                    transient=True,
+                )
 
         subtitle = item["_embedded"].get("subtitle")
         if subtitle:

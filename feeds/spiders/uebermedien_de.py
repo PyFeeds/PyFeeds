@@ -17,7 +17,7 @@ class UebermedienDeSpider(FeedsXMLFeedSpider):
     namespaces = [("dc", "http://purl.org/dc/elements/1.1/")]
     custom_settings = {"COOKIES_ENABLED": True}
 
-    feed_title = "uebermedien.de"
+    feed_title = "Übermedien"
     feed_subtitle = "Medien besser kritisieren."
     _steady_token = None
 
@@ -81,12 +81,12 @@ class UebermedienDeSpider(FeedsXMLFeedSpider):
         il.add_value("updated", node.xpath("//pubDate/text()").extract_first())
         il.add_value("author_name", node.xpath("//dc:creator/text()").extract_first())
         il.add_value("category", node.xpath("//category/text()").extract())
-        title = node.xpath("(//title)[2]/text()").extract()
+        title = node.xpath("//title/text()").extract()
         if not title:
             # Fallback to the first category if no title is provided (e.g. comic).
             title = node.xpath("//category/text()").extract_first()
         il.add_value("title", title)
-        link = node.xpath("(//link)[2]/text()").extract_first()
+        link = node.xpath("//link/text()").extract_first()
         il.add_value("link", link)
         if self._steady_token:
             cookies = {"steady-token": self._steady_token}
@@ -110,5 +110,7 @@ class UebermedienDeSpider(FeedsXMLFeedSpider):
             convert_footnotes=convert_footnotes,
             pullup_elems=pullup_elems,
         )
-        il.add_css("content_html", ".entry-content")
+        il.add_css("content_html", ".entry__content")
+        if response.css(".membership__thank"):
+            il.add_value("category", "paywalled")
         return il.load_item()

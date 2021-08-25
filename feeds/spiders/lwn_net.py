@@ -4,7 +4,7 @@ from datetime import timedelta
 
 import scrapy
 from dateutil.parser import parse as dateutil_parse
-from scrapy.loader.processors import TakeFirst
+from itemloaders.processors import TakeFirst
 
 from feeds.loaders import FeedEntryItemLoader
 from feeds.spiders import FeedsXMLFeedSpider

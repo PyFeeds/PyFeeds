@@ -72,6 +72,8 @@ class LwnNetSpider(FeedsXMLFeedSpider):
     # lwn.net doesn't like it (i.e. blocks us) if we impose too much load.
     custom_settings = {"DOWNLOAD_DELAY": 1.0, "COOKIES_ENABLED": True}
 
+    feed_title = "LWN.net"
+
     _subscribed = False
 
     def start_requests(self):
@@ -118,7 +120,7 @@ class LwnNetSpider(FeedsXMLFeedSpider):
     def _start_requests(self):
         return scrapy.Request(
             f"https://{self.name}/headlines/rss",
-            self.parse,
+            self._parse,
             meta={"dont_cache": True},
         )
 

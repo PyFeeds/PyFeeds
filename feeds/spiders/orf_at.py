@@ -62,6 +62,7 @@ class OrfAtSpider(FeedsXMLFeedSpider):
         for channel in channels:
             yield scrapy.Request(
                 f"https://rss.orf.at/{channel}.xml",
+                self.parse,
                 meta={"path": channel, "dont_cache": True},
             )
 

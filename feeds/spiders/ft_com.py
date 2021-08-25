@@ -25,6 +25,7 @@ class FtComSpider(FeedsXMLFeedSpider):
                 path = ressort
             yield scrapy.Request(
                 f"https://www.{self.name}/{path}?format=rss",
+                self._parse,
                 meta={"dont_cache": True, "ressort": ressort},
             )
 

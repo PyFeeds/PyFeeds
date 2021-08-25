@@ -21,6 +21,7 @@ class ArsTechnicaComSpider(FeedsXMLFeedSpider):
         for channel in channels:
             yield scrapy.Request(
                 f"http://feeds.{self.name}/arstechnica/{channel}",
+                self._parse,
                 meta={"path": channel, "dont_cache": True},
             )
 

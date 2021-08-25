@@ -33,6 +33,7 @@ class TrendAtSpider(FeedsXMLFeedSpider):
                 "https://www.{}/sitemap-articles-{}.xml".format(
                     self.name, month.strftime("%Y-%m")
                 ),
+                self._parse,
                 meta={"dont_cache": True, "handle_httpstatus_list": [404]},
             )
 

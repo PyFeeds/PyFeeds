@@ -32,6 +32,7 @@ class NachrichtenAtSpider(FeedsXMLFeedSpider):
         for ressort in self._ressorts:
             yield scrapy.Request(
                 f"https://www.{self.name}/storage/rss/rss/{ressort}.xml",
+                self._parse,
                 meta={"ressort": ressort, "dont_cache": True},
             )
 

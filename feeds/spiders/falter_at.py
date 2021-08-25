@@ -5,7 +5,7 @@ from datetime import timedelta
 
 import scrapy
 from dateutil.parser import parse as dateutil_parse
-from scrapy.loader.processors import MapCompose
+from itemloaders.processors import MapCompose
 
 from feeds.loaders import FeedEntryItemLoader
 from feeds.spiders import FeedsSpider

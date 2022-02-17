@@ -79,7 +79,10 @@ class TvthekOrfAtSpider(FeedsSpider):
             # This is also how mediathekviewweb.de works.
             item["sources"] = item["_embedded"]["segments"][0]["sources"]
 
-        if item["sources"]["dash"][0]["quality_description"] == "Kein DRM":
+        if (
+            len(item["sources"]["dash"]) > 0
+            and item["sources"]["dash"][0]["quality_description"] == "Kein DRM"
+        ):
             self.logger.debug(f'Video for {item["title"]} is DRM protected')
         else:
             try:

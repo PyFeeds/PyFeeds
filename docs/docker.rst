@@ -10,7 +10,7 @@ A ``docker-compose.yaml`` could look like this:
 
 .. code-block:: yaml
 
-    version: "3.7"
+    version: "3.9"
     services:
       pyfeeds:
         image: pyfeeds/pyfeeds:latest
@@ -28,7 +28,7 @@ volume which could be picked up by a webserver:
 
 .. code-block:: yaml
 
-    version: "3.7"
+    version: "3.9"
     services:
       pyfeeds-server:
         image: nginx:stable-alpine

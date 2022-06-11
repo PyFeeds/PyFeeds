@@ -29,14 +29,6 @@ setup(
     ],
     extras_require={
         "docs": ["sphinx", "sphinx_rtd_theme"],
-        "style": [
-            "black",
-            "doc8",
-            "flake8",
-            "isort>=5",
-            "pygments",
-            "restructuredtext_lint",
-        ],
         "test": ["pytest"],
     },
     entry_points={"console_scripts": ["feeds=feeds.cli:main"]},

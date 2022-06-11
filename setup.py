@@ -17,7 +17,6 @@ setup(
     install_requires=[
         "Click>=6.6",
         "Scrapy>=2.2",
-        "bleach>=1.4.3",
         "dateparser>=0.5.1",
         "feedparser",
         "lxml>=3.5.0",

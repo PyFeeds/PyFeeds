@@ -33,7 +33,7 @@ class KonsumentAtSpider(FeedsSpider):
             return self._after_login(response)
 
     def _after_login(self, response):
-        if "login_failed" in response.body_as_unicode():
+        if "login_failed" in response.text:
             self.logger.error("Login failed: Username or password wrong")
         for url in response.xpath(
             '//div[@id="content"]//a[text()!="Bestellen"]/@href'

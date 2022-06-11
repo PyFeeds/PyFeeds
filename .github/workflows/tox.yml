@@ -12,12 +12,14 @@ jobs:
     strategy:
       matrix:
         python:
-          - version: 3.7
+          - version: "3.7"
             toxenv: py37
-          - version: 3.8
+          - version: "3.8"
             toxenv: py38
-          - version: 3.9
-            toxenv: py39,docs,check-style
+          - version: "3.9"
+            toxenv: py39
+          - version: "3.10"
+            toxenv: py310,docs,check-style
 
     steps:
       - uses: actions/checkout@v2

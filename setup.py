@@ -5,7 +5,7 @@ with open("README.rst") as f:
 
 setup(
     name="PyFeeds",
-    version="2020.5.16",
+    version="2022.6.18",
     description="DIY Atom feeds in times of social media and paywalls",
     long_description=long_description,
     long_description_content_type="text/x-rst",

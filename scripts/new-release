@@ -5,7 +5,7 @@ set -e
 set -u
 
 # Version information.
-VERSION="$(date +%Y.%m.%d)"
+VERSION="$(date +%Y.%-m.%-d)"
 YEAR="$(date +%Y)"
 
 update_docs() {

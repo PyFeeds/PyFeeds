@@ -1,10 +1,10 @@
 import scrapy
+from itemloaders.processors import TakeFirst
 
 from feeds.exceptions import DropResponse
 from feeds.loaders import FeedEntryItemLoader
 from feeds.spiders import FeedsSpider
 from feeds.utils import generate_feed_header
-from itemloaders.processors import TakeFirst
 
 
 class EconomistComSpider(FeedsSpider):
@@ -77,7 +77,7 @@ class EconomistComSpider(FeedsSpider):
         il.add_css("content_html", "article section h2")
         il.add_css(
             "content_html",
-            ".article__body-text, .article-text, article__body-text-image"
+            ".article__body-text, .article-text, article__body-text-image",
         )
         il.add_value("path", response.meta["ressort"])
         return il.load_item()

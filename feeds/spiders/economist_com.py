@@ -4,6 +4,7 @@ from feeds.exceptions import DropResponse
 from feeds.loaders import FeedEntryItemLoader
 from feeds.spiders import FeedsSpider
 from feeds.utils import generate_feed_header
+from itemloaders.processors import TakeFirst
 
 
 class EconomistComSpider(FeedsSpider):
@@ -24,7 +25,7 @@ class EconomistComSpider(FeedsSpider):
 
         for ressort in self._ressorts:
             yield scrapy.Request(
-                f"https://www.{self.name}/{ressort}/",
+                f"https://www.{self.name}/{ressort}",
                 meta={"dont_cache": True, "ressort": ressort},
             )
 
@@ -34,7 +35,7 @@ class EconomistComSpider(FeedsSpider):
                 "h1.section-collection-headline ::text"
             ).extract_first()
 
-        for path in response.css(".headline-link::attr('href')").extract():
+        for path in response.css("h3 a::attr('href')").extract():
             url = response.urljoin(path)
             yield scrapy.Request(
                 url, self._parse_article, meta={"ressort": response.meta["ressort"]}
@@ -62,30 +63,21 @@ class EconomistComSpider(FeedsSpider):
                 transient=True,
             )
 
-        remove_elems = [
-            "meta",
-            ".ds-share-list",
-            ".advert",
-            ".layout-article-links",
-            ".ds-chapter-list",
-            ".layout-article-meta",
-        ]
         change_tags = {
-            ".article__lead-image": "figure",
-            ".article__description": "h2",
-            ".article__footnote": "i",
+            "small": "span",
+            ".article-text": "p",
         }
         il = FeedEntryItemLoader(
-            response=response,
-            base_url=f"https://{self.name}",
-            remove_elems=remove_elems,
-            change_tags=change_tags,
+            response=response, base_url=f"https://{self.name}", change_tags=change_tags
         )
         il.add_value("link", response.url)
         il.add_value("title", title)
-        il.add_css("updated", "time.article__dateline-datetime::attr('datetime')")
-        il.add_css("content_html", ".article__lead-image")
-        il.add_css("content_html", ".article__description")
-        il.add_css("content_html", ".layout-article-body")
+        il.add_css("updated", "time::attr('datetime')")
+        il.add_css("content_html", "article section figure img", TakeFirst())
+        il.add_css("content_html", "article section h2")
+        il.add_css(
+            "content_html",
+            ".article__body-text, .article-text, article__body-text-image"
+        )
         il.add_value("path", response.meta["ressort"])
         return il.load_item()

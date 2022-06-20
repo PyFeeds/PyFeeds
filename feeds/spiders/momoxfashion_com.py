@@ -1,3 +1,4 @@
+import re
 from urllib.parse import urljoin
 
 import scrapy
@@ -38,10 +39,10 @@ class MomoxFashionComSpider(FeedsSpider):
             il.add_css("title", ".item_brand_text ::text")
             il.add_css("title", ".item-title ::text")
             il.add_css("title", ".current-price ::text")
-            il.add_value(
-                "link",
-                response.urljoin(item.css(".item-link::attr(href)").extract_first()),
+            link = response.urljoin(
+                re.sub(r"\?.*", "", item.css(".item-link::attr(href)").extract_first())
             )
+            il.add_value("link", link)
             image_url = item.css(".item-image::attr(data-bg)").re_first(
                 r"url\(([^)]+)\)"
             )

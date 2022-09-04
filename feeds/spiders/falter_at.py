@@ -302,7 +302,7 @@ class FalterAtSpider(FeedsSpider):
             )
 
     def parse_blog_article(self, response):
-        remove_elems = [".ad-component", ".wp-caption-text"]
+        remove_elems = [".ad-component", ".wp-caption-text", ".alert"]
         il = FeedEntryItemLoader(
             response=response,
             remove_elems=remove_elems,

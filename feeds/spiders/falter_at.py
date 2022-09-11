@@ -88,14 +88,15 @@ class FalterAtSpider(FeedsSpider):
 
         if "events" in self.pages:
             region = self.settings.get("FEEDS_SPIDER_FALTER_AT_REGION", "wien")
-            yield scrapy.Request(
-                (
-                    "https://www.{}/api/events?mode=event&is_recommended=true&region={}"
-                    + "&c=100"
-                ).format(self.name, region),
-                self.parse_events,
-                meta={"dont_cache": True, "region": region},
-            )
+            for i in range(10):
+                yield scrapy.Request(
+                    (
+                        "https://www.{}/api/events?mode=event&is_recommended=true"
+                        + "&region={}&c=100&f={}"
+                    ).format(self.name, region, 100 * i),
+                    self.parse_events,
+                    meta={"dont_cache": True, "region": region},
+                )
 
         blogs = self.settings.get("FEEDS_SPIDER_FALTER_AT_BLOGS")
         if blogs:

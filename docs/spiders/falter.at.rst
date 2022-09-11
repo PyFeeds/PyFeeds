@@ -14,12 +14,12 @@ Add ``falter.at`` to the list of spiders:
    spiders =
      falter.at
 
-Falter_ has a paywall for certain articles. If you want to crawl paid articles, please
-provide ``abonr`` (subscription number) and ``password``.
+Falter_ has a paywall for certain articles. If you want to crawl paid
+articles, please provide ``abonr`` (subscription number) and ``password``.
 
-``pages`` accepts ``magazine`` for the Falter newspaper and ``lokalfuehrer_reviews``,
-``lokalfuehrer_newest`` for restaurant, ``streams`` for movie streams and ``events`` for
-events. By default all are scraped.
+``pages`` accepts ``magazine`` for the Falter newspaper and
+``lokalfuehrer_reviews``, ``lokalfuehrer_newest`` for restaurant, ``streams``
+for movie streams and ``events`` for events. By default all are scraped.
 
 ``blogs`` accepts slugs for the blogs from https://cms.falter.at/blogs/.
 

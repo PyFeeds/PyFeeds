@@ -5,7 +5,7 @@ from scrapy import Request, signals
 from scrapy.exceptions import NotConfigured
 from scrapy.spidermiddlewares.httperror import HttpError
 from scrapy.utils.misc import load_object
-from scrapy.utils.request import request_fingerprint
+from scrapy.utils.request import fingerprint
 
 from feeds.exceptions import DropResponse
 
@@ -72,8 +72,8 @@ class FeedsHttpCacheMiddleware:
             )
         )
         if not request.meta.get("dont_cache", False):
-            fingerprint = request_fingerprint(request, include_headers=["Cookie"])
-            request.meta["fingerprints"].append(fingerprint)
+            fpr = fingerprint(request, include_headers=["Cookie"])
+            request.meta["fingerprints"].append(fpr)
         else:
             logger.debug(f"Skipping fingerprinting uncached request {request}")
 

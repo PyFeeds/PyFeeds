@@ -10,7 +10,7 @@ from time import time
 import scrapy
 from scrapy.extensions.httpcache import DummyPolicy, FilesystemCacheStorage
 from scrapy.utils.python import to_bytes
-from scrapy.utils.request import request_fingerprint
+from scrapy.utils.request import fingerprint
 
 logger = logging.getLogger(__name__)
 
@@ -92,7 +92,7 @@ class FeedsCacheStorage(FilesystemCacheStorage):
         self._write_meta_to_path(rpath, metadata)
 
     def _get_request_path(self, spider, request):
-        key = request_fingerprint(request, include_headers=["Cookie"])
+        key = fingerprint(request, include_headers=["Cookie"]).hex()
         return os.path.join(self.cachedir, spider.name, key[0:2], key)
 
     def retrieve_object(self, spider, key):
@@ -185,8 +185,8 @@ class FeedsCacheStorage(FilesystemCacheStorage):
 
         if remove_parents and "parents" in meta:
             spider_root = os.path.dirname(os.path.dirname(cache_entry_path))
-            for fingerprint in meta["parents"]:
-                path = os.path.join(spider_root, fingerprint[0:2], fingerprint)
+            for fpr in meta["parents"]:
+                path = os.path.join(spider_root, fpr[0:2], fpr)
                 self.remove_cache_entry(path, remove_parents=False)
 
         shutil.rmtree(cache_entry_path, ignore_errors=True)

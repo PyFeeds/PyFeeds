@@ -67,3 +67,7 @@ LOG_LEVEL = logging.INFO
 # Stats collection is disabled by default.
 # Can be overriden with --stats parameter.
 STATS_CLASS = "scrapy.statscollectors.DummyStatsCollector"
+
+# Set settings whose default value is deprecated to a future-proof value
+REQUEST_FINGERPRINTER_IMPLEMENTATION = "2.7"
+TWISTED_REACTOR = "twisted.internet.asyncioreactor.AsyncioSelectorReactor"

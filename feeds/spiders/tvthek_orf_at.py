@@ -71,7 +71,7 @@ class TvthekOrfAtSpider(FeedsSpider):
         if item["description"]:
             il.add_value("content_html", item["description"].replace("\r\n", "<br>"))
         il.add_value("updated", item["date"])
-        il.add_value("link", item["url"].replace("api-tvthek.orf.at", "tvthek.orf.at"))
+        il.add_value("link", item["share_body"])
         # Check how many segments are part of this episode.
         if len(item["_embedded"]["segments"]) == 1:
             # If only one segment, item["sources"] contains invalid links.

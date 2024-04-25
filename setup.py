@@ -19,7 +19,7 @@ setup(
         "dateparser",
         "feedparser",
         "itemloaders",
-        "lxml",
+        "lxml[html_clean]",
         "python-dateutil",
         "pyxdg",
         "readability-lxml",

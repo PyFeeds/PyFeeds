@@ -3,4 +3,4 @@
 set -e
 set -u
 
-find feeds/ tests/ -name '*.py' -print0 | xargs --null pyupgrade --py37-plus $@
+find feeds/ tests/ -name '*.py' -print0 | xargs --null pyupgrade --py38-plus $@

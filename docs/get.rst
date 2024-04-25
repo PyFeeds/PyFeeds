@@ -19,4 +19,4 @@ considered stable enough for daily use:
 
 After installation ``feeds`` is available in your virtual environment.
 
-Feeds supports Python 3.7+.
+Feeds supports Python 3.8+.

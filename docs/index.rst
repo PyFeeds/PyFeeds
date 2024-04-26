@@ -47,8 +47,6 @@ Related work
 * `f43.me <https://github.com/j0k3r/f43.me>`_ converts feeds to contain the
   full article and also improves articles by adding links to the comment
   sections of Hacker News and Reddit. Feeds are converted periodically.
-* `python-ftr <https://github.com/1flow/python-ftr>`_ is a library to extract
-  content from pages. A partial reimplementation of Full-Text RSS.
 
 Authors
 -------

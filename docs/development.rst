@@ -145,7 +145,6 @@ Custom extraction
 The last resort is to find a page that lists the newest articles and start
 scraping from there.
 
-  * :ref:`spider_ak.ciando.com`
   * :ref:`spider_atv.at`
   * :ref:`spider_biblioweb.at`
   * :ref:`spider_cbird.at`

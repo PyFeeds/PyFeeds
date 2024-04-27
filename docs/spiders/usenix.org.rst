@@ -2,7 +2,8 @@
 
 usenix.org
 ----------
-Newest issues of the Usenix Magazine ;login:.
+Newest articles from `Usenix ;login: online
+<https://www.usenix.org/publications/loginonline>`_.
 
 Configuration
 ~~~~~~~~~~~~~

@@ -176,10 +176,6 @@ useragent = feeds (+https://github.com/pyfeeds/pyfeeds)
 #    special-report
 #    leaders
 
-#[tinyletter.com]
-#accounts =
-#    dabeaz
-
 #[riskommunal]
 #urls =
 #    http://yourlocalcommunity.tld/News

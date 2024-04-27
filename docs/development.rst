@@ -157,7 +157,6 @@ scraping from there.
   * :ref:`spider_python-patterns.guide`
   * :ref:`spider_riskommunal`
   * :ref:`spider_servustv.com`
-  * :ref:`spider_tinyletter.com`
   * :ref:`spider_tuwien.ac.at`
   * :ref:`spider_momoxfashion.com`
   * :ref:`spider_usenix.org`

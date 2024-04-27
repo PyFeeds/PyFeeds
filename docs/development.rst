@@ -103,7 +103,6 @@ cleaning up the content (removing share buttons, etc.):
 
   * :ref:`spider_arstechnica.com`
   * :ref:`spider_derstandard.at`
-  * :ref:`spider_dietiwag.org`
   * :ref:`spider_ft.com`
   * :ref:`spider_lwn.net`
   * :ref:`spider_orf.at`

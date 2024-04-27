@@ -7,7 +7,7 @@ from feeds.loaders import FeedEntryItemLoader
 from feeds.spiders import FeedsSpider
 
 
-class Pusl4ComSpider(FeedsSpider):
+class Puls4ComSpider(FeedsSpider):
     name = "puls4.com"
     start_urls = ["https://www.puls4.com/api/json-fe/page/sendungen"]
 

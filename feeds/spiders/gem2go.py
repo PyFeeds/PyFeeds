@@ -55,15 +55,14 @@ class Gem2GoSpider(FeedsSpider):
         self._subtitles[site] = f"Neuigkeiten aus {title}"
 
         for selector in response.css("div.newslist div[class*='float_left']"):
-            updated = selector.css("p.float_right::text").get()
-            if not updated:
-                # Do not care about "archived news"
-                continue
-
             url = selector.css("a::attr(href)").get()
             if not url:
                 # Ignore articles without a link
                 continue
+
+            # The publication date might be present only on the overview page,
+            # only on the article page or mix and match on both.
+            updated = selector.css("p.float_right::text").get()
 
             yield scrapy.Request(
                 urljoin(self._links[site], url),
@@ -90,7 +89,9 @@ class Gem2GoSpider(FeedsSpider):
         il.add_value("path", site)
         il.add_value("link", response.url)
         il.add_value("updated", response.meta["updated"])
-        il.add_css("title", "div.main-content h1:first-of-type::text")
+        il.add_css("updated", ".newsdatum_container ::text")
+        il.add_css("updated", "p[id$='detail_p_date'] ::text")
+        il.add_css("title", "div.main-content h1:first-of-type ::text")
         il.add_css("content_html", "div.main-content")
 
         yield il.load_item()

@@ -54,22 +54,29 @@ class Gem2GoSpider(FeedsSpider):
         self._titles[site] = title
         self._subtitles[site] = f"Neuigkeiten aus {title}"
 
-        for selector in response.css("div.newslist div[class*='float_left']"):
-            url = selector.css("a::attr(href)").get()
-            if not url:
-                # Ignore articles without a link
-                continue
+        # Sites use different versions of the same "CMS". Extract the "news"
+        # container first and for each container scrape the article URL and the
+        # publication date.
+        for query_container, query_updated in [
+            ("div.newslist div[class*='float_left']", "p.float_right::text"),
+            (".bemCard", ".card-footer .bemContainer--date::text"),
+        ]:
+            for selector in response.css(query_container):
+                url = selector.css("a::attr(href)").get()
+                if not url:
+                    # Ignore articles without a link
+                    continue
 
-            # The publication date might be present only on the overview page,
-            # only on the article page or mix and match on both.
-            updated = selector.css("p.float_right::text").get()
+                # The publication date might be present only on the overview page,
+                # only on the article page or mix and match on both.
+                updated = selector.css(query_updated).get()
 
-            yield scrapy.Request(
-                urljoin(self._links[site], url),
-                self.parse_article,
-                cookies=self.cookies,
-                meta={"site": site, "updated": updated},
-            )
+                yield scrapy.Request(
+                    urljoin(self._links[site], url),
+                    self.parse_article,
+                    cookies=self.cookies,
+                    meta={"site": site, "updated": updated},
+                )
 
     def parse_article(self, response):
         site = response.meta["site"]
@@ -84,11 +91,14 @@ class Gem2GoSpider(FeedsSpider):
                 "div.main-content h1:first-of-type",
                 "div.newsdatum_container",
                 "p#ctl00_ctl00_ctl00_cph_col_a_cph_content_cph_content_detail_p_date",
+                "span.bemContainer--publishDate",
+                "span.bemContainer--readingTime",
             ],
         )
         il.add_value("path", site)
         il.add_value("link", response.url)
         il.add_value("updated", response.meta["updated"])
+        il.add_css("updated", ".bemContainer--publishDate ::text")
         il.add_css("updated", ".newsdatum_container ::text")
         il.add_css("updated", "p[id$='detail_p_date'] ::text")
         il.add_css("title", "div.main-content h1:first-of-type ::text")

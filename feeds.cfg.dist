@@ -176,7 +176,7 @@ useragent = feeds (+https://github.com/pyfeeds/pyfeeds)
 #    special-report
 #    leaders
 
-#[riskommunal]
+#[gem2go]
 #urls =
 #    http://yourlocalcommunity.tld/News
 #    https://mytown.tld/BUeRGERSERVICE/Neuigkeiten

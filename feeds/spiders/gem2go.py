@@ -1,4 +1,4 @@
-from urllib.parse import urlparse
+from urllib.parse import urljoin, urlparse
 
 import scrapy
 
@@ -7,8 +7,8 @@ from feeds.spiders import FeedsSpider
 from feeds.utils import generate_feed_header
 
 
-class RisKommunalSpider(FeedsSpider):
-    name = "riskommunal"
+class Gem2GoSpider(FeedsSpider):
+    name = "gem2go"
     custom_settings = {"COOKIES_ENABLED": True}
     allowed_domains = []
     cookies = {"ris-cookie": "g7750", "ris_cookie_setting": "g7750"}
@@ -30,7 +30,7 @@ class RisKommunalSpider(FeedsSpider):
             )
 
     def start_requests(self):
-        urls = self.settings.get("FEEDS_SPIDER_RISKOMMUNAL_URLS")
+        urls = self.settings.get("FEEDS_SPIDER_GEM2GO_URLS")
         if not urls:
             self.logger.error("Please specify url(s) in the config file!")
             return
@@ -52,14 +52,12 @@ class RisKommunalSpider(FeedsSpider):
     def parse(self, response):
         site = response.meta["site"]
 
-        title = response.css("meta[property='og:title']::attr('content')").get()
+        title = response.css("meta[property='og:title']::attr(content)").get()
         self._titles[site] = title
         self._subtitles[site] = f"Neuigkeiten aus {title}"
 
-        icon = response.css("link[rel='icon']::attr('href')").get()
-        if icon and icon.startswith("/"):
-            icon = f"{self._links[site]}{icon}"
-        self._icons[site] = icon
+        if icon := response.css("link[rel='icon']::attr(href)").get():
+            self._icons[site] = urljoin(self._links[site], icon)
 
         for selector in response.css("div.newslist div[class*='float_left']"):
             updated = selector.css("p.float_right::text").get()
@@ -67,16 +65,13 @@ class RisKommunalSpider(FeedsSpider):
                 # Do not care about "archived news"
                 continue
 
-            url = selector.css("a::attr('href')").get()
+            url = selector.css("a::attr(href)").get()
             if not url:
                 # Ignore articles without a link
                 continue
 
-            if url.startswith("/"):
-                url = f"{self._links[site]}{url}"
-
             yield scrapy.Request(
-                url,
+                urljoin(self._links[site], url),
                 self.parse_article,
                 cookies=self.cookies,
                 meta={"site": site, "updated": updated},

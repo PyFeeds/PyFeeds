@@ -152,7 +152,7 @@ scraping from there.
   * :ref:`spider_npr.org`
   * :ref:`spider_puls4.com`
   * :ref:`spider_python-patterns.guide`
-  * :ref:`spider_riskommunal`
+  * :ref:`spider_gem2go`
   * :ref:`spider_servustv.com`
   * :ref:`spider_tuwien.ac.at`
   * :ref:`spider_momoxfashion.com`

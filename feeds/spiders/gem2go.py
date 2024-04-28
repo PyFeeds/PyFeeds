@@ -17,7 +17,6 @@ class Gem2GoSpider(FeedsSpider):
     _titles = {}
     _subtitles = {}
     _links = {}
-    _icons = {}
 
     def feed_headers(self):
         for site in self._sites:
@@ -25,7 +24,6 @@ class Gem2GoSpider(FeedsSpider):
                 title=self._titles.get(site),
                 subtitle=self._subtitles.get(site),
                 link=self._links.get(site),
-                icon=self._icons.get(site),
                 path=site,
             )
 
@@ -55,9 +53,6 @@ class Gem2GoSpider(FeedsSpider):
         title = response.css("meta[property='og:title']::attr(content)").get()
         self._titles[site] = title
         self._subtitles[site] = f"Neuigkeiten aus {title}"
-
-        if icon := response.css("link[rel='icon']::attr(href)").get():
-            self._icons[site] = urljoin(self._links[site], icon)
 
         for selector in response.css("div.newslist div[class*='float_left']"):
             updated = selector.css("p.float_right::text").get()

@@ -86,9 +86,10 @@ class Gem2GoSpider(FeedsSpider):
             dayfirst=True,
             yearfirst=False,
             remove_elems=[
-                "div.main-content h1:first-of-type",
-                "p#ctl00_ctl00_ctl00_cph_col_a_cph_content_cph_content_detail_p_date",
                 "div#main-content-header",
+                "div.main-content h1:first-of-type",
+                "div.newsdatum_container",
+                "p#ctl00_ctl00_ctl00_cph_col_a_cph_content_cph_content_detail_p_date",
             ],
         )
         il.add_value("path", site)

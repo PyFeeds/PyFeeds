@@ -2,7 +2,6 @@ import re
 from datetime import timedelta
 
 import scrapy
-from dateutil.parser import parse as dateutil_parse
 from itemloaders.processors import TakeFirst
 
 from feeds.loaders import FeedEntryItemLoader
@@ -119,7 +118,7 @@ class LwnNetSpider(FeedsXMLFeedSpider):
 
     def parse_node(self, response, node):
         il = FeedEntryItemLoader(response=response, base_url=f"https://{self.name}")
-        updated = dateutil_parse(node.xpath("pubDate/text()").extract_first())
+        updated = node.xpath("pubDate/text()").extract_first()
         il.add_value("updated", updated)
         title = node.xpath("title/text()").extract_first()
         paywalled = title.startswith("[$]")

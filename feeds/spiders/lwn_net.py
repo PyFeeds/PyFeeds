@@ -61,14 +61,10 @@ class LwnNetSpider(FeedsXMLFeedSpider):
     name = "lwn.net"
     namespaces = [
         ("dc", "http://purl.org/dc/elements/1.1/"),
-        # Default (empty) namespaces are not supported so we just come up with
-        # one.
-        ("rss", "http://purl.org/rss/1.0/"),
+        ("atom", "http://www.w3.org/2005/Atom"),
     ]
-    itertag = "rss:item"
-    # Use XML iterator instead of regex magic which would fail due to the
-    # introduced rss namespace prefix.
-    iterator = "xml"
+    itertag = "item"
+    iterator = "iternodes"
     # lwn.net doesn't like it (i.e. blocks us) if we impose too much load.
     custom_settings = {"DOWNLOAD_DELAY": 1.0, "COOKIES_ENABLED": True}
 
@@ -126,22 +122,21 @@ class LwnNetSpider(FeedsXMLFeedSpider):
 
     def parse_node(self, response, node):
         il = FeedEntryItemLoader(response=response, base_url=f"https://{self.name}")
-        updated = dateutil_parse(node.xpath("dc:date/text()").extract_first())
+        updated = dateutil_parse(node.xpath("pubDate/text()").extract_first())
         il.add_value("updated", updated)
-        title = node.xpath("rss:title/text()").extract_first()
+        title = node.xpath("title/text()").extract_first()
         paywalled = title.startswith("[$]")
         if paywalled:
             title = title.replace("[$] ", "")
             il.add_value("category", "paywalled")
-        link = node.xpath("rss:link/text()").extract_first()
-        link = link.replace("rss", "")
+        link = node.xpath("link/text()").extract_first()
         link = link.replace("http://", "https://")
         meta = {"il": il}
         if paywalled and not self._subscribed:
             il.add_value("title", title)
             il.add_value("author_name", node.xpath("dc:creator/text()").extract_first())
             il.add_value(
-                "content_text", node.xpath("rss:description/text()").extract_first()
+                "content_text", node.xpath("description/text()").extract_first()
             )
             il.add_value("link", link)
             return il.load_item()

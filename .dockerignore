@@ -1,0 +1,9 @@
+# ignore everything
+*
+
+# allow code
+!setup.cfg
+!setup.py
+!LICENSE
+!README.rst
+!feeds

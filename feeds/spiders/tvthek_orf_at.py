@@ -28,7 +28,7 @@ class TvthekOrfAtSpider(FeedsSpider):
         today = datetime.now(gettz("Europe/Vienna"))
         for day in [today, today - timedelta(days=1)]:
             yield Request(
-                "https://api-tvthek.orf.at/api/v3/schedule/{}?limit=1000".format(
+                "https://api-tvthek.orf.at/api/v4.2/schedule/{}".format(
                     day.strftime("%Y-%m-%d")
                 ),
                 meta={"dont_cache": True},
@@ -37,12 +37,7 @@ class TvthekOrfAtSpider(FeedsSpider):
     def parse(self, response):
         json_response = json.loads(response.text)
 
-        if "next" in json_response["_links"]:
-            yield Request(
-                json_response["_links"]["nextPage"], meta={"dont_cache": True}
-            )
-
-        for item in json_response["_embedded"]["items"]:
+        for item in json_response:
             # Skip incomplete items or items with active youth protection.
             # We want to have working download links in the feed item.
             if not item["segments_complete"] or item["has_active_youth_protection"]:
@@ -61,58 +56,87 @@ class TvthekOrfAtSpider(FeedsSpider):
             )
 
     def _parse_episode(self, response):
-        item = json.loads(response.text)
+        episode = json.loads(response.text)
+
+        # Check how many segments are part of this episode.
+        if (
+            len(episode["_embedded"]["segments"]) == 1
+            and "progressive_download" in episode["_embedded"]["segments"][0]["_links"]
+        ):
+            # If only one segment, use the progressive HTTP source in segments[0]
+            yield Request(
+                episode["_embedded"]["segments"][0]["_links"]["progressive_download"][
+                    "href"
+                ],
+                self._parse_progressive_download,
+                meta={"dont_cache": True, "episode": episode},
+            )
+        elif "progressive_download" in episode["_links"]:
+            yield Request(
+                episode["_links"]["progressive_download"]["href"],
+                self._parse_progressive_download,
+                meta={"dont_cache": True, "episode": episode},
+            )
+        else:
+            self.logger.warning(
+                "Could not extract video for '{}'! "
+                "Unsupported multi-segment episode...".format(episode["title"])
+            )
+            raise DropResponse(
+                f"Skipping {response.url} because it's a multi-segment episode...",
+                transient=True,
+            )
+
+    def _parse_progressive_download(self, response):
+        progressive_download = json.loads(response.text)
+        episode = response.meta["episode"]
+
         il = FeedEntryItemLoader()
-        il.add_value("title", item["title"])
+        il.add_value("title", episode["title"])
         il.add_value(
             "content_html",
-            '<img src="{}">'.format(item["playlist"]["preview_image_url"]),
+            '<img src="{}">'.format(
+                episode["_embedded"]["image"]["public_urls"]["highlight_teaser"]["url"]
+            ),
         )
-        if item["description"]:
-            il.add_value("content_html", item["description"].replace("\r\n", "<br>"))
-        il.add_value("updated", item["date"])
-        il.add_value("link", item["share_body"])
-        # Check how many segments are part of this episode.
-        if len(item["_embedded"]["segments"]) == 1:
-            # If only one segment, item["sources"] contains invalid links.
-            # We use the first embedded segment instead.
-            # This is also how mediathekviewweb.de works.
-            item["sources"] = item["_embedded"]["segments"][0]["sources"]
+        if episode["description"]:
+            il.add_value("content_html", episode["description"].replace("\r\n", "<br>"))
+        il.add_value("updated", episode["date"])
+        il.add_value("link", episode["share_body"])
 
-        if (
-            len(item["sources"]["dash"]) > 0
-            and item["sources"]["dash"][0]["quality_description"] == "Kein DRM"
-        ):
-            self.logger.debug(f'Video for {item["title"]} is DRM protected')
-        else:
-            try:
-                video = next(
-                    s
-                    for s in item["sources"]["progressive_download"]
-                    if s["quality_key"] == "Q8C"
-                )
-                il.add_value("enclosure", {"iri": video["src"], "type": "video/mp4"})
-            except StopIteration:
-                self.logger.warning(
-                    "Could not extract video for '{}'!".format(item["title"])
-                )
-                raise DropResponse(
-                    f"Skipping {response.url} because not downloadable yet",
-                    transient=True,
-                )
+        try:
+            video = next(
+                s
+                for s in progressive_download["progressive_download"]
+                if s["quality_key"] == "Q8C"
+            )
+            il.add_value("enclosure", {"iri": video["src"], "type": "video/mp4"})
+        except StopIteration:
+            self.logger.warning(
+                "Could not extract video for '{}'!".format(episode["title"])
+            )
+            raise DropResponse(
+                f"Skipping {response.url} because not downloadable yet",
+                transient=True,
+            )
 
-        subtitle = item["_embedded"].get("subtitle")
+        subtitle = episode["_embedded"].get("subtitle")
         if subtitle:
-            subtitle = subtitle["_embedded"]["srt_file"]["public_urls"]["reference"]
-            il.add_value("enclosure", {"iri": subtitle["url"], "type": "text/plain"})
+            subtitle = subtitle["srt_url"]
+            il.add_value("enclosure", {"iri": subtitle, "type": "text/plain"})
         else:
-            self.logger.debug("No subtitle file found for '{}'".format(item["url"]))
+            self.logger.debug(
+                "No subtitle file found for '{}'".format(
+                    episode["_links"]["self"]["href"]
+                )
+            )
         il.add_value(
             "category",
             self._categories_from_oewa_base_path(
-                item["_embedded"]["profile"]["oewa_base_path"]
+                episode["_embedded"]["profile"]["oewa_base_path"]
             ),
         )
+
         return il.load_item()
 
     def _categories_from_oewa_base_path(self, oewa_base_path):
@@ -139,4 +163,4 @@ class TvthekOrfAtSpider(FeedsSpider):
         }
         for old, new in old_new.items():
             oewa_base_path = oewa_base_path.replace(old, new)
-        return filter(lambda x: x != "", oewa_base_path.split("/"))
+        return list(filter(lambda x: x != "", oewa_base_path.split("/")))

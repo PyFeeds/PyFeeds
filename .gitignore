@@ -33,6 +33,9 @@ feeds.cfg
 # vim tags
 tags
 
+# IDEA IDEs
+.idea
+
 # distribution
 build/
 dist/
